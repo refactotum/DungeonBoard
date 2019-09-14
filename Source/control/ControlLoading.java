@@ -59,9 +59,7 @@ public class ControlLoading extends Control
 
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
 
-		var timeLabel = new JLabel("08");
-		timeLabel.setBackground(colorControlBackground);
-		timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		var timeLabel = controlBuilder.createLabel("08", SwingConstants.CENTER, colorControlBackground);
 		northPanel.add(timeLabel);
 		
 		var timeSlider = new JSlider(SwingConstants.HORIZONTAL, 1, 20, 8);

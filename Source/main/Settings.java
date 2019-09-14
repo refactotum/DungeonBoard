@@ -140,6 +140,52 @@ public class Settings
 			}
 			return button;
 		}
+
+		public JLabel createLabel(String text, int horizontalAlignment)
+		{
+			return this.createLabel(text, horizontalAlignment, null);
+		}
+
+		public JLabel createLabel(String text, int horizontalAlignment, Color backgroundColor)
+		{
+			var returnValue = new JLabel(text);
+			if (backgroundColor != null)
+			{
+				returnValue.setBackground(backgroundColor);
+			}
+			if (horizontalAlignment >= 0)
+			{
+				returnValue.setHorizontalAlignment(horizontalAlignment);
+			}
+			return returnValue;
+		}
+		
+		public JPanel createPanel(LayoutManager layout)
+		{
+			var returnValue = new JPanel(layout);
+			return returnValue;
+		}
+
+		public JPanel createPanelWithBoxLayout(int axis)
+		{
+			var returnValue = new JPanel();
+			returnValue.setLayout(new BoxLayout(returnValue, axis));
+			return returnValue;
+		}
+
+		public JSlider createSlider()
+		{
+			var returnValue = new JSlider();
+			return returnValue;
+		}
+		
+		public JTextField createTextField(String text, int columns)
+		{
+			var returnValue = new JTextField(text, columns);
+			return returnValue;
+		}
+		
+		
 	}
 	public final ControlBuilder controlBuilder = new ControlBuilder();
 

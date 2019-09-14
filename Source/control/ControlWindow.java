@@ -50,7 +50,7 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 			displayButtons[i] = displayButton;
 		}
 		
-		var northPanel = new JPanel(new GridLayout(1, 2));
+		var northPanel = controlBuilder.createPanel(new GridLayout(1, 2));
 		northPanel.add(createButtonGroup("Controls", controlButtons));
 		northPanel.add(createButtonGroup("Displaying", displayButtons));
 		
@@ -59,26 +59,25 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 	
 	private JPanel createButtonGroup(String title, JButton[] buttons)
 	{
+		var controlBuilder = _settings.controlBuilder;
 		var colors = _settings.colors;
 		
 		var colorBackground = colors.BACKGROUND;
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
 
-		var panel = new JPanel();
+		var panel = controlBuilder.createPanel(new GridLayout(2, 1));
 		panel.setBackground(colorControlBackground);
-		panel.setLayout(new GridLayout(2, 1));
 		panel.setBorder(BorderFactory.createLineBorder(colorBackground, 2));
 		
-		var south = new JPanel();
+		var south = controlBuilder.createPanel(new GridLayout(1, buttons.length));
 		south.setBackground(colorControlBackground);
-		south.setLayout(new GridLayout(1, buttons.length));
 		
 		for (var button : buttons)
 		{
 			south.add(button);
 		}
 		
-		panel.add(new JLabel(title, SwingConstants.CENTER));
+		panel.add(controlBuilder.createLabel(title, SwingConstants.CENTER));
 		panel.add(south);
 		
 		return panel;

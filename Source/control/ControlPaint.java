@@ -23,8 +23,8 @@ public class ControlPaint extends Control
 	{
 		super(settings);
 
-		var northPanel = new JPanel();
-		northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
+		var controlBuilder = _settings.controlBuilder;
+		var northPanel = controlBuilder.createPanelWithBoxLayout(BoxLayout.Y_AXIS);
 
 		folderControlPanel = getEmptyNorthPanel();
 		folderControlPanel.setVisible(false);
@@ -103,8 +103,6 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(fileBox);
 
-		var controlBuilder = _settings.controlBuilder;
-
 		var iconsForPenDirectionLock = _settings.icons.PenDirectionLocks;
 		var penDirectionLockButton = controlBuilder.createButton
 		(
@@ -168,13 +166,12 @@ public class ControlPaint extends Control
 		
 		innerNorthPanel.add(drawPanel.getUpdateButton());
 		
-		var westPanel = new JPanel();
+		var westPanel = controlBuilder.createPanelWithBoxLayout(BoxLayout.Y_AXIS);
 		westPanel.setBackground(colors.CONTROL_BACKGROUND);
-		westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
 		
-		westPanel.add(new JLabel("Zoom", SwingConstants.LEFT));
+		westPanel.add(controlBuilder.createLabel("Zoom", SwingConstants.LEFT));
 		
-		zoomText = new JTextField("1.00", 1);
+		zoomText = controlBuilder.createTextField("1.00", 1);
 		zoomText.setMaximumSize(new Dimension(5000, 25));
 		zoomText.addActionListener
 		(
