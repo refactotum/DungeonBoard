@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
+import java.util.*;
 import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -36,11 +37,14 @@ public class ControlPaint extends Control
 		drawPanel = new DrawPanel();
 
 		setFocusable(true);
-		
-		fileBox = new JComboBox<>();
-		fileBox.setBackground(_settings.colors.CONTROL_BACKGROUND);
+
+		fileBox = controlBuilder.createComboBox(new String[] {}, _settings.colors.CONTROL_BACKGROUND);
 		fileBox.addItem("");
-		load();
+		var fileNames = getFileNames();
+		for (var fileName : fileNames)
+		{
+			fileBox.addItem(fileName);
+		}
 		fileBox.addActionListener
 		(
 			e ->
@@ -153,21 +157,25 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(hideButton);
 		
-		var slider = new JSlider(SwingConstants.HORIZONTAL, 10, 100, 25);
-		slider.setBackground(colors.CONTROL_BACKGROUND);
-		slider.addChangeListener
+		var sliderPenRadius = controlBuilder.createSlider
 		(
-			arg0 ->
+			SwingConstants.HORIZONTAL, 10, 100, 25,
+			null, // minSize 
+			colors.CONTROL_BACKGROUND,
+			e ->
 			{
+				var slider = ((JSlider)(e.getSource()));
 				drawPanel.setPenRadius(slider.getValue());
 			}
 		);
-		innerNorthPanel.add(slider);
+		innerNorthPanel.add(sliderPenRadius);
 		
 		innerNorthPanel.add(drawPanel.getUpdateButton());
 		
-		var westPanel = controlBuilder.createPanelWithBoxLayout(BoxLayout.Y_AXIS);
-		westPanel.setBackground(colors.CONTROL_BACKGROUND);
+		var westPanel = controlBuilder.createPanelWithBoxLayout
+		(
+			BoxLayout.Y_AXIS, colors.CONTROL_BACKGROUND
+		);
 		
 		westPanel.add(controlBuilder.createLabel("Zoom", SwingConstants.LEFT));
 		
@@ -201,12 +209,15 @@ public class ControlPaint extends Control
 		);
 		westPanel.add(zoomText);
 		
-		zoomSlider = new JSlider(SwingConstants.VERTICAL, 1, (int)(maxZoom * 100), 100);
-		zoomSlider.addChangeListener
+		zoomSlider = controlBuilder.createSlider
 		(
-			arg0 ->
+			SwingConstants.VERTICAL, 1, (int)(maxZoom * 100), 100,
+			null, // minSize
+			null, // backgroundColor
+			e ->
 			{
-				var zoom = zoomSlider.getValue() / 100.0;
+				var slider = ((JSlider)(e.getSource()));
+				var zoom = slider.getValue() / 100.0;
 				if (zoom < 0.01)
 				{
 					zoom = 0.01;
@@ -460,33 +471,38 @@ public class ControlPaint extends Control
 	@Override
 	protected void load()
 	{
+		// Do nothing?
+	}
+	
+	private java.util.List<String> getFileNames()
+	{
+		var returnValues = new ArrayList<String>();
+
 		var fileHelper = _settings.fileHelper;
 
-		while (fileBox.getItemCount() > 1)
-		{
-			fileBox.removeItemAt(1);
-		}
 		var folder = fileHelper.FOLDERS[Mode.PAINT.ordinal()];
 		
 		if (folder.exists())
 		{
 			for (var f : fileHelper.listFilesInOrder(folder))
 			{
+				var name = f.getName();
 				if (f.isDirectory())
 				{
-					fileBox.addItem(f.getName());
+					returnValues.add(name);
 				}
 				else
 				{
-					var name = f.getName();
 					var suffix = name.substring(name.lastIndexOf('.') + 1);
 					if (suffix.equalsIgnoreCase("PNG") || suffix.equalsIgnoreCase("JPG") || suffix.equalsIgnoreCase("JPEG"))
 					{
-						fileBox.addItem(name);
+						returnValues.add(name);
 					}
 				}
 			}
 		}
+		
+		return returnValues;
 	}
 
 	public void saveMask()

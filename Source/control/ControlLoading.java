@@ -59,18 +59,23 @@ public class ControlLoading extends Control
 
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
 
-		var timeLabel = controlBuilder.createLabel("08", SwingConstants.CENTER, colorControlBackground);
+		var timeLabel = controlBuilder.createLabel
+		(
+			"08", SwingConstants.CENTER, colorControlBackground
+		);
 		northPanel.add(timeLabel);
 		
-		var timeSlider = new JSlider(SwingConstants.HORIZONTAL, 1, 20, 8);
-		timeSlider.setBackground(colorControlBackground);
-		timeSlider.setMinimumSize(new Dimension(100, 0));
-		timeSlider.addChangeListener
+		var timeSlider = controlBuilder.createSlider
 		(
+			SwingConstants.HORIZONTAL, 1, 20, 8,
+			new Dimension(100, 0),
+			colorControlBackground,
 			e ->
 			{
-				timeLabel.setText(String.format("%02d", timeSlider.getValue()));
-				_main.DISPLAY_LOADING.setSecondsPerImage(timeSlider.getValue());
+				var slider = ((JSlider)(e.getSource()));
+				var sliderValue = slider.getValue();
+				timeLabel.setText(String.format("%02d", sliderValue));
+				_main.DISPLAY_LOADING.setSecondsPerImage(sliderValue);
 			}
 		);
 		northPanel.add(timeSlider);

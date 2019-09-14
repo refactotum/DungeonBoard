@@ -33,9 +33,10 @@ public abstract class Control extends JPanel
 	
 	protected JPanel getEmptyNorthPanel()
 	{
-		var northPanel =
-			_settings.controlBuilder.createPanelWithBoxLayout(BoxLayout.X_AXIS);
-		northPanel.setBackground(_settings.colors.CONTROL_BACKGROUND);
+		var northPanel = _settings.controlBuilder.createPanelWithBoxLayout
+		(
+			BoxLayout.X_AXIS, _settings.colors.CONTROL_BACKGROUND
+		);
 		northPanel.repaint();
 		return northPanel;
 	}

@@ -24,9 +24,12 @@ public class ControlPictures extends Control
 		var controlBuilder = _settings.controlBuilder;
 		var colors = _settings.colors;
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
-		
-		var scaleComboBox = new JComboBox<>(ScaleMethod.values());
-		scaleComboBox.setBackground(colorControlBackground);
+
+		var scaleMethods = ScaleMethod.values();
+		var scaleComboBox = controlBuilder.createComboBox
+		(
+			scaleMethods, colorControlBackground
+		);
 		scaleComboBox.setMaximumSize(new Dimension(100, 5000));
 		scaleComboBox.setSelectedItem(ScaleMethod.UP_SCALE);
 		scaleComboBox.addActionListener
@@ -74,7 +77,7 @@ public class ControlPictures extends Control
 		
 		add(northPanel, BorderLayout.NORTH);
 		
-		var jsp = new JScrollPane(picturePanel);
+		var jsp = controlBuilder.createScrollPane(picturePanel);
 		jsp.setBackground(colorControlBackground);
 		jsp.setBorder(BorderFactory.createEmptyBorder());
 		add(jsp, BorderLayout.CENTER);

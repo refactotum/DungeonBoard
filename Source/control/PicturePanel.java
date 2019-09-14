@@ -21,23 +21,21 @@ public abstract class PicturePanel extends JPanel
 		setLayout(new GridLayout(0, GRID_WIDTH));
 		setBorder(BorderFactory.createEmptyBorder());
 	}
-	
+
 	public JButton createPicturePanelButton(File file)
 	{
 		createThumbnail(file);
-		
+
 		var colors = _settings.colors;
-		
-		var button = new JButton(file.getName());
-		button.setMargin(new Insets(0, 0, 0, 0));
-		button.setFocusPainted(false);
-		button.setVerticalTextPosition(SwingConstants.TOP);
-		button.setHorizontalTextPosition(SwingConstants.CENTER);
-		button.setBackground(colors.DISABLE_COLOR);
-		button.addActionListener
+		var controlBuilder = _settings.controlBuilder;
+
+		var buttonFile = controlBuilder.createButton
 		(
-			arg0 ->
+			file.getName(),
+			colors.DISABLE_COLOR,
+			e ->
 			{
+				var button = ((JButton)(e.getSource()));
 				var name = button.getText();
 				if (button.getBackground() == colors.DISABLE_COLOR)
 				{
@@ -51,7 +49,12 @@ public abstract class PicturePanel extends JPanel
 				}
 			}
 		);
-		return button;
+		buttonFile.setMargin(new Insets(0, 0, 0, 0));
+		buttonFile.setFocusPainted(false);
+		buttonFile.setVerticalTextPosition(SwingConstants.TOP);
+		buttonFile.setHorizontalTextPosition(SwingConstants.CENTER);
+		
+		return buttonFile;
 	}
 	
 	private void createThumbnail(File file)

@@ -65,12 +65,16 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 		var colorBackground = colors.BACKGROUND;
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
 
-		var panel = controlBuilder.createPanel(new GridLayout(2, 1));
-		panel.setBackground(colorControlBackground);
+		var panel = controlBuilder.createPanel
+		(
+			new GridLayout(2, 1), colorControlBackground
+		);
 		panel.setBorder(BorderFactory.createLineBorder(colorBackground, 2));
 		
-		var south = controlBuilder.createPanel(new GridLayout(1, buttons.length));
-		south.setBackground(colorControlBackground);
+		var south = controlBuilder.createPanel
+		(
+			new GridLayout(1, buttons.length), colorControlBackground
+		);
 		
 		for (var button : buttons)
 		{

@@ -6,6 +6,7 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
 public class Settings
 {
@@ -141,6 +142,21 @@ public class Settings
 			return button;
 		}
 
+		public <T> JComboBox<T> createComboBox(T[] items)
+		{
+			return this.createComboBox(items, null);
+		}
+
+		public <T> JComboBox<T> createComboBox(T[] items, Color backgroundColor)
+		{
+			var returnValue = new JComboBox<T>(items);
+			if (backgroundColor != null)
+			{
+				returnValue.setBackground(backgroundColor);
+			}
+			return returnValue;
+		}
+
 		public JLabel createLabel(String text, int horizontalAlignment)
 		{
 			return this.createLabel(text, horizontalAlignment, null);
@@ -159,23 +175,62 @@ public class Settings
 			}
 			return returnValue;
 		}
-		
+
 		public JPanel createPanel(LayoutManager layout)
 		{
+			return this.createPanel(layout, null);
+		}
+
+		public JPanel createPanel(LayoutManager layout, Color backgroundColor)
+		{
 			var returnValue = new JPanel(layout);
+			if (backgroundColor != null)
+			{
+				returnValue.setBackground(backgroundColor);
+			}
 			return returnValue;
 		}
 
 		public JPanel createPanelWithBoxLayout(int axis)
 		{
-			var returnValue = new JPanel();
-			returnValue.setLayout(new BoxLayout(returnValue, axis));
-			return returnValue;
+			return this.createPanelWithBoxLayout(axis, null);
 		}
 
-		public JSlider createSlider()
+		public JPanel createPanelWithBoxLayout(int axis, Color backgroundColor)
 		{
-			var returnValue = new JSlider();
+			var returnValue = new JPanel();
+			returnValue.setLayout(new BoxLayout(returnValue, axis));
+			if (backgroundColor != null)
+			{
+				returnValue.setBackground(backgroundColor);
+			}
+			return returnValue;
+		}
+		
+		public JScrollPane createScrollPane(JComponent component)
+		{
+			return new JScrollPane(component);
+		}
+
+		public JSlider createSlider
+		(
+			int orientation, int min, int max, int value, 
+			Dimension minSize, Color backgroundColor, ChangeListener changeListener
+		)
+		{
+			var returnValue = new JSlider(orientation, min, max, value);
+			if (minSize != null)
+			{
+				returnValue.setMinimumSize(minSize);
+			}
+			if (backgroundColor != null)
+			{
+				returnValue.setBackground(backgroundColor);
+			}
+			if (changeListener != null)
+			{
+				returnValue.addChangeListener(changeListener);
+			}
 			return returnValue;
 		}
 		
