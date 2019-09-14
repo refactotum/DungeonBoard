@@ -8,15 +8,14 @@ import main.*;
 
 public class ControlLoading extends Control
 {
-	public ControlLoading(Settings settings)
+	public ControlLoading()
 	{
-		super(settings);
+		super();
 		var northPanel = getNorthPanel();
 
-		var colors = _settings.colors;
-
-		var controlBuilder = _settings.controlBuilder;
-		var upScaleButton = controlBuilder.createButton
+		var colors = _controlBuilder.colors;
+		
+		var upScaleButton = _controlBuilder.createButton
 		(
 			"Up Scale", colors.INACTIVE,
 			e ->
@@ -37,7 +36,7 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(upScaleButton);
 		
-		var addCubeButton = controlBuilder.createButton
+		var addCubeButton = _controlBuilder.createButton
 		(
 			"Add Cube",
 			e ->
@@ -47,7 +46,7 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(addCubeButton);
 		
-		var clearScreensaverCubeButton = controlBuilder.createButton
+		var clearScreensaverCubeButton = _controlBuilder.createButton
 		(
 			"Clear Screensaver Cubes",
 			e ->
@@ -59,13 +58,13 @@ public class ControlLoading extends Control
 
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
 
-		var timeLabel = controlBuilder.createLabel
+		var timeLabel = _controlBuilder.createLabel
 		(
 			"08", SwingConstants.CENTER, colorControlBackground
 		);
 		northPanel.add(timeLabel);
-		
-		var timeSlider = controlBuilder.createSlider
+
+		var timeSlider = _controlBuilder.createSlider
 		(
 			SwingConstants.HORIZONTAL, 1, 20, 8,
 			new Dimension(100, 0),
@@ -80,7 +79,7 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(timeSlider);
 		
-		var createTimerButton = controlBuilder.createButton
+		var createTimerButton = _controlBuilder.createButton
 		(
 			"Create Timer",
 			e ->
@@ -109,7 +108,7 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(createTimerButton);
 		
-		var clearTimerButton = controlBuilder.createButton
+		var clearTimerButton = _controlBuilder.createButton
 		(
 			"Clear Timer",
 			e -> { _main.getDisplay().clearTimer(); }

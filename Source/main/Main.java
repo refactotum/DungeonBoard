@@ -25,6 +25,7 @@ public class Main
 	public DisplayLoading DISPLAY_LOADING;
 	
 	private Settings _settings = Settings.Instance;
+	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 
 	public static void main(String[] args)
 	{
@@ -35,7 +36,7 @@ public class Main
 	{
 		try
 		{
-			var colors = _settings.colors;
+			var colors = _controlBuilder.colors;
 			var colorBackground = colors.BACKGROUND;
 			var colorControlBackground = colors.CONTROL_BACKGROUND;
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -59,6 +60,8 @@ public class Main
 		try
 		{
 			var fileHelper = _settings.fileHelper;
+			var _paintHelper = _settings.paintHelper;
+
 			fileHelper.load();
 			var screens = getScreens();
 			var displayIndex = JOptionPane.showOptionDialog
@@ -73,26 +76,33 @@ public class Main
 			{
 				var controlIndex = (displayIndex == 0 ? screens.length - 1 : 0);
 				
-				_settings.DISPLAY_SIZE = screens[displayIndex].getSize();
+				_paintHelper.displaySize = screens[displayIndex].getSize();
 				
-				_displayWindow = new DisplayWindow(_settings, screens[displayIndex].getRectangle());
+				_displayWindow = new DisplayWindow
+				(
+					screens[displayIndex].getRectangle()
+				);
 				
-				var controlWindow = new ControlWindow(_settings, screens[controlIndex].getRectangle());
+				var controlWindow = new ControlWindow
+				(
+					_settings.NAME,
+					_settings.icons.Program.getImage(),
+					screens[controlIndex].getRectangle());
 				_controlWindow = controlWindow;
 				
 				var folders = fileHelper.FOLDERS;
 				var folderLayer = folders[Mode.LAYER.ordinal()];
 				var folderImage = folders[Mode.IMAGE.ordinal()];
 				
-				_displayLayer = new DisplayPictures(_settings, folderLayer);
-				_displayImage = new DisplayPictures(_settings, folderImage);
-				DISPLAY_PAINT = new DisplayPaint(_settings);
-				DISPLAY_LOADING = new DisplayLoading(_settings);
+				_displayLayer = new DisplayPictures(folderLayer);
+				_displayImage = new DisplayPictures(folderImage);
+				DISPLAY_PAINT = new DisplayPaint();
+				DISPLAY_LOADING = new DisplayLoading();
 				
-				_controlLayer = new ControlPictures(_settings, folderLayer, _displayLayer, true);
-				_controlImage = new ControlPictures(_settings, folderImage, _displayImage, false);
-				_controlPaint = new ControlPaint(_settings);
-				_controlLoading = new ControlLoading(_settings);
+				_controlLayer = new ControlPictures(folderLayer, _displayLayer, true);
+				_controlImage = new ControlPictures(folderImage, _displayImage, false);
+				_controlPaint = new ControlPaint();
+				_controlLoading = new ControlLoading();
 				
 				controlWindow.addWindowListener
 				(

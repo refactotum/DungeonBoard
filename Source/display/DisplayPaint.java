@@ -17,9 +17,9 @@ public class DisplayPaint extends Display
 	 // Larger means zoomed out and a smaller image.
 	private double scale;
 
-	public DisplayPaint(Settings settings)
+	public DisplayPaint()
 	{
-		super(settings);
+		super();
 		windowPosition = new Point(0, 0);
 		scale = 1;
 		setVisible(true);
@@ -33,10 +33,10 @@ public class DisplayPaint extends Display
 		
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		g2d.setColor(Color.BLACK);
-		var displaySize = _settings.DISPLAY_SIZE;
+		var displaySize = _paintHelper.displaySize;
 		g2d.fillRect(0, 0, displaySize.width, displaySize.height);
 		
-		var paintImage = _settings.PAINT_IMAGE;
+		var paintImage = _paintHelper.paintImage;
 		if (paintImage != null && mask != null && imageSizeScaled != null)
 		{
 			var images = new BufferedImage[] { paintImage, mask };
@@ -60,7 +60,7 @@ public class DisplayPaint extends Display
 	
 	public void setImageSizeScaled()
 	{
-		var paintImage = _settings.PAINT_IMAGE;
+		var paintImage = _paintHelper.paintImage;
 		imageSizeScaled = new Dimension
 		(
 			(int)(paintImage.getWidth() / scale),
@@ -80,16 +80,16 @@ public class DisplayPaint extends Display
 	public void setWindowScaleAndPosition(double scale, Point position)
 	{
 		this.scale = scale;
-		if (_settings.PAINT_IMAGE != null)
+		if (_paintHelper.paintImage != null)
 		{
 			setImageSizeScaled();
 			windowPosition = position;
-			var displaySize = _settings.DISPLAY_SIZE;
+			var displaySize = _paintHelper.displaySize;
 			if (imageSizeScaled.width < displaySize.width)
 			{
 				windowPosition.x = (imageSizeScaled.width - displaySize.width) / 2;
 			}
-			if (imageSizeScaled.height < _settings.DISPLAY_SIZE.height)
+			if (imageSizeScaled.height < displaySize.height)
 			{
 				windowPosition.y = (imageSizeScaled.height - displaySize.height) / 2;
 			}
@@ -117,7 +117,7 @@ public class DisplayPaint extends Display
 
 	public void resetImage()
 	{
-		mask = _settings.BLANK_CURSOR;
+		mask = _paintHelper.blankCursor;
 		repaint();
 	}
 }

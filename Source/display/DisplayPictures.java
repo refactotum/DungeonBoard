@@ -16,12 +16,12 @@ public class DisplayPictures extends Display
 	private Thread compileThread;
 	private final File imageFolder;
 
-	public DisplayPictures(Settings settings, File imageFolder)
+	public DisplayPictures(File imageFolder)
 	{
-		super(settings);
+		super();
 		this.imageFolder = imageFolder;
 
-		var displaySize = _settings.DISPLAY_SIZE;
+		var displaySize = _paintHelper.displaySize;
 		image = new BufferedImage(displaySize.width, displaySize.height, BufferedImage.TYPE_INT_ARGB);
 		imagesToBePainted = new LinkedList<>();
 		scaleMethod = ScaleMethod.UP_SCALE;
@@ -42,7 +42,7 @@ public class DisplayPictures extends Display
 	
 	public void paintImage(Graphics2D g2d, BufferedImage img)
 	{
-		var displaySize = _settings.DISPLAY_SIZE;
+		var displaySize = _paintHelper.displaySize;
 		if (scaleMethod == ScaleMethod.FILL)
 		{
 			g2d.drawImage(img, 0, 0, displaySize.width, displaySize.height, null);
@@ -87,7 +87,7 @@ public class DisplayPictures extends Display
 	private void fillBackground(Graphics2D g2d, Color c)
 	{
 		g2d.setColor(c);
-		g2d.fillRect(0, 0, _settings.DISPLAY_SIZE.width, _settings.DISPLAY_SIZE.height);
+		g2d.fillRect(0, 0, _paintHelper.displaySize.width, _paintHelper.displaySize.height);
 	}
 	
 	private void drawImage(Graphics2D g2d, BufferedImage img)
@@ -131,7 +131,7 @@ public class DisplayPictures extends Display
 			@Override
 			public void run()
 			{
-				var displaySize = _settings.DISPLAY_SIZE;
+				var displaySize = _paintHelper.displaySize;
 				var img = new BufferedImage
 				(
 					displaySize.width,

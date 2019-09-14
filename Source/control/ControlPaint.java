@@ -20,11 +20,11 @@ public class ControlPaint extends Control
 	private double maxZoom;
 	private JPanel folderControlPanel;
 
-	public ControlPaint(Settings settings)
+	public ControlPaint()
 	{
-		super(settings);
+		super();
 
-		var controlBuilder = _settings.controlBuilder;
+		var controlBuilder = _controlBuilder;
 		var northPanel = controlBuilder.createPanelWithBoxLayout(BoxLayout.Y_AXIS);
 
 		folderControlPanel = getEmptyNorthPanel();
@@ -38,7 +38,7 @@ public class ControlPaint extends Control
 
 		setFocusable(true);
 
-		fileBox = controlBuilder.createComboBox(new String[] {}, _settings.colors.CONTROL_BACKGROUND);
+		fileBox = controlBuilder.createComboBox(new String[] {}, controlBuilder.colors.CONTROL_BACKGROUND);
 		fileBox.addItem("");
 		var fileNames = getFileNames();
 		for (var fileName : fileNames)
@@ -52,7 +52,7 @@ public class ControlPaint extends Control
 				if (fileBox.getSelectedIndex() != 0)
 				{
 					var filePath =
-						_settings.fileHelper.FOLDERS[Mode.PAINT.ordinal()].getAbsolutePath()
+						_fileHelper.FOLDERS[Mode.PAINT.ordinal()].getAbsolutePath()
 						+ File.separator + fileBox.getSelectedItem().toString();
 
 					var file = new File(filePath);
@@ -60,10 +60,9 @@ public class ControlPaint extends Control
 					if (file.exists())
 					{
 						drawPanel.saveMask();
-						var fileHelper = _settings.fileHelper;
-						var maskFile = fileHelper.fileToMaskFile(file);
+						var maskFile = _fileHelper.fileToMaskFile(file);
 						var dataFilePath =
-							fileHelper.DATA_FOLDER + File.separator 
+							_fileHelper.DATA_FOLDER + File.separator 
 							+ "Paint" + File.separator + maskFile.getName() 
 							+ ".data";
 						var dataFile = new File(dataFilePath);
@@ -84,7 +83,7 @@ public class ControlPaint extends Control
 							}
 							catch (IOException e2)
 							{
-								_settings.errorHelper.showError("Cannot load Mask Data", e2);
+								_errorHelper.showError("Cannot load Mask Data", e2);
 							}
 						}
 						if (file.isDirectory())
@@ -100,14 +99,14 @@ public class ControlPaint extends Control
 					}
 					else
 					{
-						_settings.errorHelper.showError("Cannot load Image, file does not exist");
+						_errorHelper.showError("Cannot load Image, file does not exist");
 					}
 				}
 			}
 		);
 		innerNorthPanel.add(fileBox);
 
-		var iconsForPenDirectionLock = _settings.icons.PenDirectionLocks;
+		var iconsForPenDirectionLock = _icons.PenDirectionLocks;
 		var penDirectionLockButton = controlBuilder.createButton
 		(
 			iconsForPenDirectionLock[0],
@@ -119,7 +118,7 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(penDirectionLockButton);
 
-		var iconsForPenShapes = _settings.icons.PenShapes;
+		var iconsForPenShapes = _icons.PenShapes;
 		var shape = controlBuilder.createButton
 		(
 			iconsForPenShapes[0],
@@ -131,7 +130,7 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(shape);
 		
-		var iconsForTouchpadDrawMode = _settings.icons.TouchpadDrawModes;
+		var iconsForTouchpadDrawMode = _icons.TouchpadDrawModes;
 		var touchpadDrawModeButton = controlBuilder.createButton
 		(
 			iconsForTouchpadDrawMode[0],
@@ -143,7 +142,7 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(touchpadDrawModeButton);
 		
-		var colors = _settings.colors;
+		var colors = controlBuilder.colors;
 
 		var showButton = controlBuilder.createButton
 		(
@@ -271,12 +270,12 @@ public class ControlPaint extends Control
 				}
 			}
 		}
-		
+
 		var paintImages = new boolean[paintFolderSize];
 		
-		var colors = _settings.colors;
-		var controlBuilder = _settings.controlBuilder;
-		
+		var controlBuilder = _controlBuilder;
+		var colors = controlBuilder.colors;
+
 		folderControlPanel.removeAll();
 		// Creates all buttons.
 		for (var i = 1; i <= paintFolderSize; i++)
@@ -305,7 +304,7 @@ public class ControlPaint extends Control
 						{
 							try
 							{
-								var paintImage = _settings.PAINT_IMAGE;
+								var paintImage = _paintHelper.paintImage;
 								synchronized (paintImage)
 								{
 									
@@ -313,7 +312,7 @@ public class ControlPaint extends Control
 									g2d.setColor(Color.BLACK);
 									g2d.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
 									
-									var paintFolderSize = _settings.fileHelper.PAINT_FOLDER_SIZE;
+									var paintFolderSize = _fileHelper.PAINT_FOLDER_SIZE;
 									for (var i = paintFolderSize; i > 0; i--)
 									{
 										if (paintImages[i - 1])
@@ -325,7 +324,7 @@ public class ControlPaint extends Control
 									
 									g2d.dispose();
 									
-									if (_settings.PAINT_IMAGE != null)
+									if (_paintHelper.paintImage != null)
 									{
 										_main.DISPLAY_PAINT.setMask(drawPanel.getMask());
 										_main.DISPLAY_PAINT.setImageSizeScaled();
@@ -337,8 +336,8 @@ public class ControlPaint extends Control
 							{
 								drawPanel.resetImage();
 								_main.DISPLAY_PAINT.resetImage();
-								_settings.PAINT_IMAGE = null;
-								_settings.errorHelper.showError("Cannot load Image, file is probably too large", error);
+								_paintHelper.paintImage = null;
+								_errorHelper.showError("Cannot load Image, file is probably too large", error);
 							}
 							_main.DISPLAY_PAINT.repaint();
 							drawPanel.repaint();
@@ -364,20 +363,20 @@ public class ControlPaint extends Control
 				{
 					try
 					{
-						_settings.PAINT_IMAGE = null;
-						_settings.PAINT_CONTROL_IMAGE = null;
+						_paintHelper.paintImage = null;
+						_paintHelper.paintControlImage = null;
 						Dimension imageSizeScaled;
 						{
 							var guideImg = ImageIO.read(guide);
 							imageSizeScaled = new Dimension(guideImg.getWidth(), guideImg.getHeight());
-							var paintGuideScale = _settings.PAINT_GUIDE_SCALE;
+							var paintGuideScale = _paintHelper.paintGuideScale;
 							var paintControlImage = new BufferedImage
 							(
 									imageSizeScaled.width / paintGuideScale,
 									imageSizeScaled.height / paintGuideScale,
 									BufferedImage.TYPE_INT_RGB
 							);
-							_settings.PAINT_CONTROL_IMAGE = paintControlImage;
+							_paintHelper.paintControlImage = paintControlImage;
 							paintControlImage.getGraphics().drawImage
 							(
 								guideImg.getScaledInstance
@@ -389,7 +388,7 @@ public class ControlPaint extends Control
 								0, 0, null
 							);
 						}
-						_settings.PAINT_IMAGE = new BufferedImage
+						_paintHelper.paintImage = new BufferedImage
 						(
 								imageSizeScaled.width,
 								imageSizeScaled.height,
@@ -404,8 +403,8 @@ public class ControlPaint extends Control
 					{
 						drawPanel.resetImage();
 						_main.DISPLAY_PAINT.resetImage();
-						_settings.PAINT_IMAGE = null;
-						_settings.errorHelper.showError("Cannot load Image, file is probably too large", error);
+						_paintHelper.paintImage = null;
+						_errorHelper.showError("Cannot load Image, file is probably too large", error);
 					}
 					_main.DISPLAY_PAINT.repaint();
 					drawPanel.repaint();
@@ -415,26 +414,25 @@ public class ControlPaint extends Control
 			folderLoadingThread.start();
 		}
 		
-		var fileHelper = _settings.fileHelper;
-		fileHelper.PAINT_FOLDER = paintFolder;
-		fileHelper.PAINT_FOLDER_SIZE = paintFolderSize;
-		_settings.PAINT_IMAGES = paintImages;
+		_fileHelper.PAINT_FOLDER = paintFolder;
+		_fileHelper.PAINT_FOLDER_SIZE = paintFolderSize;
+		_paintHelper.paintImageS = paintImages;
 	}
 
 	private void setFile(File file)
 	{
 		drawPanel.setIsImageLoading(true);
-		_settings.fileHelper.PAINT_FOLDER = file;
+		_fileHelper.PAINT_FOLDER = file;
 		var fileLoadingThread = new Thread("fileLoadingThread")
 		{
 			public void run()
 			{
 				try
 				{
-					_settings.PAINT_IMAGE = null;
-					_settings.PAINT_IMAGE = ImageIO.read(file);
-					_settings.PAINT_CONTROL_IMAGE = _settings.PAINT_IMAGE;
-					if (_settings.PAINT_IMAGE != null)
+					_paintHelper.paintImage = null;
+					_paintHelper.paintImage = ImageIO.read(file);
+					_paintHelper.paintControlImage = _paintHelper.paintImage;
+					if (_paintHelper.paintImage != null)
 					{
 						drawPanel.setImage();
 						_main.DISPLAY_PAINT.setMask(drawPanel.getMask());
@@ -446,8 +444,8 @@ public class ControlPaint extends Control
 				{
 					drawPanel.resetImage();
 					_main.DISPLAY_PAINT.resetImage();
-					_settings.PAINT_IMAGE = null;
-					_settings.errorHelper.showError("Cannot load Image, file is probably too large", error);
+					_paintHelper.paintImage = null;
+					_errorHelper.showError("Cannot load Image, file is probably too large", error);
 				}
 				_main.DISPLAY_PAINT.repaint();
 				drawPanel.repaint();
@@ -460,8 +458,8 @@ public class ControlPaint extends Control
 	private void setZoomMax()
 	{
 		// Image cannot be smaller than the screen.
-		var paintImage = _settings.PAINT_IMAGE;
-		var displaySize = _settings.DISPLAY_SIZE;
+		var paintImage = _paintHelper.paintImage;
+		var displaySize = _paintHelper.displaySize;
 		var w = paintImage.getWidth() / displaySize.getWidth();
 		var h = paintImage.getHeight() / displaySize.getHeight();
 		maxZoom = h > w ? h : w;
@@ -478,7 +476,7 @@ public class ControlPaint extends Control
 	{
 		var returnValues = new ArrayList<String>();
 
-		var fileHelper = _settings.fileHelper;
+		var fileHelper = _fileHelper;
 
 		var folder = fileHelper.FOLDERS[Mode.PAINT.ordinal()];
 		

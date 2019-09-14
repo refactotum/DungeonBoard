@@ -12,12 +12,14 @@ public abstract class PicturePanel extends JPanel
 {
 	private final int GRID_WIDTH = 4;
 	private final Dimension IMAGE_ICON_SIZE = new Dimension(100, 60);
-	
-	private Settings _settings;
 
-	public PicturePanel(Settings settings)
+	private Settings _settings = Settings.Instance;
+	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
+	private Settings.ErrorHelper _errorHelper = _settings.errorHelper;
+	private Settings.FileHelper _fileHelper = _settings.fileHelper;
+
+	public PicturePanel()
 	{
-		_settings = settings;
 		setLayout(new GridLayout(0, GRID_WIDTH));
 		setBorder(BorderFactory.createEmptyBorder());
 	}
@@ -26,10 +28,9 @@ public abstract class PicturePanel extends JPanel
 	{
 		createThumbnail(file);
 
-		var colors = _settings.colors;
-		var controlBuilder = _settings.controlBuilder;
+		var colors = _controlBuilder.colors;
 
-		var buttonFile = controlBuilder.createButton
+		var buttonFile = _controlBuilder.createButton
 		(
 			file.getName(),
 			colors.DISABLE_COLOR,
@@ -110,14 +111,14 @@ public abstract class PicturePanel extends JPanel
 			{
 				var b = (JButton) c;
 				var f = new File(folder + File.separator + b.getText());
-				f = _settings.fileHelper.fileToThumb(f);
+				f = _fileHelper.fileToThumb(f);
 				try
 				{
 					b.setIcon(new ImageIcon(ImageIO.read(f)));
 				}
 				catch (OutOfMemoryError | IOException e)
 				{
-					_settings.errorHelper.showError("Cannot load Thumbnail, file is probably too large", e);
+					_errorHelper.showError("Cannot load Thumbnail, file is probably too large", e);
 					e.printStackTrace();
 				}
 			}

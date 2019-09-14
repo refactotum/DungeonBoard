@@ -8,19 +8,25 @@ import main.*;
 public abstract class Control extends JPanel
 {
 	protected Main _main = Main.Instance;
-	protected Settings _settings;
+	private Settings _settings = Settings.Instance;
+	protected ControlBuilder _controlBuilder = ControlBuilder.Instance;
+	protected Settings.ErrorHelper _errorHelper = _settings.errorHelper;
+	protected Settings.FileHelper _fileHelper = _settings.fileHelper;
+	protected Settings.Icons _icons = _settings.icons;
+	protected Settings.PaintHelper _paintHelper = _settings.paintHelper;
 
-	public Control(Settings settings)
+	public Control()
 	{
-		this._settings = settings;
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createLineBorder(_settings.colors.BACKGROUND, 5));
+		var border =
+			BorderFactory.createLineBorder(_controlBuilder.colors.BACKGROUND, 5);
+		setBorder(border);
 	}
-	
+
 	protected JPanel getNorthPanel()
 	{
 		var northPanel = getEmptyNorthPanel();
-		var refreshButton = _settings.controlBuilder.createButton
+		var refreshButton = _controlBuilder.createButton
 		(
 			_settings.icons.Refresh,
 			e -> { load(); } 
@@ -30,17 +36,17 @@ public abstract class Control extends JPanel
 
 		return northPanel;
 	}
-	
+
 	protected JPanel getEmptyNorthPanel()
 	{
-		var northPanel = _settings.controlBuilder.createPanelWithBoxLayout
+		var northPanel = _controlBuilder.createPanelWithBoxLayout
 		(
-			BoxLayout.X_AXIS, _settings.colors.CONTROL_BACKGROUND
+			BoxLayout.X_AXIS, _controlBuilder.colors.CONTROL_BACKGROUND
 		);
 		northPanel.repaint();
 		return northPanel;
 	}
-	
+
 	protected abstract void load();
 
 	public void setIsMainControl(boolean value)

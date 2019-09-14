@@ -13,16 +13,21 @@ public class ControlPictures extends Control
 	private final File imageFolder;
 	private final DisplayPictures display;
 
-	public ControlPictures(Settings settings, File imageFolder, DisplayPictures display, boolean areMultipleImagesAllowed)
+	public ControlPictures
+	(
+		File imageFolder,
+		DisplayPictures display,
+		boolean areMultipleImagesAllowed
+	)
 	{
-		super(settings);
+		super();
 		this.imageFolder = imageFolder;
 		this.display = display;
 		
 		var northPanel = getNorthPanel();
 
-		var controlBuilder = _settings.controlBuilder;
-		var colors = _settings.colors;
+		var controlBuilder = _controlBuilder;
+		var colors = controlBuilder.colors;
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
 
 		var scaleMethods = ScaleMethod.values();
@@ -43,7 +48,7 @@ public class ControlPictures extends Control
 		
 		var flipButton = controlBuilder.createButton
 		(
-			_settings.icons.Flip,
+			_icons.Flip,
 			colorControlBackground,
 			arg0 ->
 			{
@@ -52,7 +57,7 @@ public class ControlPictures extends Control
 		);
 		northPanel.add(flipButton);
 		
-		picturePanel = new PicturePanel(_settings)
+		picturePanel = new PicturePanel()
 		{
 			@Override
 			protected void select(String name)
@@ -107,7 +112,7 @@ public class ControlPictures extends Control
 	{
 		if (imageFolder.exists())
 		{
-			var fileHelper = _settings.fileHelper;
+			var fileHelper = _fileHelper;
 			var files =
 				fileHelper.folderToDataFolder(imageFolder).listFiles();
 			for (var file : files)
@@ -122,7 +127,7 @@ public class ControlPictures extends Control
 			picturePanel.clearButtons();
 			
 			var picturePanelButtonCreator =
-				new PicturePanelButtonCreator(_settings, picturePanel, imageFolder);
+				new PicturePanelButtonCreator(picturePanel, imageFolder);
 			picturePanelButtonCreator.run();
 			
 			repaint();

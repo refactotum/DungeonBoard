@@ -16,15 +16,16 @@ public class ScreensaverCube
 	private boolean isMovingLeftNotRight;
 	private boolean isInCorner;
 
-	private Settings _settings;
+	private Settings _settings = Settings.Instance;
+	private Settings.Icons _icons = _settings.icons;
+	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
 
-	public ScreensaverCube(Settings settings)
+	public ScreensaverCube()
 	{
-		_settings = settings;
 		var rand = new Random();
 		PIXELS_PER_MOVE = rand.nextInt(5) + 1;
-		var displaySize = _settings.DISPLAY_SIZE;
-		var iconDvd = _settings.icons.Dvd;
+		var displaySize = _paintHelper.displaySize;
+		var iconDvd = _icons.Dvd;
 		position = new Point
 		(
 			rand.nextInt(displaySize.width - iconDvd.getIconWidth()),
@@ -39,11 +40,11 @@ public class ScreensaverCube
 	{
 		if (isInCorner)
 		{
-			g2d.drawImage(_settings.icons.Dvd2.getImage(), position.x, position.y, null);
+			g2d.drawImage(_icons.Dvd2.getImage(), position.x, position.y, null);
 		}
 		else
 		{
-			g2d.drawImage(_settings.icons.Dvd.getImage(), position.x, position.y, null);
+			g2d.drawImage(_icons.Dvd.getImage(), position.x, position.y, null);
 		}
 	}
 	
@@ -52,8 +53,8 @@ public class ScreensaverCube
 		if (isInCorner == false)
 		{
 			var vertHit = false;
-			var displaySize = _settings.DISPLAY_SIZE;
-			var iconDvd = _settings.icons.Dvd;
+			var displaySize = _paintHelper.displaySize;
+			var iconDvd = _icons.Dvd;
 
 			if (isMovingUpNotDown)
 			{

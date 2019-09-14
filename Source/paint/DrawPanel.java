@@ -30,10 +30,15 @@ public class DrawPanel extends JComponent
 	private Point lastWindowClick;
 	private Point windowPosition;
 	private Point startOfClick;
-	
+
 	private JButton updateButton;
 
 	private Settings _settings = Settings.Instance;
+	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
+	private Settings.ErrorHelper _errorHelper = _settings.errorHelper;
+	private Settings.FileHelper _fileHelper = _settings.fileHelper;
+	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
+	
 	private Main _main = Main.Instance;
 
 	public DrawPanel()
@@ -47,7 +52,10 @@ public class DrawPanel extends JComponent
 		penShape = PenShape.CIRCLE;
 		penDirectionLock = PenDirection.NONE;
 		touchpadDrawMode = TouchpadDrawMode.ANY;
-		updateButton = _settings.controlBuilder.createButton
+
+		var colors = _controlBuilder.colors;
+
+		updateButton = _controlBuilder.createButton
 		(
 			"Update Screen",
 			e ->
@@ -60,19 +68,19 @@ public class DrawPanel extends JComponent
 					}
 					catch (OutOfMemoryError error)
 					{
-						_settings.errorHelper.showError("Cannot update Image, file is probably large", error);
+						_errorHelper.showError("Cannot update Image, file is probably large", error);
 					}
 					updateButton.setEnabled(false);
-					updateButton.setBackground(_settings.colors.CONTROL_BACKGROUND);
+					updateButton.setBackground(colors.CONTROL_BACKGROUND);
 				}
 			}
 		);
-		
+
 		var mouseAdapter = new MouseAdapter()
 		{
 			public void mousePressed(MouseEvent e)
 			{
-				if (_settings.PAINT_IMAGE != null)
+				if (_paintHelper.paintImage != null)
 				{
 					lastMouseClickPosition = toDrawingPoint(e.getPoint());
 					switch (touchpadDrawMode)
@@ -86,7 +94,6 @@ public class DrawPanel extends JComponent
 						}
 						else
 						{
-							var colors = _settings.colors;
 							if (e.getButton() == MouseEvent.BUTTON1)
 							{
 								g2.setPaint(colors.CLEAR);
@@ -119,7 +126,7 @@ public class DrawPanel extends JComponent
 			@Override
 			public void mouseReleased(MouseEvent e)
 			{
-				if (_settings.PAINT_IMAGE != null && canDraw)
+				if (_paintHelper.paintImage != null && canDraw)
 				{
 					switch (penShape){
 					case RECT:
@@ -140,12 +147,12 @@ public class DrawPanel extends JComponent
 			}
 		};
 		addMouseListener(mouseAdapter);
-		
+
 		var mouseMotionAdapter = new MouseMotionAdapter()
 		{
 			public void mouseDragged(MouseEvent e)
 			{
-				if (_settings.PAINT_IMAGE != null)
+				if (_paintHelper.paintImage != null)
 				{
 					if (canDraw)
 					{
@@ -166,9 +173,9 @@ public class DrawPanel extends JComponent
 				repaint();
 			}
 		};
-		
+
 		addMouseMotionListener(mouseMotionAdapter);
-		
+
 		var componentListener = new ComponentListener()
 		{
 			public void componentShown(ComponentEvent e) {}
@@ -183,7 +190,7 @@ public class DrawPanel extends JComponent
 		addComponentListener(componentListener);
 		repaint();
 	}
-	
+
 	public void setZoom(double zoom)
 	{
 		// A higher number will zoom out.
@@ -192,7 +199,7 @@ public class DrawPanel extends JComponent
 		_main.DISPLAY_PAINT.setWindowScaleAndPosition(zoom, getWindowPosition());
 		repaint();
 	}
-	
+
 	public void setWindowScaleAndPosition(double zoom, Point p)
 	{
 		displayZoom = zoom;
@@ -200,14 +207,13 @@ public class DrawPanel extends JComponent
 		_main.DISPLAY_PAINT.setWindowScaleAndPosition(zoom, getWindowPosition());
 		repaint();
 	}
-	
+
 	public synchronized void setImage()
 	{
-		if (_settings.PAINT_IMAGE != null)
+		if (_paintHelper.paintImage != null)
 		{
-			var fileHelper = _settings.fileHelper;
-			var paintFolder = fileHelper.PAINT_FOLDER;
-			var maskFile = fileHelper.fileToMaskFile(paintFolder);
+			var paintFolder = _fileHelper.PAINT_FOLDER;
+			var maskFile = _fileHelper.fileToMaskFile(paintFolder);
 
 			if (maskFile.exists() && maskFile.lastModified() > paintFolder.lastModified())
 			{
@@ -225,8 +231,8 @@ public class DrawPanel extends JComponent
 			}
 			else
 			{
-				var paintImage = _settings.PAINT_IMAGE;
-				var pixelsPerMask = _settings.PAINT_PIXELS_PER_MASK_PIXEL;
+				var paintImage = _paintHelper.paintImage;
+				var pixelsPerMask = _paintHelper.paintPixelsPerMaskPixel;
 				drawingLayer = new BufferedImage
 				(
 					paintImage.getWidth() / pixelsPerMask,
@@ -247,16 +253,16 @@ public class DrawPanel extends JComponent
 		penDiameter = penRadius * 2;
 		repaint();
 	}
-	
+
 	public JButton getUpdateButton()
 	{
 		return updateButton;
 	}
-	
+
 	public void resetImage()
 	{
-		_settings.PAINT_IMAGE = null;
-		_settings.PAINT_CONTROL_IMAGE = null;
+		_paintHelper.paintImage = null;
+		_paintHelper.paintControlImage = null;
 		g2 = null;
 		drawingLayer = null;
 		isLoading = false;
@@ -274,12 +280,14 @@ public class DrawPanel extends JComponent
 		var penDirections = PenDirection.values();
 		penDirectionLock = penDirections[(penDirectionLock.ordinal() + 1) % penDirections.length];
 	}
-	
+
 	public void toggleTouchpadDrawMode()
 	{
 		var touchpadDrawModes = TouchpadDrawMode.values();
 		touchpadDrawMode =
 			touchpadDrawModes[(touchpadDrawMode.ordinal() + 1) % touchpadDrawModes.length];
+
+		var colors = _controlBuilder.colors;
 
 		if (g2 != null)
 		{
@@ -287,11 +295,11 @@ public class DrawPanel extends JComponent
 			case ANY:
 				break;
 			case VISIBLE:
-				g2.setPaint(_settings.colors.CLEAR);
+				g2.setPaint(colors.CLEAR);
 				canDraw = true;
 				break;
 			case INVISIBLE:
-				g2.setPaint(_settings.colors.OPAQUE);
+				g2.setPaint(colors.OPAQUE);
 				canDraw = true;
 				break;
 			case WINDOW:
@@ -300,28 +308,28 @@ public class DrawPanel extends JComponent
 			}
 		}
 	}
-	
+
 	public void setIsImageLoading(boolean value)
 	{
 		isLoading = value;
 		repaint();
 	}
-	
+
 	public int getPenShape()
 	{
 		return penShape.ordinal();
 	}
-	
+
 	public int getStyle()
 	{
 		return penDirectionLock.ordinal();
 	}
-	
+
 	public int getTouchpadDrawMode()
 	{
 		return touchpadDrawMode.ordinal();
 	}
-	
+
 	public BufferedImage getMask() throws OutOfMemoryError
 	{
 		var mask = new BufferedImage
@@ -330,10 +338,10 @@ public class DrawPanel extends JComponent
 			drawingLayer.getHeight(),
 			BufferedImage.TYPE_INT_ARGB
 		);
-		
+
 		var colorClearAsRgb = -1721434268;
 		var colorOpaqueAsRgb = -1711315868;
-		
+
 		for (var i = 0; i < drawingLayer.getWidth(); i++)
 		{
 			for (var j = 0; j < drawingLayer.getHeight(); j++)
@@ -351,30 +359,32 @@ public class DrawPanel extends JComponent
 		}
 		return mask;
 	}
-	
+
 	public Point getWindowPosition()
 	{
 		return new Point((int)(windowPosition.x / displayZoom), (int) (windowPosition.y / displayZoom));
 	}
-	
+
 	public boolean hasImage()
 	{
 		return drawingLayer != null;
 	}
-	
+
 	@Override
 	protected void paintComponent(Graphics g)
 	{
+		var colors = _controlBuilder.colors;
+
 		var g2d = (Graphics2D) g;
 		if (isLoading)
 		{
 			g2d.drawString("Loading...", controlSize.width / 2, controlSize.height / 2);
 		}
-		else if (_settings.PAINT_CONTROL_IMAGE != null)
+		else if (_paintHelper.paintControlImage != null)
 		{
-			g2d.drawImage(_settings.PAINT_CONTROL_IMAGE, 0, 0, controlSize.width, controlSize.height, null);
+			g2d.drawImage(_paintHelper.paintControlImage, 0, 0, controlSize.width, controlSize.height, null);
 			g2d.drawImage(drawingLayer, 0, 0, controlSize.width, controlSize.height, null);
-			g2d.setColor(_settings.colors.PINK);
+			g2d.setColor(colors.PINK);
 			switch (penShape) {
 			case CIRCLE:
 				g2d.drawOval(mousePos.x - penRadius, mousePos.y - penRadius, penDiameter, penDiameter);
@@ -397,7 +407,7 @@ public class DrawPanel extends JComponent
 				g2d.drawLine(mousePos.x - 10, mousePos.y, mousePos.x + 10, mousePos.y);
 				break;
 			}
-			
+
 			drawPlayerView(g2d);
 		}
 		else if (controlSize != null)
@@ -405,15 +415,15 @@ public class DrawPanel extends JComponent
 			g2d.drawString("No image loaded", controlSize.width / 2, controlSize.height / 2);
 		}
 	}
-	
+
 	private void drawPlayerView(Graphics2D g2d)
 	{
-		var displaySize = _settings.DISPLAY_SIZE;
-		var paintImage = _settings.PAINT_IMAGE;
+		var displaySize = _paintHelper.displaySize;
+		var paintImage = _paintHelper.paintImage;
 		var w = (int) (displaySize.width * displayZoom * controlSize.width / paintImage.getWidth());
 		var h = (int) (displaySize.height * displayZoom * controlSize.height / paintImage.getHeight());
 		int x, y;
-		
+
 		if (w > controlSize.width)
 		{
 			x = -(w - controlSize.width) / 2;
@@ -430,11 +440,11 @@ public class DrawPanel extends JComponent
 		{
 			y = windowPosition.y * controlSize.height / paintImage.getHeight();
 		}
-		
+
 		g2d.drawRect(x, y, w, h);
 		g2d.drawLine(x, y, x + w, y + h);
 		g2d.drawLine(x + w, y, x, y + h);
-		g2d.setColor(_settings.colors.PINK_CLEAR);
+		g2d.setColor(_controlBuilder.colors.PINK_CLEAR);
 		g2d.fillRect(x, y, w, h);
 	}
 
@@ -446,17 +456,17 @@ public class DrawPanel extends JComponent
 			p.y * drawingLayer.getHeight() / controlSize.height
 		);
 	}
-	
+
 	private void setWindowPosition(Point p)
 	{
 		lastWindowClick = p;
 
-		var pixelsPerMask = _settings.PAINT_PIXELS_PER_MASK_PIXEL;
-		var displaySize = _settings.DISPLAY_SIZE;
+		var pixelsPerMask = _paintHelper.paintPixelsPerMaskPixel;
+		var displaySize = _paintHelper.displaySize;
 		windowPosition.x = (int) (p.x * pixelsPerMask - (displaySize.width * displayZoom) / 2);
 		windowPosition.y = (int) (p.y * pixelsPerMask - (displaySize.height * displayZoom) / 2);
-		
-		var paintImage = _settings.PAINT_IMAGE;
+
+		var paintImage = _paintHelper.paintImage;
 		if (paintImage != null)
 		{
 			var xMax = paintImage.getWidth() - displaySize.width * displayZoom;
@@ -479,16 +489,18 @@ public class DrawPanel extends JComponent
 			}
 		}
 	}
-	
+
 	/**
 	 * uses the pen to draw onto the {@code drawingLayer}
-	 * @param newP a point based on the placement on {@code _settings.PAINT_IMAGE}<br>
+	 * @param newP a point based on the placement on {@code _settings.paintImage}<br>
 	 * use {@code toDrawingPoint} to convert to the correct point
 	 */
 	private void addPoint(Point newP)
 	{
 		if (g2 != null)
 		{
+			var colors = _controlBuilder.colors;
+
 			switch (penDirectionLock)
 			{
 				case HORIZONTAL:
@@ -532,10 +544,10 @@ public class DrawPanel extends JComponent
 			}
 			lastMouseClickPosition = newP;
 			updateButton.setEnabled(true);
-			updateButton.setBackground(_settings.colors.ACTIVE);
+			updateButton.setBackground(colors.ACTIVE);
 		}
 	}
-	
+
 	private Polygon getPolygonSweptByOval(Point newP, Point oldP, double rwidth, double rheight)
 	{
 		final double angle = -Math.atan2(newP.getY() - oldP.getY(), newP.getX() - oldP.getX());
@@ -586,7 +598,7 @@ public class DrawPanel extends JComponent
 			4 
 		);
 	}
-	
+
 	private void fillAll(Color c)
 	{
 		if (g2 != null)
@@ -595,20 +607,20 @@ public class DrawPanel extends JComponent
 			g2.fillRect(0, 0, drawingLayer.getWidth(), drawingLayer.getHeight());
 			repaint();
 			updateButton.setEnabled(true);
-			updateButton.setBackground(_settings.colors.ACTIVE);
+			updateButton.setBackground(_controlBuilder.colors.ACTIVE);
 		}
 	}
-	
+
 	public void hideAll()
 	{
-		fillAll(_settings.colors.OPAQUE);
+		fillAll(_controlBuilder.colors.OPAQUE);
 	}
-	
+
 	public void showAll()
 	{
-		fillAll(_settings.colors.CLEAR);
+		fillAll(_controlBuilder.colors.CLEAR);
 	}
-	
+
 	public void saveMask()
 	{
 		var fileHelper = _settings.fileHelper;
@@ -618,7 +630,7 @@ public class DrawPanel extends JComponent
 			try
 			{
 				ImageIO.write(drawingLayer, "png", f);
-				
+
 				var dataFilePath = 
 					fileHelper.DATA_FOLDER + File.separator
 					+ "Paint" + File.separator + f.getName() + ".data";
@@ -626,7 +638,7 @@ public class DrawPanel extends JComponent
 				var writer = new BufferedWriter(new FileWriter(dataFile));
 				writer.write(String.format("%f %d %d", displayZoom, lastWindowClick.x, lastWindowClick.y));
 				writer.close();
-				
+
 			}
 			catch (IOException e)
 			{

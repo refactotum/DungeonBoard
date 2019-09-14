@@ -10,14 +10,14 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 	private JButton[] displayButtons;
 	
 	private Main _main = Main.Instance;
-	protected Settings _settings;
+	protected ControlBuilder _controlBuilder = ControlBuilder.Instance;
 
-	public ControlWindow(Settings settings, Rectangle r)
+	public ControlWindow(String name, Image iconImage, Rectangle r)
 	{
-		_settings = settings;
-		setIconImage(_settings.icons.Program.getImage());
-		setTitle(_settings.NAME);
-		var controlSize = _settings.CONTROL_SIZE;
+		setTitle(name);
+		setIconImage(iconImage);
+
+		var controlSize = _controlBuilder.CONTROL_SIZE;
 		setSize(controlSize);
 		setLocation
 		(
@@ -26,8 +26,8 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 		);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		var colors = _settings.colors;
-		var controlBuilder = _settings.controlBuilder;
+		var colors = _controlBuilder.colors;
+
 		var modes = Mode.values();
 		var modeCount = modes.length;
 		controlButtons = new JButton[modeCount];
@@ -37,20 +37,20 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 			var mode = modes[i];
 			var modeName = mode.name();
 			
-			var controlButton = controlBuilder.createButton
+			var controlButton = _controlBuilder.createButton
 			(
 				modeName, colors.INACTIVE, new ModeListener(WindowType.CONTROL, mode)
 			);
 			controlButtons[i] = controlButton;
 
-			var displayButton = controlBuilder.createButton
+			var displayButton = _controlBuilder.createButton
 			(
 				modeName, colors.INACTIVE, new ModeListener(WindowType.DISPLAY, mode)
 			);
 			displayButtons[i] = displayButton;
 		}
 		
-		var northPanel = controlBuilder.createPanel(new GridLayout(1, 2));
+		var northPanel = _controlBuilder.createPanel(new GridLayout(1, 2));
 		northPanel.add(createButtonGroup("Controls", controlButtons));
 		northPanel.add(createButtonGroup("Displaying", displayButtons));
 		
@@ -59,8 +59,8 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 	
 	private JPanel createButtonGroup(String title, JButton[] buttons)
 	{
-		var controlBuilder = _settings.controlBuilder;
-		var colors = _settings.colors;
+		var controlBuilder = _controlBuilder;
+		var colors = controlBuilder.colors;
 		
 		var colorBackground = colors.BACKGROUND;
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
@@ -99,7 +99,7 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 	
 	public void setButton(WindowType display, Mode mode, boolean value)
 	{
-		var colors = _settings.colors;
+		var colors = _controlBuilder.colors;
 
 		if (display == WindowType.CONTROL)
 		{

@@ -14,17 +14,17 @@ public class PicturePanelButtonCreator
 	private final JButton[] buttons;
 	private int queueNumber;
 	
-	private Settings _settings;
+	private Settings _settings = Settings.Instance;
+	private Settings.FileHelper _fileHelper = _settings.fileHelper;
+	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
 
-	public PicturePanelButtonCreator(Settings settings, PicturePanel pp, File imageFolder)
+	public PicturePanelButtonCreator(PicturePanel pp, File imageFolder)
 	{
-		this._settings = settings;
 		this.pp = pp;
 		queue = new LinkedList<>();
 		queueNumber = 0;
 		
-		var fileHelper = settings.fileHelper;
-		for (var f: fileHelper.listFilesInOrder(imageFolder))
+		for (var f: _fileHelper.listFilesInOrder(imageFolder))
 		{
 			var name = f.getName();
 			var suffix = name.substring(name.lastIndexOf('.') + 1);
@@ -40,7 +40,7 @@ public class PicturePanelButtonCreator
 	{
 		if (queue.isEmpty() == false)
 		{
-			var threads = new ButtonMakerThread[_settings.SYS_THREADS];
+			var threads = new ButtonMakerThread[_paintHelper.sysThreads];
 			
 			for (var i = 0; i < threads.length; i++)
 			{

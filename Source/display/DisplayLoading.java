@@ -25,9 +25,9 @@ public class DisplayLoading extends Display
 	private short ticksSinceImageChanged;
 	private float fadeOpacity;
 
-	public DisplayLoading(Settings settings)
+	public DisplayLoading()
 	{
-		super(settings);
+		super();
 		screensaverCubes = new LinkedList<>();
 		paintThread = new Thread();
 		fileNamesNotYetShown = new LinkedList<>();
@@ -45,7 +45,7 @@ public class DisplayLoading extends Display
 		var g2d = (Graphics2D) g;
 		if (currentImage != null)
 		{
-			var displaySize = _settings.DISPLAY_SIZE;
+			var displaySize = _paintHelper.displaySize;
 			
 			if (shouldImagesBeUpscaled)
 			{
@@ -115,7 +115,7 @@ public class DisplayLoading extends Display
 	
 	public void addScreensaverCube()
 	{
-		screensaverCubes.add(new ScreensaverCube(_settings));
+		screensaverCubes.add(new ScreensaverCube());
 		repaint();
 	}
 

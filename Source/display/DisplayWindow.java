@@ -10,6 +10,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 	private final Point NULL_POS = new Point(-100, -100);
 
 	private Settings _settings = Settings.Instance;
+	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
 
 	private Point mousePos;
 	private CursorDirection handDirection;
@@ -17,10 +18,9 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 
 	private Main _main = Main.Instance;
 
-	public DisplayWindow(Settings settings, Rectangle r)
+	public DisplayWindow(Rectangle r)
 	{
 		super();
-		_settings = settings;
 		setTitle("Display");
 		setUndecorated(true);
 		setIconImage(_settings.icons.Program.getImage());
@@ -32,7 +32,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		(
 			getToolkit().createCustomCursor
 			(
-				_settings.BLANK_CURSOR, new Point(0, 0), "null"
+				_paintHelper.blankCursor, new Point(0, 0), "null"
 			)
 		);
 		mousePos = NULL_POS;
