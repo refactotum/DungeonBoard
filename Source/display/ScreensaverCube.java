@@ -11,15 +11,16 @@ public class ScreensaverCube
 
 	private final int PIXELS_PER_MOVE;
 	private Point position;
-	
+
 	private boolean isMovingUpNotDown;
 	private boolean isMovingLeftNotRight;
 	private boolean isInCorner;
 
-	private Settings _settings = Settings.Instance;
+	private Settings _settings;
 
-	public ScreensaverCube()
+	public ScreensaverCube(Settings settings)
 	{
+		_settings = settings;
 		var rand = new Random();
 		PIXELS_PER_MOVE = rand.nextInt(5) + 1;
 		var displaySize = _settings.DISPLAY_SIZE;

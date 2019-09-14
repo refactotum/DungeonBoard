@@ -14,15 +14,17 @@ public class PicturePanelButtonCreator
 	private final JButton[] buttons;
 	private int queueNumber;
 	
-	private Settings _settings = Settings.Instance;
+	private Settings _settings;
 
-	public PicturePanelButtonCreator(PicturePanel pp, File imageFolder)
+	public PicturePanelButtonCreator(Settings settings, PicturePanel pp, File imageFolder)
 	{
+		this._settings = settings;
 		this.pp = pp;
 		queue = new LinkedList<>();
 		queueNumber = 0;
 		
-		for (var f: _settings.listFilesInOrder(imageFolder))
+		var fileHelper = settings.fileHelper;
+		for (var f: fileHelper.listFilesInOrder(imageFolder))
 		{
 			var name = f.getName();
 			var suffix = name.substring(name.lastIndexOf('.') + 1);

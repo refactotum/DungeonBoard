@@ -8,10 +8,11 @@ import main.*;
 public abstract class Control extends JPanel
 {
 	protected Main _main = Main.Instance;
-	protected Settings _settings = Settings.Instance;
+	protected Settings _settings;
 
-	public Control()
+	public Control(Settings settings)
 	{
+		this._settings = settings;
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createLineBorder(_settings.colors.BACKGROUND, 5));
 	}
@@ -19,7 +20,7 @@ public abstract class Control extends JPanel
 	protected JPanel getNorthPanel()
 	{
 		var northPanel = getEmptyNorthPanel();
-		var refreshButton = _settings.createButton(_settings.icons.Refresh);
+		var refreshButton = _settings.controlBuilder.createButton(_settings.icons.Refresh);
 		refreshButton.addActionListener( e -> { load(); } );
 		northPanel.add(refreshButton);
 		northPanel.repaint();

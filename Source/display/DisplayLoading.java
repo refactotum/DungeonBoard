@@ -25,8 +25,9 @@ public class DisplayLoading extends Display
 	private short ticksSinceImageChanged;
 	private float fadeOpacity;
 
-	public DisplayLoading()
+	public DisplayLoading(Settings settings)
 	{
+		super(settings);
 		screensaverCubes = new LinkedList<>();
 		paintThread = new Thread();
 		fileNamesNotYetShown = new LinkedList<>();
@@ -114,7 +115,7 @@ public class DisplayLoading extends Display
 	
 	public void addScreensaverCube()
 	{
-		screensaverCubes.add(new ScreensaverCube());
+		screensaverCubes.add(new ScreensaverCube(_settings));
 		repaint();
 	}
 
@@ -157,7 +158,7 @@ public class DisplayLoading extends Display
 		{
 			oldImage = currentImage;
 			var filePath = 
-				_settings.directories.FOLDERS[Mode.LOADING.ordinal()]
+				_settings.fileHelper.FOLDERS[Mode.LOADING.ordinal()]
 				+ "/" + fileNamesNotYetShown.removeFirst();
 			try
 			{
@@ -173,7 +174,7 @@ public class DisplayLoading extends Display
 
 	private void reloadImagesInLoadingFolder()
 	{
-		var folder = _settings.directories.FOLDERS[Mode.LOADING.ordinal()];
+		var folder = _settings.fileHelper.FOLDERS[Mode.LOADING.ordinal()];
 		if (folder.exists())
 		{
 			var rand = new Random();

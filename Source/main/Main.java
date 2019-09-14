@@ -53,12 +53,13 @@ public class Main
 			| UnsupportedLookAndFeelException e
 		)
 		{
-			_settings.showError("Error - Changing look and feel", e);
+			_settings.errorHelper.showError("Error - Changing look and feel", e);
 		}
 		
 		try
 		{
-			_settings.load();
+			var fileHelper = _settings.fileHelper;
+			fileHelper.load();
 			var screens = getScreens();
 			var displayIndex = JOptionPane.showOptionDialog
 			(
@@ -74,21 +75,24 @@ public class Main
 				
 				_settings.DISPLAY_SIZE = screens[displayIndex].getSize();
 				
-				_displayWindow = new DisplayWindow(screens[displayIndex].getRectangle());
+				_displayWindow = new DisplayWindow(_settings, screens[displayIndex].getRectangle());
 				
-				var controlWindow = new ControlWindow(screens[controlIndex].getRectangle());
+				var controlWindow = new ControlWindow(_settings, screens[controlIndex].getRectangle());
 				_controlWindow = controlWindow;
 				
-				var folders = _settings.directories.FOLDERS;
-				_displayLayer = new DisplayPictures(folders[Mode.LAYER.ordinal()]);
-				_displayImage = new DisplayPictures(folders[Mode.IMAGE.ordinal()]);
-				DISPLAY_PAINT = new DisplayPaint();
-				DISPLAY_LOADING = new DisplayLoading();
+				var folders = fileHelper.FOLDERS;
+				var folderLayer = folders[Mode.LAYER.ordinal()];
+				var folderImage = folders[Mode.IMAGE.ordinal()];
 				
-				_controlLayer = new ControlPictures(folders[Mode.LAYER.ordinal()], _displayLayer, true);
-				_controlImage = new ControlPictures(folders[Mode.IMAGE.ordinal()], _displayImage, false);
-				_controlPaint = new ControlPaint();
-				_controlLoading = new ControlLoading();
+				_displayLayer = new DisplayPictures(_settings, folderLayer);
+				_displayImage = new DisplayPictures(_settings, folderImage);
+				DISPLAY_PAINT = new DisplayPaint(_settings);
+				DISPLAY_LOADING = new DisplayLoading(_settings);
+				
+				_controlLayer = new ControlPictures(_settings, folderLayer, _displayLayer, true);
+				_controlImage = new ControlPictures(_settings, folderImage, _displayImage, false);
+				_controlPaint = new ControlPaint(_settings);
+				_controlLoading = new ControlLoading(_settings);
 				
 				controlWindow.addWindowListener
 				(
@@ -116,7 +120,7 @@ public class Main
 		}
 		catch (SecurityException e)
 		{
-			_settings.showError("Error - Loading resources", e);
+			_settings.errorHelper.showError("Error - Loading resources", e);
 		}
 		catch (HeadlessException e)
 		{

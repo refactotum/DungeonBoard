@@ -1,4 +1,5 @@
 package display;
+
 import java.awt.*;
 import java.awt.image.*;
 import main.*;
@@ -16,8 +17,9 @@ public class DisplayPaint extends Display
 	 // Larger means zoomed out and a smaller image.
 	private double scale;
 
-	public DisplayPaint()
+	public DisplayPaint(Settings settings)
 	{
+		super(settings);
 		windowPosition = new Point(0, 0);
 		scale = 1;
 		setVisible(true);

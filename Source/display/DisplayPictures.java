@@ -16,8 +16,9 @@ public class DisplayPictures extends Display
 	private Thread compileThread;
 	private final File imageFolder;
 
-	public DisplayPictures(File imageFolder)
+	public DisplayPictures(Settings settings, File imageFolder)
 	{
+		super(settings);
 		this.imageFolder = imageFolder;
 
 		var displaySize = _settings.DISPLAY_SIZE;
@@ -108,7 +109,7 @@ public class DisplayPictures extends Display
 	
 	public void addImage(String name)
 	{
-		AlphaImage ai = new AlphaImage(imageFolder, name);
+		AlphaImage ai = new AlphaImage(_settings, imageFolder, name);
 		stopCompile();
 		imagesToBePainted.add(ai);
 		compileImage();

@@ -10,10 +10,11 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 	private JButton[] displayButtons;
 	
 	private Main _main = Main.Instance;
-	private Settings _settings = Settings.Instance;
+	protected Settings _settings;
 
-	public ControlWindow(Rectangle r)
+	public ControlWindow(Settings settings, Rectangle r)
 	{
+		_settings = settings;
 		setIconImage(_settings.icons.Program.getImage());
 		setTitle(_settings.NAME);
 		var controlSize = _settings.CONTROL_SIZE;
@@ -26,6 +27,7 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		var colors = _settings.colors;
+		var controlBuilder = _settings.controlBuilder;
 		var modes = Mode.values();
 		var modeCount = modes.length;
 		controlButtons = new JButton[modeCount];
@@ -33,13 +35,14 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 		for (var i = 0; i < controlButtons.length; i++) 
 		{
 			var mode = modes[i];
+			var modeName = mode.name();
 			
-			var controlButton = _settings.createButton(mode.name());
+			var controlButton = controlBuilder.createButton(modeName);
 			controlButton.setBackground(colors.INACTIVE);
 			controlButton.addActionListener(new ModeListener(WindowType.CONTROL, mode));
 			controlButtons[i] = controlButton;
 
-			var displayButton = _settings.createButton(mode.name());
+			var displayButton = controlBuilder.createButton(modeName);
 			displayButton.setBackground(colors.INACTIVE);
 			displayButton.addActionListener(new ModeListener(WindowType.DISPLAY, mode));
 			displayButtons[i] = displayButton;

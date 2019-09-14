@@ -10,13 +10,14 @@ import main.*;
 
 public abstract class PicturePanel extends JPanel
 {
-	private static final int GRID_WIDTH = 4;
-	private static final Dimension IMAGE_ICON_SIZE = new Dimension(100, 60);
+	private final int GRID_WIDTH = 4;
+	private final Dimension IMAGE_ICON_SIZE = new Dimension(100, 60);
 	
-	private Settings _settings = Settings.Instance;
+	private Settings _settings;
 
-	public PicturePanel()
+	public PicturePanel(Settings settings)
 	{
+		_settings = settings;
 		setLayout(new GridLayout(0, GRID_WIDTH));
 		setBorder(BorderFactory.createEmptyBorder());
 	}
@@ -55,7 +56,7 @@ public abstract class PicturePanel extends JPanel
 	
 	private void createThumbnail(File file)
 	{
-		var tFile = _settings.fileToThumb(file);
+		var tFile = _settings.fileHelper.fileToThumb(file);
 		if (tFile.exists() == false || file.lastModified() > tFile.lastModified())
 		{
 			try
@@ -77,7 +78,7 @@ public abstract class PicturePanel extends JPanel
 			}
 			catch (OutOfMemoryError | IOException e)
 			{
-				_settings.showError("Cannot create Thumbnail, file is probably too large", e);
+				_settings.errorHelper.showError("Cannot create Thumbnail, file is probably too large", e);
 				e.printStackTrace();
 			}
 		}
@@ -106,14 +107,14 @@ public abstract class PicturePanel extends JPanel
 			{
 				var b = (JButton) c;
 				var f = new File(folder + File.separator + b.getText());
-				f = _settings.fileToThumb(f);
+				f = _settings.fileHelper.fileToThumb(f);
 				try
 				{
 					b.setIcon(new ImageIcon(ImageIO.read(f)));
 				}
 				catch (OutOfMemoryError | IOException e)
 				{
-					_settings.showError("Cannot load Thumbnail, file is probably too large", e);
+					_settings.errorHelper.showError("Cannot load Thumbnail, file is probably too large", e);
 					e.printStackTrace();
 				}
 			}

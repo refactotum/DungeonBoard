@@ -11,10 +11,11 @@ public class AlphaImage
 	private String name;
 	private File file;
 
-	private Settings _settings = Settings.Instance;
+	private Settings _settings;
 
-	public AlphaImage(File folder, String n)
+	public AlphaImage(Settings settings, File folder, String n)
 	{
+		_settings = settings;
 		name = n;
 		file = new File(folder.getAbsolutePath() + File.separator + name);
 	}
@@ -48,10 +49,10 @@ public class AlphaImage
 			}
 			catch (IllegalArgumentException | IOException e)
 			{
-				_settings.showError("Cannot load Image \"" + name, e);
+				_settings.errorHelper.showError("Cannot load Image \"" + name, e);
 			}
 		}
-		_settings.showError
+		_settings.errorHelper.showError
 		(
 			"Cannot Load Image\"" + name + "\" after 50 attempts\n" + "Allocate more memory, use smaller images"
 		);
@@ -63,7 +64,7 @@ public class AlphaImage
 	{
 		var returnValue = Color.BLACK;
 		
-		var f = _settings.fileToThumb(file);
+		var f = _settings.fileHelper.fileToThumb(file);
 		
 		try
 		{
@@ -71,7 +72,7 @@ public class AlphaImage
 		}
 		catch (IllegalArgumentException | IOException e)
 		{
-			_settings.showError("Cannot load Image RGB \"" + name, e);
+			_settings.errorHelper.showError("Cannot load Image RGB \"" + name, e);
 		}
 		
 		return returnValue;

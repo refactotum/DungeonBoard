@@ -8,13 +8,15 @@ import main.*;
 
 public class ControlLoading extends Control
 {
-	public ControlLoading()
+	public ControlLoading(Settings settings)
 	{
+		super(settings);
 		var northPanel = getNorthPanel();
 
 		var colors = _settings.colors;
 
-		var upScaleButton = _settings.createButton("Up Scale");
+		var controlBuilder = _settings.controlBuilder;
+		var upScaleButton = controlBuilder.createButton("Up Scale");
 		upScaleButton.setBackground(colors.INACTIVE);
 		upScaleButton.addActionListener
 		(
@@ -35,7 +37,7 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(upScaleButton);
 		
-		var addCubeButton = _settings.createButton("Add Cube");
+		var addCubeButton = controlBuilder.createButton("Add Cube");
 		addCubeButton.addActionListener
 		(
 			e ->
@@ -45,7 +47,7 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(addCubeButton);
 		
-		var clearScreensaverCubeButton = _settings.createButton("Clear Screensaver Cubes");
+		var clearScreensaverCubeButton = controlBuilder.createButton("Clear Screensaver Cubes");
 		clearScreensaverCubeButton.addActionListener
 		(
 			e ->
@@ -75,7 +77,7 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(timeSlider);
 		
-		var createTimerButton = _settings.createButton("Create Timer");
+		var createTimerButton = controlBuilder.createButton("Create Timer");
 		createTimerButton.addActionListener
 		(
 			e ->
@@ -104,7 +106,7 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(createTimerButton);
 		
-		var clearTimerButton = _settings.createButton("Clear Timer");
+		var clearTimerButton = controlBuilder.createButton("Clear Timer");
 		clearTimerButton.addActionListener
 		(
 			new ActionListener()

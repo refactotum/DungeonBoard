@@ -12,16 +12,16 @@ public class ControlPictures extends Control
 	private PicturePanel picturePanel;
 	private final File imageFolder;
 	private final DisplayPictures display;
-	
-	private Settings _settings = Settings.Instance;
-	
-	public ControlPictures(File imageFolder, DisplayPictures display, boolean areMultipleImagesAllowed)
+
+	public ControlPictures(Settings settings, File imageFolder, DisplayPictures display, boolean areMultipleImagesAllowed)
 	{
+		super(settings);
 		this.imageFolder = imageFolder;
 		this.display = display;
 		
 		var northPanel = getNorthPanel();
-		
+
+		var controlBuilder = _settings.controlBuilder;
 		var colors = _settings.colors;
 		var colorControlBackground = colors.CONTROL_BACKGROUND;
 		
@@ -38,7 +38,7 @@ public class ControlPictures extends Control
 		);
 		northPanel.add(scaleComboBox);
 		
-		var flipButton = _settings.createButton(_settings.icons.Flip);
+		var flipButton = controlBuilder.createButton(_settings.icons.Flip);
 		flipButton.setBackground(colorControlBackground);
 		flipButton.addActionListener
 		(
@@ -49,7 +49,7 @@ public class ControlPictures extends Control
 		);
 		northPanel.add(flipButton);
 		
-		picturePanel = new PicturePanel()
+		picturePanel = new PicturePanel(_settings)
 		{
 			@Override
 			protected void select(String name)
@@ -104,10 +104,12 @@ public class ControlPictures extends Control
 	{
 		if (imageFolder.exists())
 		{
-			var files = _settings.folderToDataFolder(imageFolder).listFiles();
-			for (var file: files)
+			var fileHelper = _settings.fileHelper;
+			var files =
+				fileHelper.folderToDataFolder(imageFolder).listFiles();
+			for (var file : files)
 			{
-				var fileFromThumbnail = _settings.thumbToFile(file);
+				var fileFromThumbnail = fileHelper.thumbToFile(file);
 				if (fileFromThumbnail.exists() == false)
 				{
 					file.delete();
@@ -117,7 +119,7 @@ public class ControlPictures extends Control
 			picturePanel.clearButtons();
 			
 			var picturePanelButtonCreator =
-				new PicturePanelButtonCreator(picturePanel, imageFolder);
+				new PicturePanelButtonCreator(_settings, picturePanel, imageFolder);
 			picturePanelButtonCreator.run();
 			
 			repaint();

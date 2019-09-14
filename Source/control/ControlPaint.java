@@ -18,23 +18,23 @@ public class ControlPaint extends Control
 	private JSlider zoomSlider;
 	private double maxZoom;
 	private JPanel folderControlPanel;
-	
-	private static Settings _settings = Settings.Instance;
-	
-	public ControlPaint()
+
+	public ControlPaint(Settings settings)
 	{
+		super(settings);
+
 		var northPanel = new JPanel();
 		northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
-		
+
 		folderControlPanel = getEmptyNorthPanel();
 		folderControlPanel.setVisible(false);
-		
+
 		var innerNorthPanel = getNorthPanel();
-		
+
 		maxZoom = 10.0;
-		
+
 		drawPanel = new DrawPanel();
-		
+
 		setFocusable(true);
 		
 		fileBox = new JComboBox<>();
@@ -48,7 +48,7 @@ public class ControlPaint extends Control
 				if (fileBox.getSelectedIndex() != 0)
 				{
 					var filePath =
-						_settings.directories.FOLDERS[Mode.PAINT.ordinal()].getAbsolutePath()
+						_settings.fileHelper.FOLDERS[Mode.PAINT.ordinal()].getAbsolutePath()
 						+ File.separator + fileBox.getSelectedItem().toString();
 
 					var file = new File(filePath);
@@ -56,9 +56,10 @@ public class ControlPaint extends Control
 					if (file.exists())
 					{
 						drawPanel.saveMask();
-						var maskFile = _settings.fileToMaskFile(file);
+						var fileHelper = _settings.fileHelper;
+						var maskFile = fileHelper.fileToMaskFile(file);
 						var dataFilePath =
-							_settings.directories.DATA_FOLDER + File.separator 
+							fileHelper.DATA_FOLDER + File.separator 
 							+ "Paint" + File.separator + maskFile.getName() 
 							+ ".data";
 						var dataFile = new File(dataFilePath);
@@ -79,7 +80,7 @@ public class ControlPaint extends Control
 							}
 							catch (IOException e2)
 							{
-								_settings.showError("Cannot load Mask Data", e2);
+								_settings.errorHelper.showError("Cannot load Mask Data", e2);
 							}
 						}
 						if (file.isDirectory())
@@ -95,7 +96,7 @@ public class ControlPaint extends Control
 					}
 					else
 					{
-						_settings.showError("Cannot load Image, file does not exist");
+						_settings.errorHelper.showError("Cannot load Image, file does not exist");
 					}
 				}
 			}
@@ -103,7 +104,7 @@ public class ControlPaint extends Control
 		innerNorthPanel.add(fileBox);
 		
 		var iconsForPenDirectionLock = _settings.icons.PenDirectionLocks;
-		var penDirectionLockButton = _settings.createButton(iconsForPenDirectionLock[0]);
+		var penDirectionLockButton = _settings.controlBuilder.createButton(iconsForPenDirectionLock[0]);
 		penDirectionLockButton.addActionListener
 		(
 			e ->
@@ -114,8 +115,10 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(penDirectionLockButton);
 		
+		var controlBuilder = _settings.controlBuilder;
+		
 		var iconsForPenShapes = _settings.icons.PenShapes;
-		var shape = _settings.createButton(iconsForPenShapes[0]);
+		var shape = controlBuilder.createButton(iconsForPenShapes[0]);
 		shape.addActionListener
 		(
 			e ->
@@ -127,7 +130,7 @@ public class ControlPaint extends Control
 		innerNorthPanel.add(shape);
 		
 		var iconsForTouchpadDrawMode = _settings.icons.TouchpadDrawModes;
-		var touchpadDrawModeButton = _settings.createButton(iconsForTouchpadDrawMode[0]);
+		var touchpadDrawModeButton = controlBuilder.createButton(iconsForTouchpadDrawMode[0]);
 		touchpadDrawModeButton.addActionListener
 		(
 			e ->
@@ -140,7 +143,7 @@ public class ControlPaint extends Control
 		
 		var colors = _settings.colors;
 
-		var showButton = _settings.createButton("Show");
+		var showButton = controlBuilder.createButton("Show");
 		showButton.setBackground(colors.ACTIVE);
 		showButton.addActionListener
 		(
@@ -151,7 +154,7 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(showButton);
 		
-		var hideButton = _settings.createButton("Hide");
+		var hideButton = controlBuilder.createButton("Hide");
 		hideButton.setBackground(colors.INACTIVE);
 		hideButton.addActionListener
 		(
@@ -274,12 +277,13 @@ public class ControlPaint extends Control
 		var paintImages = new boolean[paintFolderSize];
 		
 		var colors = _settings.colors;
+		var controlBuilder = _settings.controlBuilder;
 		
 		folderControlPanel.removeAll();
 		// Creates all buttons.
 		for (var i = 1; i <= paintFolderSize; i++)
 		{
-			var button = _settings.createButton(i + "");
+			var button = controlBuilder.createButton(i + "");
 			button.setBackground(colors.INACTIVE);
 			button.addActionListener(new ActionListener()
 			{
@@ -311,7 +315,7 @@ public class ControlPaint extends Control
 									g2d.setColor(Color.BLACK);
 									g2d.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
 									
-									var paintFolderSize = _settings.directories.PAINT_FOLDER_SIZE;
+									var paintFolderSize = _settings.fileHelper.PAINT_FOLDER_SIZE;
 									for (var i = paintFolderSize; i > 0; i--)
 									{
 										if (paintImages[i - 1])
@@ -336,7 +340,7 @@ public class ControlPaint extends Control
 								drawPanel.resetImage();
 								_main.DISPLAY_PAINT.resetImage();
 								_settings.PAINT_IMAGE = null;
-								_settings.showError("Cannot load Image, file is probably too large", error);
+								_settings.errorHelper.showError("Cannot load Image, file is probably too large", error);
 							}
 							_main.DISPLAY_PAINT.repaint();
 							drawPanel.repaint();
@@ -403,7 +407,7 @@ public class ControlPaint extends Control
 						drawPanel.resetImage();
 						_main.DISPLAY_PAINT.resetImage();
 						_settings.PAINT_IMAGE = null;
-						_settings.showError("Cannot load Image, file is probably too large", error);
+						_settings.errorHelper.showError("Cannot load Image, file is probably too large", error);
 					}
 					_main.DISPLAY_PAINT.repaint();
 					drawPanel.repaint();
@@ -413,15 +417,16 @@ public class ControlPaint extends Control
 			folderLoadingThread.start();
 		}
 		
-		_settings.directories.PAINT_FOLDER = paintFolder;
-		_settings.directories.PAINT_FOLDER_SIZE = paintFolderSize;
+		var fileHelper = _settings.fileHelper;
+		fileHelper.PAINT_FOLDER = paintFolder;
+		fileHelper.PAINT_FOLDER_SIZE = paintFolderSize;
 		_settings.PAINT_IMAGES = paintImages;
 	}
 
 	private void setFile(File file)
 	{
 		drawPanel.setIsImageLoading(true);
-		_settings.directories.PAINT_FOLDER = file;
+		_settings.fileHelper.PAINT_FOLDER = file;
 		var fileLoadingThread = new Thread("fileLoadingThread")
 		{
 			public void run()
@@ -444,7 +449,7 @@ public class ControlPaint extends Control
 					drawPanel.resetImage();
 					_main.DISPLAY_PAINT.resetImage();
 					_settings.PAINT_IMAGE = null;
-					_settings.showError("Cannot load Image, file is probably too large", error);
+					_settings.errorHelper.showError("Cannot load Image, file is probably too large", error);
 				}
 				_main.DISPLAY_PAINT.repaint();
 				drawPanel.repaint();
@@ -468,15 +473,17 @@ public class ControlPaint extends Control
 	@Override
 	protected void load()
 	{
+		var fileHelper = _settings.fileHelper;
+
 		while (fileBox.getItemCount() > 1)
 		{
 			fileBox.removeItemAt(1);
 		}
-		var folder = _settings.directories.FOLDERS[Mode.PAINT.ordinal()];
+		var folder = fileHelper.FOLDERS[Mode.PAINT.ordinal()];
 		
 		if (folder.exists())
 		{
-			for (var f: _settings.listFilesInOrder(folder))
+			for (var f : fileHelper.listFilesInOrder(folder))
 			{
 				if (f.isDirectory())
 				{

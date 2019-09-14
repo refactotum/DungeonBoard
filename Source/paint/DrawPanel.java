@@ -47,7 +47,7 @@ public class DrawPanel extends JComponent
 		penShape = PenShape.CIRCLE;
 		penDirectionLock = PenDirection.NONE;
 		touchpadDrawMode = TouchpadDrawMode.ANY;
-		updateButton = _settings.createButton("Update Screen");
+		updateButton = _settings.controlBuilder.createButton("Update Screen");
 
 		updateButton.addActionListener
 		(
@@ -61,7 +61,7 @@ public class DrawPanel extends JComponent
 					}
 					catch (OutOfMemoryError error)
 					{
-						_settings.showError("Cannot update Image, file is probably large", error);
+						_settings.errorHelper.showError("Cannot update Image, file is probably large", error);
 					}
 					updateButton.setEnabled(false);
 					updateButton.setBackground(_settings.colors.CONTROL_BACKGROUND);
@@ -206,8 +206,9 @@ public class DrawPanel extends JComponent
 	{
 		if (_settings.PAINT_IMAGE != null)
 		{
-			var paintFolder = _settings.directories.PAINT_FOLDER;
-			var maskFile = _settings.fileToMaskFile(paintFolder);
+			var fileHelper = _settings.fileHelper;
+			var paintFolder = fileHelper.PAINT_FOLDER;
+			var maskFile = fileHelper.fileToMaskFile(paintFolder);
 
 			if (maskFile.exists() && maskFile.lastModified() > paintFolder.lastModified())
 			{
@@ -220,7 +221,7 @@ public class DrawPanel extends JComponent
 				}
 				catch (IOException e)
 				{
-					_settings.showError("Cannot load Mask, file is probably too large", e);
+					_settings.errorHelper.showError("Cannot load Mask, file is probably too large", e);
 				}
 			}
 			else
@@ -611,7 +612,8 @@ public class DrawPanel extends JComponent
 	
 	public void saveMask()
 	{
-		var f = _settings.fileToMaskFile(_settings.directories.PAINT_FOLDER);
+		var fileHelper = _settings.fileHelper;
+		var f = fileHelper.fileToMaskFile(fileHelper.PAINT_FOLDER);
 		if (f != null)
 		{
 			try
@@ -619,7 +621,7 @@ public class DrawPanel extends JComponent
 				ImageIO.write(drawingLayer, "png", f);
 				
 				var dataFilePath = 
-					_settings.directories.DATA_FOLDER + File.separator
+					fileHelper.DATA_FOLDER + File.separator
 					+ "Paint" + File.separator + f.getName() + ".data";
 				var dataFile = new File(dataFilePath);
 				var writer = new BufferedWriter(new FileWriter(dataFile));
@@ -629,7 +631,7 @@ public class DrawPanel extends JComponent
 			}
 			catch (IOException e)
 			{
-				_settings.showError("Cannot save Mask", e);
+				_settings.errorHelper.showError("Cannot save Mask", e);
 			}
 		}
 	}
