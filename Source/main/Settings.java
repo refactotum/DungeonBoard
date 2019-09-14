@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
@@ -82,17 +83,61 @@ public class Settings
 	{
 		public JButton createButton(String label)
 		{
+			return this.createButton(label, null, null);
+		}
+
+		public JButton createButton(String label, Color backgroundColor)
+		{
+			return this.createButton(label, backgroundColor, null);
+		}
+
+		public JButton createButton(String label, ActionListener actionListener)
+		{
+			return this.createButton(label, null, actionListener);
+		}
+
+		public JButton createButton
+		(
+			String label, Color backgroundColor, ActionListener actionListener
+		)
+		{
 			var button = new JButton(label);
 			button.setFocusPainted(false);
 			button.setRolloverEnabled(false);
+			if (backgroundColor != null)
+			{
+				button.setBackground(backgroundColor);
+			}
+			if (actionListener != null)
+			{
+				button.addActionListener(actionListener);
+			}
 			return button;
 		}
 		
 		public JButton createButton(ImageIcon imageIcon)
 		{
+			return this.createButton(imageIcon, null, null);
+		}
+		
+		public JButton createButton(ImageIcon imageIcon, ActionListener actionListener)
+		{
+			return this.createButton(imageIcon, null, actionListener);
+		}
+		
+		public JButton createButton(ImageIcon imageIcon, Color backgroundColor, ActionListener actionListener)
+		{
 			var button = new JButton(imageIcon);
 			button.setFocusPainted(false);
 			button.setRolloverEnabled(false);
+			if (backgroundColor != null)
+			{
+				button.setBackground(backgroundColor);
+			}
+			if (actionListener != null)
+			{
+				button.addActionListener(actionListener);
+			}
 			return button;
 		}
 	}

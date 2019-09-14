@@ -38,10 +38,10 @@ public class ControlPictures extends Control
 		);
 		northPanel.add(scaleComboBox);
 		
-		var flipButton = controlBuilder.createButton(_settings.icons.Flip);
-		flipButton.setBackground(colorControlBackground);
-		flipButton.addActionListener
+		var flipButton = controlBuilder.createButton
 		(
+			_settings.icons.Flip,
+			colorControlBackground,
 			arg0 ->
 			{
 				display.toggleShouldImageBeRotatedAHalfTurn();

@@ -20,8 +20,11 @@ public abstract class Control extends JPanel
 	protected JPanel getNorthPanel()
 	{
 		var northPanel = getEmptyNorthPanel();
-		var refreshButton = _settings.controlBuilder.createButton(_settings.icons.Refresh);
-		refreshButton.addActionListener( e -> { load(); } );
+		var refreshButton = _settings.controlBuilder.createButton
+		(
+			_settings.icons.Refresh,
+			e -> { load(); } 
+		);
 		northPanel.add(refreshButton);
 		northPanel.repaint();
 

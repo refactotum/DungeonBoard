@@ -37,14 +37,16 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 			var mode = modes[i];
 			var modeName = mode.name();
 			
-			var controlButton = controlBuilder.createButton(modeName);
-			controlButton.setBackground(colors.INACTIVE);
-			controlButton.addActionListener(new ModeListener(WindowType.CONTROL, mode));
+			var controlButton = controlBuilder.createButton
+			(
+				modeName, colors.INACTIVE, new ModeListener(WindowType.CONTROL, mode)
+			);
 			controlButtons[i] = controlButton;
 
-			var displayButton = controlBuilder.createButton(modeName);
-			displayButton.setBackground(colors.INACTIVE);
-			displayButton.addActionListener(new ModeListener(WindowType.DISPLAY, mode));
+			var displayButton = controlBuilder.createButton
+			(
+				modeName, colors.INACTIVE, new ModeListener(WindowType.DISPLAY, mode)
+			);
 			displayButtons[i] = displayButton;
 		}
 		

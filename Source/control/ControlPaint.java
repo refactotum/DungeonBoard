@@ -102,66 +102,56 @@ public class ControlPaint extends Control
 			}
 		);
 		innerNorthPanel.add(fileBox);
-		
+
+		var controlBuilder = _settings.controlBuilder;
+
 		var iconsForPenDirectionLock = _settings.icons.PenDirectionLocks;
-		var penDirectionLockButton = _settings.controlBuilder.createButton(iconsForPenDirectionLock[0]);
-		penDirectionLockButton.addActionListener
+		var penDirectionLockButton = controlBuilder.createButton
 		(
+			iconsForPenDirectionLock[0],
 			e ->
 			{
 				drawPanel.togglePenDirectionLock();
-				penDirectionLockButton.setIcon(iconsForPenDirectionLock[drawPanel.getStyle()]);
+				((JButton)(e.getSource())).setIcon(iconsForPenDirectionLock[drawPanel.getStyle()]);
 			}
 		);
 		innerNorthPanel.add(penDirectionLockButton);
-		
-		var controlBuilder = _settings.controlBuilder;
-		
+
 		var iconsForPenShapes = _settings.icons.PenShapes;
-		var shape = controlBuilder.createButton(iconsForPenShapes[0]);
-		shape.addActionListener
+		var shape = controlBuilder.createButton
 		(
+			iconsForPenShapes[0],
 			e ->
 			{
 				drawPanel.togglePenShape();
-				shape.setIcon(iconsForPenShapes[drawPanel.getPenShape()]);
+				((JButton)(e.getSource())).setIcon(iconsForPenShapes[drawPanel.getPenShape()]);
 			}
 		);
 		innerNorthPanel.add(shape);
 		
 		var iconsForTouchpadDrawMode = _settings.icons.TouchpadDrawModes;
-		var touchpadDrawModeButton = controlBuilder.createButton(iconsForTouchpadDrawMode[0]);
-		touchpadDrawModeButton.addActionListener
+		var touchpadDrawModeButton = controlBuilder.createButton
 		(
+			iconsForTouchpadDrawMode[0],
 			e ->
 			{
 				drawPanel.toggleTouchpadDrawMode();
-				touchpadDrawModeButton.setIcon(iconsForTouchpadDrawMode[drawPanel.getTouchpadDrawMode()]);
+				((JButton)(e.getSource())).setIcon(iconsForTouchpadDrawMode[drawPanel.getTouchpadDrawMode()]);
 			}
 		);
 		innerNorthPanel.add(touchpadDrawModeButton);
 		
 		var colors = _settings.colors;
 
-		var showButton = controlBuilder.createButton("Show");
-		showButton.setBackground(colors.ACTIVE);
-		showButton.addActionListener
+		var showButton = controlBuilder.createButton
 		(
-			e ->
-			{
-				drawPanel.showAll();
-			}
+			"Show", colors.ACTIVE, e -> { drawPanel.showAll(); }
 		);
 		innerNorthPanel.add(showButton);
 		
-		var hideButton = controlBuilder.createButton("Hide");
-		hideButton.setBackground(colors.INACTIVE);
-		hideButton.addActionListener
+		var hideButton = controlBuilder.createButton
 		(
-			e ->
-			{
-				drawPanel.hideAll();
-			}
+			"Hide", colors.INACTIVE, e -> { drawPanel.hideAll(); }
 		);
 		innerNorthPanel.add(hideButton);
 		
@@ -283,13 +273,13 @@ public class ControlPaint extends Control
 		// Creates all buttons.
 		for (var i = 1; i <= paintFolderSize; i++)
 		{
-			var button = controlBuilder.createButton(i + "");
-			button.setBackground(colors.INACTIVE);
-			button.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent e)
+			var buttonI = controlBuilder.createButton
+			(
+				i + "", colors.INACTIVE,
+				e ->
 				{
-					var number = Integer.parseInt(((JButton) e.getSource()).getText());
+					var button = ((JButton)(e.getSource()));
+					var number = Integer.parseInt(button.getText());
 					
 					if (button.getBackground().equals(colors.ACTIVE))
 					{
@@ -349,9 +339,9 @@ public class ControlPaint extends Control
 					};
 					fileLoadingThread.start();
 				}
-			});
+			);
 			
-			folderControlPanel.add(button);
+			folderControlPanel.add(buttonI);
 		}
 		folderControlPanel.revalidate();
 		

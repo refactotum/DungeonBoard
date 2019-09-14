@@ -47,10 +47,9 @@ public class DrawPanel extends JComponent
 		penShape = PenShape.CIRCLE;
 		penDirectionLock = PenDirection.NONE;
 		touchpadDrawMode = TouchpadDrawMode.ANY;
-		updateButton = _settings.controlBuilder.createButton("Update Screen");
-
-		updateButton.addActionListener
+		updateButton = _settings.controlBuilder.createButton
 		(
+			"Update Screen",
 			e ->
 			{
 				if (hasImage())

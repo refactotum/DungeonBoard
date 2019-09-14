@@ -16,30 +16,30 @@ public class ControlLoading extends Control
 		var colors = _settings.colors;
 
 		var controlBuilder = _settings.controlBuilder;
-		var upScaleButton = controlBuilder.createButton("Up Scale");
-		upScaleButton.setBackground(colors.INACTIVE);
-		upScaleButton.addActionListener
+		var upScaleButton = controlBuilder.createButton
 		(
-			arg0 ->
+			"Up Scale", colors.INACTIVE,
+			e ->
 			{
-				var upScaleButtonBackground = upScaleButton.getBackground();
+				var button = ((JButton)(e.getSource()));
+				var upScaleButtonBackground = button.getBackground();
 				if (upScaleButtonBackground == colors.ACTIVE)
 				{
 					_main.DISPLAY_LOADING.setShouldImagesBeUpscaled(false);
-					upScaleButton.setBackground(colors.INACTIVE);
+					button.setBackground(colors.INACTIVE);
 				}
 				else if (upScaleButtonBackground == colors.INACTIVE)
 				{
 					_main.DISPLAY_LOADING.setShouldImagesBeUpscaled(true);
-					upScaleButton.setBackground(colors.ACTIVE);
+					button.setBackground(colors.ACTIVE);
 				}
 			}
 		);
 		northPanel.add(upScaleButton);
 		
-		var addCubeButton = controlBuilder.createButton("Add Cube");
-		addCubeButton.addActionListener
+		var addCubeButton = controlBuilder.createButton
 		(
+			"Add Cube",
 			e ->
 			{
 				_main.DISPLAY_LOADING.addScreensaverCube();
@@ -47,9 +47,9 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(addCubeButton);
 		
-		var clearScreensaverCubeButton = controlBuilder.createButton("Clear Screensaver Cubes");
-		clearScreensaverCubeButton.addActionListener
+		var clearScreensaverCubeButton = controlBuilder.createButton
 		(
+			"Clear Screensaver Cubes",
 			e ->
 			{
 				_main.DISPLAY_LOADING.clearScreensaverCubes();
@@ -77,9 +77,9 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(timeSlider);
 		
-		var createTimerButton = controlBuilder.createButton("Create Timer");
-		createTimerButton.addActionListener
+		var createTimerButton = controlBuilder.createButton
 		(
+			"Create Timer",
 			e ->
 			{
 				var input = JOptionPane.showInputDialog(_main.getControl(), "Enter minutes or M:SS", "");
@@ -106,17 +106,10 @@ public class ControlLoading extends Control
 		);
 		northPanel.add(createTimerButton);
 		
-		var clearTimerButton = controlBuilder.createButton("Clear Timer");
-		clearTimerButton.addActionListener
+		var clearTimerButton = controlBuilder.createButton
 		(
-			new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					_main.getDisplay().clearTimer();
-				}
-			}
+			"Clear Timer",
+			e -> { _main.getDisplay().clearTimer(); }
 		);
 		northPanel.add(clearTimerButton);
 		
