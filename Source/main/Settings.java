@@ -13,7 +13,7 @@ public class Settings
 	public static Settings Instance = new Settings();
 	private Main _main = Main.Instance;
 
-	public final String NAME = "Dungeon Board";
+	public final String name = "Dungeon Board";
 
 	public class Icons
 	{
@@ -60,7 +60,7 @@ public class Settings
 		public BufferedImage paintControlImage;
 		public Dimension displaySize;
 
-		public final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+		public final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
 		public boolean[] paintImageS; // "S"?
 		public final int sysThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
 		public final int paintGuideScale = 3;
@@ -70,22 +70,22 @@ public class Settings
 
 	public class FileHelper
 	{
-		public final File FOLDER = new File(new File(System.getProperty("user.dir")).getAbsolutePath() + File.separator + NAME);
-		public File PAINT_FOLDER;
-		public final File[] FOLDERS =
+		public final File folder = new File(new File(System.getProperty("user.dir")).getAbsolutePath() + File.separator + NAME);
+		public File paintFolder;
+		public final File[] folders =
 		{
-			new File(FOLDER + File.separator + "Layer"),
-			new File(FOLDER + File.separator + "Image"),
-			new File(FOLDER + File.separator + "Paint"),
-			new File(FOLDER + File.separator + "Loading")
+			new File(folder + File.separator + "Layer"),
+			new File(folder + File.separator + "Image"),
+			new File(folder + File.separator + "Paint"),
+			new File(folder + File.separator + "Loading")
 		};
-		public final File DATA_FOLDER = new File(FOLDER + File.separator + "Data");
+		public final File dataFolder = new File(folder + File.separator + "Data");
 
-		public int PAINT_FOLDER_SIZE;
+		public int paintFolderSize;
 
 		public void load() throws SecurityException
 		{
-			for (var f : fileHelper.FOLDERS)
+			for (var f : fileHelper.folders)
 			{
 				if (f.exists() == false)
 				{
@@ -93,7 +93,7 @@ public class Settings
 				}
 			}
 
-			var dataFolder = fileHelper.DATA_FOLDER;
+			var dataFolder = fileHelper.dataFolder;
 			if (dataFolder.exists() == false)
 			{
 				dataFolder.mkdirs();
@@ -111,17 +111,17 @@ public class Settings
 
 		public File fileToThumb(File f)
 		{
-			return new File(this.DATA_FOLDER.getAbsolutePath() + File.separator + f.getParentFile().getName() + File.separator + f.getName());
+			return new File(this.dataFolder.getAbsolutePath() + File.separator + f.getParentFile().getName() + File.separator + f.getName());
 		}
 
 		public File thumbToFile(File f)
 		{
-			return new File(this.FOLDER.getAbsolutePath() + File.separator + f.getParentFile().getName() + File.separator + f.getName());
+			return new File(this.folder.getAbsolutePath() + File.separator + f.getParentFile().getName() + File.separator + f.getName());
 		}
 
 		public File folderToDataFolder(File f)
 		{
-			return new File(this.DATA_FOLDER.getAbsolutePath() + File.separator + f.getName());
+			return new File(this.dataFolder.getAbsolutePath() + File.separator + f.getName());
 		}
 
 		public File fileToMaskFile(File f)
@@ -131,7 +131,7 @@ public class Settings
 			{
 				var fileSuffix = ( f.isDirectory() ? ".f" : "");
 				var filePath =
-					this.DATA_FOLDER.getAbsolutePath() + File.separator
+					this.dataFolder.getAbsolutePath() + File.separator
 					+ "Paint" + File.separator + f.getName() + fileSuffix;
 				returnValue = new File(filePath);
 			}

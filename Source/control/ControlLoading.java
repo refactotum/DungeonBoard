@@ -17,20 +17,20 @@ public class ControlLoading extends Control
 		
 		var upScaleButton = _controlBuilder.createButton
 		(
-			"Up Scale", colors.INACTIVE,
+			"Up Scale", colors.inactive,
 			e ->
 			{
 				var button = ((JButton)(e.getSource()));
 				var upScaleButtonBackground = button.getBackground();
-				if (upScaleButtonBackground == colors.ACTIVE)
+				if (upScaleButtonBackground == colors.active)
 				{
-					_main.DISPLAY_LOADING.setShouldImagesBeUpscaled(false);
-					button.setBackground(colors.INACTIVE);
+					_main.displayLoading.setShouldImagesBeUpscaled(false);
+					button.setBackground(colors.inactive);
 				}
-				else if (upScaleButtonBackground == colors.INACTIVE)
+				else if (upScaleButtonBackground == colors.inactive)
 				{
-					_main.DISPLAY_LOADING.setShouldImagesBeUpscaled(true);
-					button.setBackground(colors.ACTIVE);
+					_main.displayLoading.setShouldImagesBeUpscaled(true);
+					button.setBackground(colors.active);
 				}
 			}
 		);
@@ -41,7 +41,7 @@ public class ControlLoading extends Control
 			"Add Cube",
 			e ->
 			{
-				_main.DISPLAY_LOADING.addScreensaverCube();
+				_main.displayLoading.addScreensaverCube();
 			}
 		);
 		northPanel.add(addCubeButton);
@@ -51,12 +51,12 @@ public class ControlLoading extends Control
 			"Clear Screensaver Cubes",
 			e ->
 			{
-				_main.DISPLAY_LOADING.clearScreensaverCubes();
+				_main.displayLoading.clearScreensaverCubes();
 			}
 		);
 		northPanel.add(clearScreensaverCubeButton);
 
-		var colorControlBackground = colors.CONTROL_BACKGROUND;
+		var colorControlBackground = colors.controlBackground;
 
 		var timeLabel = _controlBuilder.createLabel
 		(
@@ -74,7 +74,7 @@ public class ControlLoading extends Control
 				var slider = ((JSlider)(e.getSource()));
 				var sliderValue = slider.getValue();
 				timeLabel.setText(String.format("%02d", sliderValue));
-				_main.DISPLAY_LOADING.setSecondsPerImage(sliderValue);
+				_main.displayLoading.setSecondsPerImage(sliderValue);
 			}
 		);
 		northPanel.add(timeSlider);

@@ -2,7 +2,7 @@ package paint;
 
 public enum PenShape
 {
-	CIRCLE,
-	SQUARE,
-	RECT
+	Circle,
+	Square,
+	Rectangle
 }

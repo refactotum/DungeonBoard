@@ -19,7 +19,7 @@ public abstract class Control extends JPanel
 	{
 		setLayout(new BorderLayout());
 		var border =
-			BorderFactory.createLineBorder(_controlBuilder.colors.BACKGROUND, 5);
+			BorderFactory.createLineBorder(_controlBuilder.colors.background, 5);
 		setBorder(border);
 	}
 
@@ -41,7 +41,7 @@ public abstract class Control extends JPanel
 	{
 		var northPanel = _controlBuilder.createPanelWithBoxLayout
 		(
-			BoxLayout.X_AXIS, _controlBuilder.colors.CONTROL_BACKGROUND
+			BoxLayout.X_AXIS, _controlBuilder.colors.controlBackground
 		);
 		northPanel.repaint();
 		return northPanel;

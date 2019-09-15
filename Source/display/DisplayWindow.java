@@ -36,7 +36,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 			)
 		);
 		mousePos = NULL_POS;
-		handDirection = CursorDirection.UP;
+		handDirection = CursorDirection.Up;
 		displayTimer = new DisplayTimer(getSize());
 		
 		addMouseMotionListener

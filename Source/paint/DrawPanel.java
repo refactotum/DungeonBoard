@@ -12,7 +12,7 @@ import main.*;
 
 public class DrawPanel extends JComponent
 {
-	private int PEN_RADIUS_DEFAULT = 25;
+	private int penRadiusDefault = 25;
 	private int penRadius;
 	private int penDiameter;
 	private PenShape penShape;
@@ -44,14 +44,14 @@ public class DrawPanel extends JComponent
 	public DrawPanel()
 	{
 		setDoubleBuffered(false);
-		setPenRadius(PEN_RADIUS_DEFAULT);
+		setPenRadius(penRadiusDefault);
 		mousePos = new Point(-100, -100);
 		displayZoom = 1;
 		windowPosition = new Point(0, 0);
 		lastWindowClick = new Point(0, 0);
-		penShape = PenShape.CIRCLE;
-		penDirectionLock = PenDirection.NONE;
-		touchpadDrawMode = TouchpadDrawMode.ANY;
+		penShape = PenShape.Circle;
+		penDirectionLock = PenDirection.None;
+		touchpadDrawMode = TouchpadDrawMode.Any;
 
 		var colors = _controlBuilder.colors;
 
@@ -64,14 +64,14 @@ public class DrawPanel extends JComponent
 				{
 					try
 					{
-						_main.DISPLAY_PAINT.setMask(getMask());
+						_main.displayPaint.setMask(getMask());
 					}
 					catch (OutOfMemoryError error)
 					{
 						_errorHelper.showError("Cannot update Image, file is probably large", error);
 					}
 					updateButton.setEnabled(false);
-					updateButton.setBackground(colors.CONTROL_BACKGROUND);
+					updateButton.setBackground(colors.controlBackground);
 				}
 			}
 		);
@@ -85,23 +85,23 @@ public class DrawPanel extends JComponent
 					lastMouseClickPosition = toDrawingPoint(e.getPoint());
 					switch (touchpadDrawMode)
 					{
-					case ANY:
+					case Any:
 						if (e.getButton() == MouseEvent.BUTTON2)
 						{
 							setWindowPosition(lastMouseClickPosition);
-							_main.DISPLAY_PAINT.setWindowPosition(getWindowPosition());
+							_main.displayPaint.setWindowPosition(getWindowPosition());
 							canDraw = false;
 						}
 						else
 						{
 							if (e.getButton() == MouseEvent.BUTTON1)
 							{
-								g2.setPaint(colors.CLEAR);
+								g2.setPaint(colors.clear);
 								canDraw = true;
 							}
 							else if (e.getButton() == MouseEvent.BUTTON3)
 							{
-								g2.setPaint(colors.OPAQUE);
+								g2.setPaint(colors.opaque);
 								canDraw = true;
 							}
 							startOfClick = e.getPoint();
@@ -109,15 +109,15 @@ public class DrawPanel extends JComponent
 							addPoint(lastMouseClickPosition);
 						}
 						break;
-					case INVISIBLE:
-					case VISIBLE:
+					case Invisible:
+					case Visible:
 						startOfClick = e.getPoint();
 						isDragging = true;
 						addPoint(lastMouseClickPosition);
 						break;
-					case WINDOW:
+					case Window:
 						setWindowPosition(lastMouseClickPosition);
-						_main.DISPLAY_PAINT.setWindowPosition(getWindowPosition());
+						_main.displayPaint.setWindowPosition(getWindowPosition());
 						break;
 					}
 					repaint();
@@ -129,9 +129,9 @@ public class DrawPanel extends JComponent
 				if (_paintHelper.paintImage != null && canDraw)
 				{
 					switch (penShape){
-					case RECT:
-						Point p = toDrawingPoint(e.getPoint());
-						Point p2 = toDrawingPoint(startOfClick);
+					case Rectangle:
+						var p = toDrawingPoint(e.getPoint());
+						var p2 = toDrawingPoint(startOfClick);
 						g2.fillRect(
 								Math.min(p.x, p2.x),
 								Math.min(p.y, p2.y),
@@ -161,7 +161,7 @@ public class DrawPanel extends JComponent
 					else
 					{
 						setWindowPosition(toDrawingPoint(e.getPoint()));
-						_main.DISPLAY_PAINT.setWindowPosition(getWindowPosition());
+						_main.displayPaint.setWindowPosition(getWindowPosition());
 					}
 					mousePos = e.getPoint();
 					repaint();
@@ -196,7 +196,7 @@ public class DrawPanel extends JComponent
 		// A higher number will zoom out.
 		displayZoom = zoom;
 		setWindowPosition(lastWindowClick);
-		_main.DISPLAY_PAINT.setWindowScaleAndPosition(zoom, getWindowPosition());
+		_main.displayPaint.setWindowScaleAndPosition(zoom, getWindowPosition());
 		repaint();
 	}
 
@@ -204,7 +204,7 @@ public class DrawPanel extends JComponent
 	{
 		displayZoom = zoom;
 		setWindowPosition(p);
-		_main.DISPLAY_PAINT.setWindowScaleAndPosition(zoom, getWindowPosition());
+		_main.displayPaint.setWindowScaleAndPosition(zoom, getWindowPosition());
 		repaint();
 	}
 
@@ -212,7 +212,7 @@ public class DrawPanel extends JComponent
 	{
 		if (_paintHelper.paintImage != null)
 		{
-			var paintFolder = _fileHelper.PAINT_FOLDER;
+			var paintFolder = _fileHelper.paintFolder;
 			var maskFile = _fileHelper.fileToMaskFile(paintFolder);
 
 			if (maskFile.exists() && maskFile.lastModified() > paintFolder.lastModified())
@@ -292,17 +292,17 @@ public class DrawPanel extends JComponent
 		if (g2 != null)
 		{
 			switch (touchpadDrawMode) {
-			case ANY:
+			case Any:
 				break;
-			case VISIBLE:
-				g2.setPaint(colors.CLEAR);
+			case Visible:
+				g2.setPaint(colors.clear);
 				canDraw = true;
 				break;
-			case INVISIBLE:
-				g2.setPaint(colors.OPAQUE);
+			case Invisible:
+				g2.setPaint(colors.opaque);
 				canDraw = true;
 				break;
-			case WINDOW:
+			case Window:
 				canDraw = false;
 				break;
 			}
@@ -384,15 +384,15 @@ public class DrawPanel extends JComponent
 		{
 			g2d.drawImage(_paintHelper.paintControlImage, 0, 0, controlSize.width, controlSize.height, null);
 			g2d.drawImage(drawingLayer, 0, 0, controlSize.width, controlSize.height, null);
-			g2d.setColor(colors.PINK);
+			g2d.setColor(colors.pink);
 			switch (penShape) {
-			case CIRCLE:
+			case Circle:
 				g2d.drawOval(mousePos.x - penRadius, mousePos.y - penRadius, penDiameter, penDiameter);
 				break;
-			case SQUARE:
+			case Square:
 				g2d.drawRect(mousePos.x - penRadius, mousePos.y - penRadius, penDiameter, penDiameter);
 				break;
-			case RECT:
+			case Rectangle:
 				if (isDragging)
 				{
 					g2d.drawRect
@@ -444,7 +444,7 @@ public class DrawPanel extends JComponent
 		g2d.drawRect(x, y, w, h);
 		g2d.drawLine(x, y, x + w, y + h);
 		g2d.drawLine(x + w, y, x, y + h);
-		g2d.setColor(_controlBuilder.colors.PINK_CLEAR);
+		g2d.setColor(_controlBuilder.colors.pinkClear);
 		g2d.fillRect(x, y, w, h);
 	}
 
@@ -503,10 +503,10 @@ public class DrawPanel extends JComponent
 
 			switch (penDirectionLock)
 			{
-				case HORIZONTAL:
+				case Horizontal:
 					newP.y = lastMouseClickPosition.y;
 					break;
-				case VERTICAL:
+				case Vertical:
 					newP.x = lastMouseClickPosition.x;
 					break;
 				default:
@@ -519,7 +519,7 @@ public class DrawPanel extends JComponent
 			final int dwidth = (int) (penDiameter * widthMod);
 			final int dheight = (int) (penDiameter * heightMod);
 			switch (penShape) {
-			case CIRCLE:
+			case Circle:
 				g2.fillPolygon(getPolygonSweptByOval(newP, lastMouseClickPosition, rwidth, rheight));
 				g2.fillOval
 				(
@@ -529,7 +529,7 @@ public class DrawPanel extends JComponent
 					dheight
 				);
 				break;
-			case SQUARE:
+			case Square:
 				g2.fillPolygon(getPolygonSweptByRectangle(newP, lastMouseClickPosition, (int)rwidth, (int)rheight));
 				g2.fillRect
 				(
@@ -539,12 +539,12 @@ public class DrawPanel extends JComponent
 					dheight
 				);
 				break;
-			case RECT:
+			case Rectangle:
 				break;
 			}
 			lastMouseClickPosition = newP;
 			updateButton.setEnabled(true);
-			updateButton.setBackground(colors.ACTIVE);
+			updateButton.setBackground(colors.active);
 		}
 	}
 
@@ -607,24 +607,24 @@ public class DrawPanel extends JComponent
 			g2.fillRect(0, 0, drawingLayer.getWidth(), drawingLayer.getHeight());
 			repaint();
 			updateButton.setEnabled(true);
-			updateButton.setBackground(_controlBuilder.colors.ACTIVE);
+			updateButton.setBackground(_controlBuilder.colors.active);
 		}
 	}
 
 	public void hideAll()
 	{
-		fillAll(_controlBuilder.colors.OPAQUE);
+		fillAll(_controlBuilder.colors.opaque);
 	}
 
 	public void showAll()
 	{
-		fillAll(_controlBuilder.colors.CLEAR);
+		fillAll(_controlBuilder.colors.clear);
 	}
 
 	public void saveMask()
 	{
 		var fileHelper = _settings.fileHelper;
-		var f = fileHelper.fileToMaskFile(fileHelper.PAINT_FOLDER);
+		var f = fileHelper.fileToMaskFile(fileHelper.paintFolder);
 		if (f != null)
 		{
 			try
@@ -632,7 +632,7 @@ public class DrawPanel extends JComponent
 				ImageIO.write(drawingLayer, "png", f);
 
 				var dataFilePath = 
-					fileHelper.DATA_FOLDER + File.separator
+					fileHelper.dataFolder + File.separator
 					+ "Paint" + File.separator + f.getName() + ".data";
 				var dataFile = new File(dataFilePath);
 				var writer = new BufferedWriter(new FileWriter(dataFile));

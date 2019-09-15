@@ -28,7 +28,7 @@ public class ControlPictures extends Control
 
 		var controlBuilder = _controlBuilder;
 		var colors = controlBuilder.colors;
-		var colorControlBackground = colors.CONTROL_BACKGROUND;
+		var colorControlBackground = colors.controlBackground;
 
 		var scaleMethods = ScaleMethod.values();
 		var scaleComboBox = controlBuilder.createComboBox
@@ -36,7 +36,7 @@ public class ControlPictures extends Control
 			scaleMethods, colorControlBackground
 		);
 		scaleComboBox.setMaximumSize(new Dimension(100, 5000));
-		scaleComboBox.setSelectedItem(ScaleMethod.UP_SCALE);
+		scaleComboBox.setSelectedItem(ScaleMethod.UpScale);
 		scaleComboBox.addActionListener
 		(
 			e ->
@@ -67,7 +67,7 @@ public class ControlPictures extends Control
 					display.removeAllImages();
 					for (var c: getComponents())
 					{
-						c.setBackground(colors.DISABLE_COLOR);
+						c.setBackground(colors.disableColor);
 					}
 				}
 				display.addImage(name);

@@ -17,7 +17,7 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 		setTitle(name);
 		setIconImage(iconImage);
 
-		var controlSize = _controlBuilder.CONTROL_SIZE;
+		var controlSize = _controlBuilder.controlSize;
 		setSize(controlSize);
 		setLocation
 		(
@@ -39,13 +39,13 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 			
 			var controlButton = _controlBuilder.createButton
 			(
-				modeName, colors.INACTIVE, new ModeListener(WindowType.CONTROL, mode)
+				modeName, colors.inactive, new ModeListener(WindowType.Control, mode)
 			);
 			controlButtons[i] = controlButton;
 
 			var displayButton = _controlBuilder.createButton
 			(
-				modeName, colors.INACTIVE, new ModeListener(WindowType.DISPLAY, mode)
+				modeName, colors.inactive, new ModeListener(WindowType.Display, mode)
 			);
 			displayButtons[i] = displayButton;
 		}
@@ -62,8 +62,8 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 		var controlBuilder = _controlBuilder;
 		var colors = controlBuilder.colors;
 		
-		var colorBackground = colors.BACKGROUND;
-		var colorControlBackground = colors.CONTROL_BACKGROUND;
+		var colorBackground = colors.background;
+		var colorControlBackground = colors.controlBackground;
 
 		var panel = controlBuilder.createPanel
 		(
@@ -101,13 +101,13 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 	{
 		var colors = _controlBuilder.colors;
 
-		if (display == WindowType.CONTROL)
+		if (display == WindowType.Control)
 		{
-			controlButtons[mode.ordinal()].setBackground(value ? colors.ACTIVE : colors.INACTIVE);
+			controlButtons[mode.ordinal()].setBackground(value ? colors.active : colors.inactive);
 		}
-		else if (display == WindowType.DISPLAY)
+		else if (display == WindowType.Display)
 		{
-			displayButtons[mode.ordinal()].setBackground(value ? colors.ACTIVE : colors.INACTIVE);
+			displayButtons[mode.ordinal()].setBackground(value ? colors.active : colors.inactive);
 		}
 	}
 }

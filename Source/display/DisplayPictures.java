@@ -24,7 +24,7 @@ public class DisplayPictures extends Display
 		var displaySize = _paintHelper.displaySize;
 		image = new BufferedImage(displaySize.width, displaySize.height, BufferedImage.TYPE_INT_ARGB);
 		imagesToBePainted = new LinkedList<>();
-		scaleMethod = ScaleMethod.UP_SCALE;
+		scaleMethod = ScaleMethod.UpScale;
 		shouldImageBeRotatedAHalfTurn = false;
 		
 		setVisible(true);
@@ -43,11 +43,11 @@ public class DisplayPictures extends Display
 	public void paintImage(Graphics2D g2d, BufferedImage img)
 	{
 		var displaySize = _paintHelper.displaySize;
-		if (scaleMethod == ScaleMethod.FILL)
+		if (scaleMethod == ScaleMethod.Fill)
 		{
 			g2d.drawImage(img, 0, 0, displaySize.width, displaySize.height, null);
 		}
-		else if (scaleMethod == ScaleMethod.REAL_SIZE)
+		else if (scaleMethod == ScaleMethod.RealSize)
 		{
 			g2d.drawImage
 			(
@@ -58,7 +58,7 @@ public class DisplayPictures extends Display
 				img.getHeight(), null
 			);
 		}
-		else if (scaleMethod == ScaleMethod.UP_SCALE)
+		else if (scaleMethod == ScaleMethod.UpScale)
 		{
 			var screenRatio = displaySize.getWidth() / displaySize.getHeight();
 			var imageRatio = (double)img.getWidth() / img.getHeight();

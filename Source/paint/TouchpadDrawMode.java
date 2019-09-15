@@ -2,8 +2,8 @@ package paint;
 
 public enum TouchpadDrawMode
 {
-	ANY,
-	VISIBLE,
-	INVISIBLE,
-	WINDOW
+	Any,
+	Visible,
+	Invisible,
+	Window
 }

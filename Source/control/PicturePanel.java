@@ -33,20 +33,20 @@ public abstract class PicturePanel extends JPanel
 		var buttonFile = _controlBuilder.createButton
 		(
 			file.getName(),
-			colors.DISABLE_COLOR,
+			colors.disableColor,
 			e ->
 			{
 				var button = ((JButton)(e.getSource()));
 				var name = button.getText();
-				if (button.getBackground() == colors.DISABLE_COLOR)
+				if (button.getBackground() == colors.disableColor)
 				{
 					select(name);
-					button.setBackground(colors.ENABLE_COLOR);
+					button.setBackground(colors.enableColor);
 				}
 				else
 				{
 					deselect(name);
-					button.setBackground(colors.DISABLE_COLOR);
+					button.setBackground(colors.disableColor);
 				}
 			}
 		);

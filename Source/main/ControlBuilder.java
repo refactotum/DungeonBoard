@@ -14,20 +14,20 @@ public class ControlBuilder
 
 	public class Colors
 	{
-		public final Color ACTIVE = new Color(153, 255, 187);
-		public final Color INACTIVE = new Color(255, 128, 128);
-		public final Color ENABLE_COLOR = Color.GREEN;
-		public final Color DISABLE_COLOR = Color.GRAY;
-		public final Color CLEAR = new Color(100, 255, 100);
-		public final Color OPAQUE = new Color(255, 100, 100);
-		public final Color PINK = new Color(255, 0, 255);
-		public final Color PINK_CLEAR = new Color(255, 0, 255, 25);
-		public final Color BACKGROUND = new Color(153, 153, 153);
-		public final Color CONTROL_BACKGROUND = new Color(200, 200, 200);
+		public final Color active = new Color(153, 255, 187);
+		public final Color inactive = new Color(255, 128, 128);
+		public final Color enableColor = Color.GREEN;
+		public final Color disableColor = Color.GRAY;
+		public final Color clear = new Color(100, 255, 100);
+		public final Color opaque = new Color(255, 100, 100);
+		public final Color pink = new Color(255, 0, 255);
+		public final Color pinkClear = new Color(255, 0, 255, 25);
+		public final Color background = new Color(153, 153, 153);
+		public final Color controlBackground = new Color(200, 200, 200);
 	}
 	public final Colors colors = new Colors();
 
-	public final Dimension CONTROL_SIZE = new Dimension(900, 700);
+	public final Dimension controlSize = new Dimension(900, 700);
 
 	public JButton createButton(String label)
 	{

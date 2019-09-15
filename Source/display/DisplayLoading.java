@@ -158,7 +158,7 @@ public class DisplayLoading extends Display
 		{
 			oldImage = currentImage;
 			var filePath = 
-				_settings.fileHelper.FOLDERS[Mode.LOADING.ordinal()]
+				_settings.fileHelper.folders[Mode.Loading.ordinal()]
 				+ "/" + fileNamesNotYetShown.removeFirst();
 			try
 			{
@@ -174,7 +174,7 @@ public class DisplayLoading extends Display
 
 	private void reloadImagesInLoadingFolder()
 	{
-		var folder = _settings.fileHelper.FOLDERS[Mode.LOADING.ordinal()];
+		var folder = _settings.fileHelper.folders[Mode.Loading.ordinal()];
 		if (folder.exists())
 		{
 			var rand = new Random();

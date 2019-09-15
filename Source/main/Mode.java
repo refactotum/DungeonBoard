@@ -2,8 +2,8 @@ package main;
 
 public enum Mode
 {
-	LAYER,
-	IMAGE,
-	PAINT,
-	LOADING
+	Layer,
+	Image,
+	Paint,
+	Loading
 }

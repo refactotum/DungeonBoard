@@ -15,15 +15,15 @@ public class Main
 	private ControlPictures _controlImage;
 	private ControlPaint _controlPaint;
 	private ControlLoading _controlLoading;
-	private Mode _controlMode = Mode.PAINT;
+	private Mode _controlMode = Mode.Paint;
 	private DisplayWindow _displayWindow;
 	private DisplayPictures _displayLayer;
 	private DisplayPictures _displayImage;
-	private Mode _displayMode = Mode.LOADING;
-	
-	public DisplayPaint DISPLAY_PAINT;
-	public DisplayLoading DISPLAY_LOADING;
-	
+	private Mode _displayMode = Mode.Loading;
+
+	public DisplayPaint displayPaint;
+	public DisplayLoading displayLoading;
+
 	private Settings _settings = Settings.Instance;
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 
@@ -31,14 +31,14 @@ public class Main
 	{
 		Main.Instance.run();
 	}
-	
+
 	private void run()
 	{
 		try
 		{
 			var colors = _controlBuilder.colors;
-			var colorBackground = colors.BACKGROUND;
-			var colorControlBackground = colors.CONTROL_BACKGROUND;
+			var colorBackground = colors.background;
+			var colorControlBackground = colors.controlBackground;
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 			UIManager.put("Button.background", colorControlBackground);
 			UIManager.put("Button.opaque", true);
@@ -56,7 +56,7 @@ public class Main
 		{
 			_settings.errorHelper.showError("Error - Changing look and feel", e);
 		}
-		
+
 		try
 		{
 			var fileHelper = _settings.fileHelper;
@@ -71,39 +71,39 @@ public class Main
 				JOptionPane.QUESTION_MESSAGE,
 				null, screens, 0
 			);
-			
+
 			if (displayIndex >= 0 && displayIndex < screens.length)
 			{
 				var controlIndex = (displayIndex == 0 ? screens.length - 1 : 0);
-				
+
 				_paintHelper.displaySize = screens[displayIndex].getSize();
-				
+
 				_displayWindow = new DisplayWindow
 				(
 					screens[displayIndex].getRectangle()
 				);
-				
+
 				var controlWindow = new ControlWindow
 				(
 					_settings.NAME,
 					_settings.icons.Program.getImage(),
 					screens[controlIndex].getRectangle());
 				_controlWindow = controlWindow;
-				
-				var folders = fileHelper.FOLDERS;
-				var folderLayer = folders[Mode.LAYER.ordinal()];
-				var folderImage = folders[Mode.IMAGE.ordinal()];
-				
+
+				var folders = fileHelper.folders;
+				var folderLayer = folders[Mode.Layer.ordinal()];
+				var folderImage = folders[Mode.Image.ordinal()];
+
 				_displayLayer = new DisplayPictures(folderLayer);
 				_displayImage = new DisplayPictures(folderImage);
-				DISPLAY_PAINT = new DisplayPaint();
-				DISPLAY_LOADING = new DisplayLoading();
-				
+				displayPaint = new DisplayPaint();
+				displayLoading = new DisplayLoading();
+
 				_controlLayer = new ControlPictures(folderLayer, _displayLayer, true);
 				_controlImage = new ControlPictures(folderImage, _displayImage, false);
 				_controlPaint = new ControlPaint();
 				_controlLoading = new ControlLoading();
-				
+
 				controlWindow.addWindowListener
 				(
 					new WindowAdapter()
@@ -115,12 +115,12 @@ public class Main
 						}
 					}
 				);
-				
-				controlWindow.setButton(WindowType.CONTROL, Mode.PAINT, true);
-				controlWindow.setButton(WindowType.DISPLAY, Mode.LOADING, true);
-				controlWindow.setMode(_controlMode, Mode.IMAGE);
-				_displayWindow.setMode(_displayMode, Mode.IMAGE);
-				
+
+				controlWindow.setButton(WindowType.Control, Mode.Paint, true);
+				controlWindow.setButton(WindowType.Display, Mode.Loading, true);
+				controlWindow.setMode(_controlMode, Mode.Image);
+				_displayWindow.setMode(_displayMode, Mode.Image);
+
 				synchronized (controlWindow)
 				{
 					_displayWindow.setVisible(true);
@@ -137,24 +137,24 @@ public class Main
 			System.out.println("Error - Cannot find any screens\n" + e.getMessage());
 		}
 	}
-	
+
 	public Control getControl(Mode mode)
 	{
 		Control returnValue = null;
 
-		if (mode == Mode.IMAGE)
+		if (mode == Mode.Image)
 		{
 			returnValue = _controlImage;
 		}
-		else if (mode == Mode.LAYER)
+		else if (mode == Mode.Layer)
 		{
 			returnValue = _controlLayer;
 		}
-		else if (mode == Mode.LOADING)
+		else if (mode == Mode.Loading)
 		{
 			returnValue = _controlLoading;
 		}
-		else if (mode == Mode.PAINT)
+		else if (mode == Mode.Paint)
 		{
 			returnValue = _controlPaint;
 		}
@@ -166,21 +166,21 @@ public class Main
 	{
 		Display returnValue = null;
 
-		if (mode == Mode.IMAGE)
+		if (mode == Mode.Image)
 		{
 			returnValue = _displayImage;
 		}
-		else if (mode == Mode.LAYER)
+		else if (mode == Mode.Layer)
 		{
 			returnValue = _displayLayer;
 		}
-		else if (mode == Mode.LOADING)
+		else if (mode == Mode.Loading)
 		{
-			returnValue = DISPLAY_LOADING;
+			returnValue = displayLoading;
 		}
-		else if (mode == Mode.PAINT)
+		else if (mode == Mode.Paint)
 		{
-			returnValue = DISPLAY_PAINT;
+			returnValue = displayPaint;
 		}
 
 		return returnValue;
@@ -196,12 +196,12 @@ public class Main
 		}
 		return screens;
 	}
-	
+
 	public DisplayWindow getDisplay()
 	{
 		return _displayWindow;
 	}
-	
+
 	public ControlWindow getControl()
 	{
 		return _controlWindow;
@@ -209,7 +209,7 @@ public class Main
 
 	public void changeButton(WindowType disp, Mode mode)
 	{
-		if (disp == WindowType.CONTROL)
+		if (disp == WindowType.Control)
 		{
 			synchronized (_controlMode)
 			{
@@ -221,11 +221,11 @@ public class Main
 				}
 			}
 		}
-		else if (disp == WindowType.DISPLAY)
+		else if (disp == WindowType.Display)
 		{
 			synchronized (_displayMode)
 			{
-				if (_displayMode != mode)
+ef				if (_displayMode != mode)
 				{
 					_controlWindow.setButton(disp, _displayMode, false);
 					_displayWindow.setMode(mode, _displayMode);

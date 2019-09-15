@@ -2,8 +2,8 @@ package display;
 
 public enum CursorDirection
 {
-	UP,
-	RIGHT,
-	DOWN,
-	LEFT
+	Up,
+	Right,
+	Down,
+	Left
 }

@@ -38,7 +38,7 @@ public class ControlPaint extends Control
 
 		setFocusable(true);
 
-		fileBox = controlBuilder.createComboBox(new String[] {}, controlBuilder.colors.CONTROL_BACKGROUND);
+		fileBox = controlBuilder.createComboBox(new String[] {}, controlBuilder.colors.controlBackground);
 		fileBox.addItem("");
 		var fileNames = getFileNames();
 		for (var fileName : fileNames)
@@ -52,7 +52,7 @@ public class ControlPaint extends Control
 				if (fileBox.getSelectedIndex() != 0)
 				{
 					var filePath =
-						_fileHelper.FOLDERS[Mode.PAINT.ordinal()].getAbsolutePath()
+						_fileHelper.folders[Mode.Paint.ordinal()].getAbsolutePath()
 						+ File.separator + fileBox.getSelectedItem().toString();
 
 					var file = new File(filePath);
@@ -62,7 +62,7 @@ public class ControlPaint extends Control
 						drawPanel.saveMask();
 						var maskFile = _fileHelper.fileToMaskFile(file);
 						var dataFilePath =
-							_fileHelper.DATA_FOLDER + File.separator 
+							_fileHelper.dataFolder + File.separator 
 							+ "Paint" + File.separator + maskFile.getName() 
 							+ ".data";
 						var dataFile = new File(dataFilePath);
@@ -146,13 +146,13 @@ public class ControlPaint extends Control
 
 		var showButton = controlBuilder.createButton
 		(
-			"Show", colors.ACTIVE, e -> { drawPanel.showAll(); }
+			"Show", colors.active, e -> { drawPanel.showAll(); }
 		);
 		innerNorthPanel.add(showButton);
 		
 		var hideButton = controlBuilder.createButton
 		(
-			"Hide", colors.INACTIVE, e -> { drawPanel.hideAll(); }
+			"Hide", colors.inactive, e -> { drawPanel.hideAll(); }
 		);
 		innerNorthPanel.add(hideButton);
 		
@@ -160,7 +160,7 @@ public class ControlPaint extends Control
 		(
 			SwingConstants.HORIZONTAL, 10, 100, 25,
 			null, // minSize 
-			colors.CONTROL_BACKGROUND,
+			colors.controlBackground,
 			e ->
 			{
 				var slider = ((JSlider)(e.getSource()));
@@ -173,7 +173,7 @@ public class ControlPaint extends Control
 		
 		var westPanel = controlBuilder.createPanelWithBoxLayout
 		(
-			BoxLayout.Y_AXIS, colors.CONTROL_BACKGROUND
+			BoxLayout.Y_AXIS, colors.controlBackground
 		);
 		
 		westPanel.add(controlBuilder.createLabel("Zoom", SwingConstants.LEFT));
@@ -282,20 +282,20 @@ public class ControlPaint extends Control
 		{
 			var buttonI = controlBuilder.createButton
 			(
-				i + "", colors.INACTIVE,
+				i + "", colors.inactive,
 				e ->
 				{
 					var button = ((JButton)(e.getSource()));
 					var number = Integer.parseInt(button.getText());
 					
-					if (button.getBackground().equals(colors.ACTIVE))
+					if (button.getBackground().equals(colors.active))
 					{
-						button.setBackground(colors.INACTIVE);
+						button.setBackground(colors.inactive);
 						paintImages[number - 1] = false;
 					}
 					else
 					{
-						button.setBackground(colors.ACTIVE);
+						button.setBackground(colors.active);
 						paintImages[number - 1] = true;
 					}
 					var fileLoadingThread = new Thread("fileLoadingThread")
@@ -312,7 +312,7 @@ public class ControlPaint extends Control
 									g2d.setColor(Color.BLACK);
 									g2d.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
 									
-									var paintFolderSize = _fileHelper.PAINT_FOLDER_SIZE;
+									var paintFolderSize = _fileHelper.paintFolderSize;
 									for (var i = paintFolderSize; i > 0; i--)
 									{
 										if (paintImages[i - 1])
@@ -326,8 +326,8 @@ public class ControlPaint extends Control
 									
 									if (_paintHelper.paintImage != null)
 									{
-										_main.DISPLAY_PAINT.setMask(drawPanel.getMask());
-										_main.DISPLAY_PAINT.setImageSizeScaled();
+										_main.displayPaint.setMask(drawPanel.getMask());
+										_main.displayPaint.setImageSizeScaled();
 										setZoomMax();
 									}
 								}
@@ -335,11 +335,11 @@ public class ControlPaint extends Control
 							catch (IOException | OutOfMemoryError error)
 							{
 								drawPanel.resetImage();
-								_main.DISPLAY_PAINT.resetImage();
+								_main.displayPaint.resetImage();
 								_paintHelper.paintImage = null;
 								_errorHelper.showError("Cannot load Image, file is probably too large", error);
 							}
-							_main.DISPLAY_PAINT.repaint();
+							_main.displayPaint.repaint();
 							drawPanel.repaint();
 							drawPanel.setIsImageLoading(false);
 						}
@@ -395,18 +395,18 @@ public class ControlPaint extends Control
 								BufferedImage.TYPE_INT_ARGB
 							);
 						drawPanel.setImage();
-						_main.DISPLAY_PAINT.setMask(drawPanel.getMask());
-						_main.DISPLAY_PAINT.setImageSizeScaled();
+						_main.displayPaint.setMask(drawPanel.getMask());
+						_main.displayPaint.setImageSizeScaled();
 						setZoomMax();
 					}
 					catch (IOException | OutOfMemoryError error)
 					{
 						drawPanel.resetImage();
-						_main.DISPLAY_PAINT.resetImage();
+						_main.displayPaint.resetImage();
 						_paintHelper.paintImage = null;
 						_errorHelper.showError("Cannot load Image, file is probably too large", error);
 					}
-					_main.DISPLAY_PAINT.repaint();
+					_main.displayPaint.repaint();
 					drawPanel.repaint();
 					drawPanel.setIsImageLoading(false);
 				}
@@ -414,15 +414,15 @@ public class ControlPaint extends Control
 			folderLoadingThread.start();
 		}
 		
-		_fileHelper.PAINT_FOLDER = paintFolder;
-		_fileHelper.PAINT_FOLDER_SIZE = paintFolderSize;
+		_fileHelper.paintFolder = paintFolder;
+		_fileHelper.paintFolderSize = paintFolderSize;
 		_paintHelper.paintImageS = paintImages;
 	}
 
 	private void setFile(File file)
 	{
 		drawPanel.setIsImageLoading(true);
-		_fileHelper.PAINT_FOLDER = file;
+		_fileHelper.paintFolder = file;
 		var fileLoadingThread = new Thread("fileLoadingThread")
 		{
 			public void run()
@@ -435,19 +435,19 @@ public class ControlPaint extends Control
 					if (_paintHelper.paintImage != null)
 					{
 						drawPanel.setImage();
-						_main.DISPLAY_PAINT.setMask(drawPanel.getMask());
-						_main.DISPLAY_PAINT.setImageSizeScaled();
+						_main.displayPaint.setMask(drawPanel.getMask());
+						_main.displayPaint.setImageSizeScaled();
 						setZoomMax();
 					}
 				}
 				catch (IOException | OutOfMemoryError error)
 				{
 					drawPanel.resetImage();
-					_main.DISPLAY_PAINT.resetImage();
+					_main.displayPaint.resetImage();
 					_paintHelper.paintImage = null;
 					_errorHelper.showError("Cannot load Image, file is probably too large", error);
 				}
-				_main.DISPLAY_PAINT.repaint();
+				_main.displayPaint.repaint();
 				drawPanel.repaint();
 				drawPanel.setIsImageLoading(false);
 			}
@@ -478,7 +478,7 @@ public class ControlPaint extends Control
 
 		var fileHelper = _fileHelper;
 
-		var folder = fileHelper.FOLDERS[Mode.PAINT.ordinal()];
+		var folder = fileHelper.folders[Mode.Paint.ordinal()];
 		
 		if (folder.exists())
 		{
