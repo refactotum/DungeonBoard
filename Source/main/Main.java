@@ -225,7 +225,7 @@ public class Main
 		{
 			synchronized (_displayMode)
 			{
-ef				if (_displayMode != mode)
+				if (_displayMode != mode)
 				{
 					_controlWindow.setButton(disp, _displayMode, false);
 					_displayWindow.setMode(mode, _displayMode);
