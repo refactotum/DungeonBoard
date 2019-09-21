@@ -14,9 +14,8 @@ public class PicturePanelButtonCreator
 	private final JButton[] buttons;
 	private int queueNumber;
 	
-	private Settings _settings = Settings.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
-	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
+	private PaintHelper _paintHelper = PaintHelper.Instance;
 
 	public PicturePanelButtonCreator(PicturePanel pp, File imageFolder)
 	{

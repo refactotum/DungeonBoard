@@ -33,11 +33,10 @@ public class DrawPanel extends JComponent
 
 	private JButton updateButton;
 
-	private Settings _settings = Settings.Instance;
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
-	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
+	private PaintHelper _paintHelper = PaintHelper.Instance;
 	
 	private Main _main = Main.Instance;
 

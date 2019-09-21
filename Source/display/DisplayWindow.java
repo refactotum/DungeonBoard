@@ -9,8 +9,8 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 {
 	private final Point NULL_POS = new Point(-100, -100);
 
-	private Settings _settings = Settings.Instance;
-	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
+	private Icons _icons = Icons.Instance;
+	private PaintHelper _paintHelper = PaintHelper.Instance;
 
 	private Point mousePos;
 	private CursorDirection handDirection;
@@ -23,7 +23,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		super();
 		setTitle("Display");
 		setUndecorated(true);
-		setIconImage(_settings.icons.Program.getImage());
+		setIconImage(_icons.Program.getImage());
 		setSize(r.getSize());
 		setLocation(r.getLocation());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,13 +85,12 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 	{
 		if (this._iconsHands == null)
 		{
-			var iconLoader = _settings.icons;
 			this._iconsHands = new ImageIcon[]
 			{
-				iconLoader.load("hand0.png"),
-				iconLoader.load("hand1.png"),
-				iconLoader.load("hand2.png"),
-				iconLoader.load("hand3.png")
+				_icons.load("hand0.png"),
+				_icons.load("hand1.png"),
+				_icons.load("hand2.png"),
+				_icons.load("hand3.png")
 			};
 		}
 		return this._iconsHands;

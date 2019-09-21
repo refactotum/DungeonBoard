@@ -9,21 +9,20 @@ public class ScreensaverCube
 {
 	// An image that floats around the screen like the old DvD logo would on DvD players.
 
-	private final int PIXELS_PER_MOVE;
+	private final int pixelsPerMove;
 	private Point position;
 
 	private boolean isMovingUpNotDown;
 	private boolean isMovingLeftNotRight;
 	private boolean isInCorner;
 
-	private Settings _settings = Settings.Instance;
-	private Settings.Icons _icons = _settings.icons;
-	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
+	private Icons _icons = Icons.Instance;
+	private PaintHelper _paintHelper = PaintHelper.Instance;
 
 	public ScreensaverCube()
 	{
 		var rand = new Random();
-		PIXELS_PER_MOVE = rand.nextInt(5) + 1;
+		pixelsPerMove = rand.nextInt(5) + 1;
 		var displaySize = _paintHelper.displaySize;
 		var iconDvd = _icons.Dvd;
 		position = new Point
@@ -58,7 +57,7 @@ public class ScreensaverCube
 
 			if (isMovingUpNotDown)
 			{
-				position.x -= PIXELS_PER_MOVE;
+				position.x -= pixelsPerMove;
 				if (position.x < 0)
 				{
 					position.x = 0;
@@ -68,7 +67,7 @@ public class ScreensaverCube
 			}
 			else
 			{
-				position.x += PIXELS_PER_MOVE;
+				position.x += pixelsPerMove;
 				var xMax = displaySize.width - iconDvd.getIconWidth();
 				if (position.x > xMax)
 				{
@@ -80,7 +79,7 @@ public class ScreensaverCube
 			
 			if (isMovingLeftNotRight)
 			{
-				position.y -= PIXELS_PER_MOVE;
+				position.y -= pixelsPerMove;
 				if (position.y < 0)
 				{
 					position.y = 0;
@@ -93,7 +92,7 @@ public class ScreensaverCube
 			}
 			else
 			{
-				position.y += PIXELS_PER_MOVE;
+				position.y += pixelsPerMove;
 				var yMax = displaySize.height - iconDvd.getIconHeight();
 				if (position.y > yMax)
 				{

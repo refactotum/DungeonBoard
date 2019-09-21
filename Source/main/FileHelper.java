@@ -12,25 +12,34 @@ public class FileHelper
 {
 	public static FileHelper Instance = new FileHelper();
 
-	private final String fileSeparator = File.separator;
+	public File folder;
+	public File[] folders;
+	public File dataFolder;
 	public File paintFolder;
-	
-	public final File folder = new File
-	(
-		new File(System.getProperty("user.dir")).getAbsolutePath()
-		+ fileSeparator + Settings.Instance.applicationName
-	);
-	
-	public final File[] folders =
-	{
-		new File(folder + fileSeparator + "Layer"),
-		new File(folder + fileSeparator + "Image"),
-		new File(folder + fileSeparator + "Paint"),
-		new File(folder + fileSeparator + "Loading")
-	};
-	public final File dataFolder = new File(folder + fileSeparator + "Data");
-
 	public int paintFolderSize;
+	
+	public FileHelper()
+	{
+		var applicationName = Main.ApplicationName;
+
+		var fileSeparator = File.separator;
+
+		this.folder = new File
+		(
+			new File(System.getProperty("user.dir")).getAbsolutePath()
+			+ fileSeparator + applicationName
+		);
+
+		this.folders = new File[]
+		{
+			new File(folder + fileSeparator + "Layer"),
+			new File(folder + fileSeparator + "Image"),
+			new File(folder + fileSeparator + "Paint"),
+			new File(folder + fileSeparator + "Loading")
+		};
+
+		this.dataFolder = new File(folder + fileSeparator + "Data");
+	}
 
 	public void load() throws SecurityException
 	{
