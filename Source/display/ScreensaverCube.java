@@ -16,7 +16,6 @@ public class ScreensaverCube
 	private boolean isMovingLeftNotRight;
 	private boolean isInCorner;
 
-	private Icons _icons = Icons.Instance;
 	private PaintHelper _paintHelper = PaintHelper.Instance;
 
 	public ScreensaverCube()
@@ -24,7 +23,7 @@ public class ScreensaverCube
 		var rand = new Random();
 		pixelsPerMove = rand.nextInt(5) + 1;
 		var displaySize = _paintHelper.displaySize;
-		var iconDvd = _icons.Dvd;
+		var iconDvd = _paintHelper.icons.Dvd;
 		position = new Point
 		(
 			rand.nextInt(displaySize.width - iconDvd.getIconWidth()),
@@ -37,14 +36,9 @@ public class ScreensaverCube
 	
 	public void paint(Graphics2D g2d)
 	{
-		if (isInCorner)
-		{
-			g2d.drawImage(_icons.Dvd2.getImage(), position.x, position.y, null);
-		}
-		else
-		{
-			g2d.drawImage(_icons.Dvd.getImage(), position.x, position.y, null);
-		}
+		var icons = _paintHelper.icons;
+		var iconToUse = (isInCorner ? icons.Dvd2 : icons.Dvd);
+		g2d.drawImage(iconToUse.getImage(), position.x, position.y, null);
 	}
 	
 	public void move()
@@ -53,7 +47,7 @@ public class ScreensaverCube
 		{
 			var vertHit = false;
 			var displaySize = _paintHelper.displaySize;
-			var iconDvd = _icons.Dvd;
+			var iconDvd = _paintHelper.icons.Dvd;
 
 			if (isMovingUpNotDown)
 			{

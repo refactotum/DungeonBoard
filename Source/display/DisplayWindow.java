@@ -9,7 +9,6 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 {
 	private final Point NULL_POS = new Point(-100, -100);
 
-	private Icons _icons = Icons.Instance;
 	private PaintHelper _paintHelper = PaintHelper.Instance;
 
 	private Point mousePos;
@@ -23,7 +22,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		super();
 		setTitle("Display");
 		setUndecorated(true);
-		setIconImage(_icons.Program.getImage());
+		setIconImage(_paintHelper.icons.Program.getImage());
 		setSize(r.getSize());
 		setLocation(r.getLocation());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,7 +37,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		mousePos = NULL_POS;
 		handDirection = CursorDirection.Up;
 		displayTimer = new DisplayTimer(getSize());
-		
+
 		addMouseMotionListener
 		(
 			new MouseMotionAdapter()
@@ -78,19 +77,20 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 			}
 		);
 	}
-	
+
 	private ImageIcon[] _iconsHands;
 	private final int[] _iconsHandsOffsets = {-5, -100, -45, 0};
 	private ImageIcon[] iconsHands()
 	{
+		var icons = _paintHelper.icons;
 		if (this._iconsHands == null)
 		{
 			this._iconsHands = new ImageIcon[]
 			{
-				_icons.load("hand0.png"),
-				_icons.load("hand1.png"),
-				_icons.load("hand2.png"),
-				_icons.load("hand3.png")
+				icons.load("hand0.png"),
+				icons.load("hand1.png"),
+				icons.load("hand2.png"),
+				icons.load("hand3.png")
 			};
 		}
 		return this._iconsHands;
@@ -129,7 +129,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		};
 		thread.start();
 	}
-	
+
 	private void setMouse(Point p)
 	{
 		mousePos = p;

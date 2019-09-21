@@ -15,9 +15,7 @@ public class ControlPictures extends Control
 
 	public ControlPictures
 	(
-		File imageFolder,
-		DisplayPictures display,
-		boolean areMultipleImagesAllowed
+		File imageFolder, DisplayPictures display, boolean areMultipleImagesAllowed
 	)
 	{
 		super();
@@ -48,7 +46,7 @@ public class ControlPictures extends Control
 		
 		var flipButton = controlBuilder.createButton
 		(
-			_icons.Flip,
+			_paintHelper.icons.Flip,
 			colorControlBackground,
 			arg0 ->
 			{
@@ -56,41 +54,19 @@ public class ControlPictures extends Control
 			}
 		);
 		northPanel.add(flipButton);
-		
-		picturePanel = new PicturePanel()
-		{
-			@Override
-			protected void select(String name)
-			{
-				if (areMultipleImagesAllowed == false)
-				{
-					display.removeAllImages();
-					for (var c: getComponents())
-					{
-						c.setBackground(colors.disableColor);
-					}
-				}
-				display.addImage(name);
-			}
 
-			@Override
-			protected void deselect(String name)
-			{
-				display.removeImage(name);
-			}
-		};
-		
 		add(northPanel, BorderLayout.NORTH);
-		
+
+		this.picturePanel = new PicturePanel(display, areMultipleImagesAllowed);
 		var jsp = controlBuilder.createScrollPane(picturePanel);
 		jsp.setBackground(colorControlBackground);
 		jsp.setBorder(BorderFactory.createEmptyBorder());
 		add(jsp, BorderLayout.CENTER);
-		
+
 		load();
-		
+
 		picturePanel.forgetThumbnails();
-		
+
 		setVisible(true);
 	}
 	

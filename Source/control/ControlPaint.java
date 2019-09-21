@@ -106,7 +106,9 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(fileBox);
 
-		var iconsForPenDirectionLock = _icons.PenDirectionLocks;
+		var icons = _paintHelper.icons;
+
+		var iconsForPenDirectionLock = icons.PenDirectionLocks;
 		var penDirectionLockButton = controlBuilder.createButton
 		(
 			iconsForPenDirectionLock[0],
@@ -118,7 +120,7 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(penDirectionLockButton);
 
-		var iconsForPenShapes = _icons.PenShapes;
+		var iconsForPenShapes = icons.PenShapes;
 		var shape = controlBuilder.createButton
 		(
 			iconsForPenShapes[0],
@@ -130,7 +132,7 @@ public class ControlPaint extends Control
 		);
 		innerNorthPanel.add(shape);
 		
-		var iconsForTouchpadDrawMode = _icons.TouchpadDrawModes;
+		var iconsForTouchpadDrawMode = icons.TouchpadDrawModes;
 		var touchpadDrawModeButton = controlBuilder.createButton
 		(
 			iconsForTouchpadDrawMode[0],
@@ -479,7 +481,7 @@ public class ControlPaint extends Control
 		var fileHelper = _fileHelper;
 
 		var folder = fileHelper.folders[Mode.Paint.ordinal()];
-		
+
 		if (folder.exists())
 		{
 			for (var f : fileHelper.listFilesInOrder(folder))
@@ -489,17 +491,13 @@ public class ControlPaint extends Control
 				{
 					returnValues.add(name);
 				}
-				else
+				else if (fileHelper.isFileAnImage(f))
 				{
-					var suffix = name.substring(name.lastIndexOf('.') + 1);
-					if (suffix.equalsIgnoreCase("PNG") || suffix.equalsIgnoreCase("JPG") || suffix.equalsIgnoreCase("JPEG"))
-					{
-						returnValues.add(name);
-					}
+					returnValues.add(name);
 				}
 			}
 		}
-		
+
 		return returnValues;
 	}
 

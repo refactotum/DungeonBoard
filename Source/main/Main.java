@@ -29,7 +29,6 @@ public class Main
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
-	private Icons _icons = Icons.Instance;
 	private PaintHelper _paintHelper = PaintHelper.Instance;
 
 	public static void main(String[] args)
@@ -88,7 +87,7 @@ public class Main
 				var controlWindow = new ControlWindow
 				(
 					Main.ApplicationName,
-					_icons.Program.getImage(),
+					_paintHelper.icons.Program.getImage(),
 					screens[controlIndex].getRectangle());
 				_controlWindow = controlWindow;
 

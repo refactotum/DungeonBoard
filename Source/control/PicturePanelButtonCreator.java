@@ -22,19 +22,17 @@ public class PicturePanelButtonCreator
 		this.pp = pp;
 		queue = new LinkedList<>();
 		queueNumber = 0;
-		
+
 		for (var f: _fileHelper.listFilesInOrder(imageFolder))
 		{
-			var name = f.getName();
-			var suffix = name.substring(name.lastIndexOf('.') + 1);
-			if (suffix.equalsIgnoreCase("PNG") || suffix.equalsIgnoreCase("JPG") || suffix.equalsIgnoreCase("JPEG"))
+			if (_fileHelper.isFileAnImage(f))
 			{
 				queue.add(f);
 			}
 		}
 		buttons = new JButton[queue.size()];
 	}
-	
+
 	public synchronized void run()
 	{
 		if (queue.isEmpty() == false)

@@ -6,20 +6,28 @@ import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
 import javax.swing.*;
+
+import display.*;
 import main.*;
 
-public abstract class PicturePanel extends JPanel
+public class PicturePanel extends JPanel
 {
-	private final int GRID_WIDTH = 4;
-	private final Dimension IMAGE_ICON_SIZE = new Dimension(100, 60);
+	private final int GridWidth = 4;
+	private final Dimension ImageIconSize = new Dimension(100, 60);
 
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
 
-	public PicturePanel()
+	private DisplayPictures _display;
+	private boolean _areMultipleImagesAllowed;
+
+	public PicturePanel(DisplayPictures display, boolean areMultipleImagesAllowed)
 	{
-		setLayout(new GridLayout(0, GRID_WIDTH));
+		this._display = display;
+		this._areMultipleImagesAllowed = areMultipleImagesAllowed;
+
+		setLayout(new GridLayout(0, GridWidth));
 		setBorder(BorderFactory.createEmptyBorder());
 	}
 
@@ -64,7 +72,7 @@ public abstract class PicturePanel extends JPanel
 		{
 			try
 			{
-				var imageIconSize = IMAGE_ICON_SIZE;
+				var imageIconSize = ImageIconSize;
 				var bufferedImage = new BufferedImage
 				(
 					imageIconSize.width, imageIconSize.height, BufferedImage.TYPE_INT_RGB
@@ -97,10 +105,24 @@ public abstract class PicturePanel extends JPanel
 			}
 		}
 	}
-	
-	protected abstract void select(String name);
-	
-	protected abstract void deselect(String name);
+
+	protected void select(String name)
+	{
+		if (this._areMultipleImagesAllowed == false)
+		{
+			this._display.removeAllImages();
+			for (var c: getComponents())
+			{
+				c.setBackground(_controlBuilder.colors.disableColor);
+			}
+		}
+		this._display.addImage(name);
+	}
+
+	protected void deselect(String name)
+	{
+		this._display.removeImage(name);
+	}
 
 	public void rememberThumbnails(File folder)
 	{

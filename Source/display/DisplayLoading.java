@@ -180,10 +180,9 @@ public class DisplayLoading extends Display
 			var rand = new Random();
 			for (var f: folder.listFiles())
 			{
-				var name = f.getName();
-				var suffix = name.substring(name.lastIndexOf('.') + 1);
-				if (suffix.equalsIgnoreCase("PNG") || suffix.equalsIgnoreCase("JPG") || suffix.equalsIgnoreCase("JPEG"))
+				if (_fileHelper.isFileAnImage(f))
 				{
+					var name = f.getName();
 					var fileCount = fileNamesNotYetShown.size();
 					var fileIndex = rand.nextInt(fileCount + 1);
 					if (fileIndex == fileCount)

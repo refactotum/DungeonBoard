@@ -11,8 +11,6 @@ public abstract class Control extends JPanel
 	protected ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	protected ErrorHelper _errorHelper = ErrorHelper.Instance;
 	protected FileHelper _fileHelper = FileHelper.Instance;
-
-	protected Icons _icons = Icons.Instance;
 	protected PaintHelper _paintHelper = PaintHelper.Instance;
 
 	public Control()
@@ -28,7 +26,7 @@ public abstract class Control extends JPanel
 		var northPanel = getEmptyNorthPanel();
 		var refreshButton = _controlBuilder.createButton
 		(
-			_icons.Refresh,
+			_paintHelper.icons.Refresh,
 			e -> { load(); } 
 		);
 		northPanel.add(refreshButton);

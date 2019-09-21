@@ -35,6 +35,19 @@ public class FileHelper
 
 		this.dataFolder = new File(folder + fileSeparator + "Data");
 	}
+	
+	public boolean isFileAnImage(File f)
+	{
+		var name = f.getName();
+		var suffix = name.substring(name.lastIndexOf('.') + 1);
+		var returnValue = 
+		(
+			suffix.equalsIgnoreCase("PNG")
+			|| suffix.equalsIgnoreCase("JPG")
+			|| suffix.equalsIgnoreCase("JPEG")
+		);
+		return returnValue;
+	}
 
 	public void load() throws SecurityException
 	{
