@@ -633,7 +633,7 @@ public class DrawPanel extends JComponent
 				var dataFilePath = 
 					fileHelper.dataFolder + File.separator
 					+ "Paint" + File.separator + f.getName() + ".data";
-				var dataFile = new File(dataFilePath);
+				var dataFile = _fileHelper.getFileAtPath(dataFilePath);
 				var writer = new BufferedWriter(new FileWriter(dataFile));
 				writer.write(String.format("%f %d %d", displayZoom, lastWindowClick.x, lastWindowClick.y));
 				writer.close();

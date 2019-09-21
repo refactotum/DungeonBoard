@@ -4,15 +4,14 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
-import javax.imageio.*;
 
 import main.*;
 
 public class DisplayLoading extends Display
 {
-	private static final int TICKS_PER_SECOND = 20;
-	private static final int MILLISECONDS_PER_TICK = 1000 / TICKS_PER_SECOND;
-	private static final int TICKS_PER_FADE = 20;
+	private static final int ticksPerSecond = 20;
+	private static final int millisecondsPerTick = 1000 / ticksPerSecond;
+	private static final int ticksPerFade = 20;
 
 	private int ticksPerImage = 400;
 	private LinkedList<ScreensaverCube> screensaverCubes;
@@ -32,7 +31,7 @@ public class DisplayLoading extends Display
 		paintThread = new Thread();
 		fileNamesNotYetShown = new LinkedList<>();
 		shouldImagesBeUpscaled = false;
-		ticksSinceImageChanged = TICKS_PER_FADE;
+		ticksSinceImageChanged = ticksPerFade;
 		fadeOpacity = 1;
 		changeToNextImage();
 		setVisible(true);
@@ -49,7 +48,7 @@ public class DisplayLoading extends Display
 			
 			if (shouldImagesBeUpscaled)
 			{
-				if (ticksSinceImageChanged <= TICKS_PER_FADE)
+				if (ticksSinceImageChanged <= ticksPerFade)
 				{
 					g2d.drawImage(oldImage, 0, 0, displaySize.width, displaySize.height, null);
 				}
@@ -61,7 +60,7 @@ public class DisplayLoading extends Display
 				g2d.setColor(new Color(currentImage.getRGB(0, 0)));
 				g2d.fillRect(0, 0, displaySize.width, displaySize.height);
 
-				if (ticksSinceImageChanged <= TICKS_PER_FADE && oldImage != null)
+				if (ticksSinceImageChanged <= ticksPerFade && oldImage != null)
 				{
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1 - fadeOpacity));
 					g2d.drawImage
@@ -104,7 +103,7 @@ public class DisplayLoading extends Display
 	
 	public void setSecondsPerImage(int value)
 	{
-		ticksPerImage = value * TICKS_PER_SECOND;
+		ticksPerImage = value * ticksPerSecond;
 	}
 
 	public void setShouldImagesBeUpscaled(boolean value)
@@ -131,9 +130,9 @@ public class DisplayLoading extends Display
 	{
 		ticksSinceImageChanged++;
 		repaint();
-		if (ticksSinceImageChanged <= TICKS_PER_FADE)
+		if (ticksSinceImageChanged <= ticksPerFade)
 		{
-			fadeOpacity = (float)ticksSinceImageChanged / TICKS_PER_FADE;
+			fadeOpacity = (float)ticksSinceImageChanged / ticksPerFade;
 		}
 		else if (ticksSinceImageChanged > ticksPerImage)
 		{
@@ -162,7 +161,7 @@ public class DisplayLoading extends Display
 				+ "/" + fileNamesNotYetShown.removeFirst();
 			try
 			{
-				currentImage = ImageIO.read(new File(filePath));
+				currentImage = _fileHelper.readImageFromFileAtPath(filePath);
 			}
 			catch (Exception e)
 			{
@@ -222,7 +221,7 @@ public class DisplayLoading extends Display
 					try
 					{
 						motion();
-						sleep(MILLISECONDS_PER_TICK);
+						sleep(millisecondsPerTick);
 					}
 					catch (InterruptedException e)
 					{

@@ -17,7 +17,8 @@ public class AlphaImage
 	public AlphaImage(File folder, String n)
 	{
 		name = n;
-		file = new File(folder.getAbsolutePath() + File.separator + name);
+		var filePath = folder.getAbsolutePath() + File.separator + name;
+		file = _fileHelper.getFileAtPath(filePath);
 	}
 	
 	public String getName()

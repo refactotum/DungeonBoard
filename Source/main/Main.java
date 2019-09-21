@@ -17,6 +17,7 @@ public class Main
 	private ControlPictures _controlImage;
 	private ControlPaint _controlPaint;
 	private ControlLoading _controlLoading;
+
 	private Mode _controlMode = Mode.Paint;
 	private DisplayWindow _displayWindow;
 	private DisplayPictures _displayLayer;
@@ -77,35 +78,31 @@ public class Main
 			{
 				var controlIndex = (displayIndex == 0 ? screens.length - 1 : 0);
 
-				_paintHelper.displaySize = screens[displayIndex].getSize();
-
-				_displayWindow = new DisplayWindow
-				(
-					screens[displayIndex].getRectangle()
-				);
-
-				var controlWindow = new ControlWindow
-				(
-					Main.ApplicationName,
-					_paintHelper.icons.Program.getImage(),
-					screens[controlIndex].getRectangle());
-				_controlWindow = controlWindow;
+				var screen = screens[displayIndex];
+				_paintHelper.displaySize = screen.getSize();
 
 				var folders = _fileHelper.folders;
 				var folderLayer = folders[Mode.Layer.ordinal()];
 				var folderImage = folders[Mode.Image.ordinal()];
 
+				_displayWindow = new DisplayWindow(screen.getRectangle());
 				_displayLayer = new DisplayPictures(folderLayer);
 				_displayImage = new DisplayPictures(folderImage);
 				displayPaint = new DisplayPaint();
 				displayLoading = new DisplayLoading();
 
+				_controlWindow = new ControlWindow
+				(
+					Main.ApplicationName,
+					_paintHelper.icons.Program.getImage(),
+					screens[controlIndex].getRectangle()
+				);
 				_controlLayer = new ControlPictures(folderLayer, _displayLayer, true);
 				_controlImage = new ControlPictures(folderImage, _displayImage, false);
-				_controlPaint = new ControlPaint();
-				_controlLoading = new ControlLoading();
+				_controlPaint = new ControlPaint(displayPaint);
+				_controlLoading = new ControlLoading(displayLoading, _displayWindow);
 
-				controlWindow.addWindowListener
+				_controlWindow.addWindowListener
 				(
 					new WindowAdapter()
 					{
@@ -117,15 +114,23 @@ public class Main
 					}
 				);
 
-				controlWindow.setButton(WindowType.Control, Mode.Paint, true);
-				controlWindow.setButton(WindowType.Display, Mode.Loading, true);
-				controlWindow.setMode(_controlMode, Mode.Image);
-				_displayWindow.setMode(_displayMode, Mode.Image);
+				_controlWindow.setButton(WindowType.Control, Mode.Paint, true);
+				_controlWindow.setButton(WindowType.Display, Mode.Loading, true);
+				_controlWindow.setControl
+				(
+					this.getControlForMode(_controlMode),
+					this.getControlForMode(Mode.Image)
+				);
+				_displayWindow.setDisplay
+				(
+					this.getDisplayForMode(_displayMode), 
+					this.getDisplayForMode(Mode.Image)
+				);
 
-				synchronized (controlWindow)
+				synchronized (_controlWindow)
 				{
 					_displayWindow.setVisible(true);
-					controlWindow.setVisible(true);
+					_controlWindow.setVisible(true);
 				}
 			}
 		}
@@ -139,7 +144,7 @@ public class Main
 		}
 	}
 
-	public Control getControl(Mode mode)
+	public Control getControlForMode(Mode mode)
 	{
 		Control returnValue = null;
 
@@ -163,7 +168,7 @@ public class Main
 		return returnValue;
 	}
 
-	public Display getDisplay(Mode mode)
+	public Display getDisplayForMode(Mode mode)
 	{
 		Display returnValue = null;
 
@@ -216,7 +221,11 @@ public class Main
 			{
 				if (_controlMode != mode) {
 					_controlWindow.setButton(disp, _controlMode, false);
-					_controlWindow.setMode(mode, _controlMode);
+					_controlWindow.setControl
+					(
+						this.getControlForMode(mode),
+						this.getControlForMode(_controlMode)
+					);
 					_controlMode = mode;
 					_controlWindow.setButton(disp, _controlMode, true);
 				}
@@ -229,7 +238,11 @@ public class Main
 				if (_displayMode != mode)
 				{
 					_controlWindow.setButton(disp, _displayMode, false);
-					_displayWindow.setMode(mode, _displayMode);
+					_displayWindow.setDisplay
+					(
+						this.getDisplayForMode(mode), 
+						this.getDisplayForMode(_displayMode)
+					);
 					_displayMode = mode;
 					_controlWindow.setButton(disp, _displayMode, true);
 				}

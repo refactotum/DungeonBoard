@@ -5,7 +5,6 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
-import main.*;
 
 public class DisplayPictures extends Display
 {

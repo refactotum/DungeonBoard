@@ -2,7 +2,6 @@ package display;
 
 import java.awt.*;
 import java.awt.image.*;
-import main.*;
 
 public class DisplayPaint extends Display
 {

@@ -7,7 +7,6 @@ import main.*;
 
 public abstract class Control extends JPanel
 {
-	protected Main _main = Main.Instance;
 	protected ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	protected ErrorHelper _errorHelper = ErrorHelper.Instance;
 	protected FileHelper _fileHelper = FileHelper.Instance;

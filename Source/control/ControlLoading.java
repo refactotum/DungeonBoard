@@ -4,13 +4,20 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import main.*;
+
+import display.*;
 
 public class ControlLoading extends Control
 {
-	public ControlLoading()
+	private DisplayLoading _displayLoading;
+	private DisplayWindow _displayWindow;
+
+	public ControlLoading(DisplayLoading displayLoading, DisplayWindow displayWindow)
 	{
 		super();
+		this._displayLoading = displayLoading;
+		this._displayWindow = displayWindow;
+
 		var northPanel = getNorthPanel();
 
 		var colors = _controlBuilder.colors;
@@ -24,12 +31,12 @@ public class ControlLoading extends Control
 				var upScaleButtonBackground = button.getBackground();
 				if (upScaleButtonBackground == colors.active)
 				{
-					_main.displayLoading.setShouldImagesBeUpscaled(false);
+					_displayLoading.setShouldImagesBeUpscaled(false);
 					button.setBackground(colors.inactive);
 				}
 				else if (upScaleButtonBackground == colors.inactive)
 				{
-					_main.displayLoading.setShouldImagesBeUpscaled(true);
+					_displayLoading.setShouldImagesBeUpscaled(true);
 					button.setBackground(colors.active);
 				}
 			}
@@ -41,7 +48,7 @@ public class ControlLoading extends Control
 			"Add Cube",
 			e ->
 			{
-				_main.displayLoading.addScreensaverCube();
+				_displayLoading.addScreensaverCube();
 			}
 		);
 		northPanel.add(addCubeButton);
@@ -51,7 +58,7 @@ public class ControlLoading extends Control
 			"Clear Screensaver Cubes",
 			e ->
 			{
-				_main.displayLoading.clearScreensaverCubes();
+				_displayLoading.clearScreensaverCubes();
 			}
 		);
 		northPanel.add(clearScreensaverCubeButton);
@@ -74,17 +81,18 @@ public class ControlLoading extends Control
 				var slider = ((JSlider)(e.getSource()));
 				var sliderValue = slider.getValue();
 				timeLabel.setText(String.format("%02d", sliderValue));
-				_main.displayLoading.setSecondsPerImage(sliderValue);
+				_displayLoading.setSecondsPerImage(sliderValue);
 			}
 		);
 		northPanel.add(timeSlider);
-		
+
+		var controlLoading = this;
 		var createTimerButton = _controlBuilder.createButton
 		(
 			"Create Timer",
 			e ->
 			{
-				var input = JOptionPane.showInputDialog(_main.getControl(), "Enter minutes or M:SS", "");
+				var input = JOptionPane.showInputDialog(controlLoading, "Enter minutes or M:SS", "");
 				try
 				{
 					var seconds = 0;
@@ -98,7 +106,7 @@ public class ControlLoading extends Control
 					{
 						seconds += Integer.parseInt(input) * 60;
 					}
-					_main.getDisplay().setTimerSecondsRemaining(seconds);
+					displayWindow.setTimerSecondsRemaining(seconds);
 				}
 				catch (NumberFormatException | NullPointerException e2)
 				{
@@ -111,7 +119,7 @@ public class ControlLoading extends Control
 		var clearTimerButton = _controlBuilder.createButton
 		(
 			"Clear Timer",
-			e -> { _main.getDisplay().clearTimer(); }
+			e -> { displayWindow.clearTimer(); }
 		);
 		northPanel.add(clearTimerButton);
 		

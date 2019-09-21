@@ -9,7 +9,6 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 	private JButton[] controlButtons;
 	private JButton[] displayButtons;
 	
-	private Main _main = Main.Instance;
 	protected ControlBuilder _controlBuilder = ControlBuilder.Instance;
 
 	public ControlWindow(String name, Image iconImage, Rectangle r)
@@ -86,13 +85,13 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 		
 		return panel;
 	}
-	
-	public void setMode(Mode newMode, Mode oldMode)
+
+	public void setControl(Control controlNew, Control controlOld)
 	{
-		remove(_main.getControl(oldMode));
-		_main.getControl(oldMode).setIsMainControl(false);
-		add(_main.getControl(newMode), BorderLayout.CENTER);
-		_main.getControl(newMode).setIsMainControl(true);
+		remove(controlOld);
+		controlOld.setIsMainControl(false);
+		add(controlNew, BorderLayout.CENTER);
+		controlNew.setIsMainControl(true);
 		validate();
 		repaint();
 	}

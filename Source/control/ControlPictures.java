@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import display.*;
-import main.*;
 
 public class ControlPictures extends Control
 {

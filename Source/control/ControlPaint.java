@@ -8,6 +8,8 @@ import java.util.*;
 import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import display.*;
 import main.*;
 import paint.*;
 
@@ -19,10 +21,13 @@ public class ControlPaint extends Control
 	private JSlider zoomSlider;
 	private double maxZoom;
 	private JPanel folderControlPanel;
+	private DisplayPaint _displayPaint;
 
-	public ControlPaint()
+	public ControlPaint(DisplayPaint displayPaint)
 	{
 		super();
+
+		this._displayPaint = displayPaint;
 
 		var controlBuilder = _controlBuilder;
 		var northPanel = controlBuilder.createPanelWithBoxLayout(BoxLayout.Y_AXIS);
@@ -55,7 +60,7 @@ public class ControlPaint extends Control
 						_fileHelper.folders[Mode.Paint.ordinal()].getAbsolutePath()
 						+ File.separator + fileBox.getSelectedItem().toString();
 
-					var file = new File(filePath);
+					var file = _fileHelper.getFileAtPath(filePath);
 					
 					if (file.exists())
 					{
@@ -65,7 +70,7 @@ public class ControlPaint extends Control
 							_fileHelper.dataFolder + File.separator 
 							+ "Paint" + File.separator + maskFile.getName() 
 							+ ".data";
-						var dataFile = new File(dataFilePath);
+						var dataFile = _fileHelper.getFileAtPath(dataFilePath);
 						if (dataFile.exists())
 						{
 							try
@@ -309,7 +314,6 @@ public class ControlPaint extends Control
 								var paintImage = _paintHelper.paintImage;
 								synchronized (paintImage)
 								{
-									
 									var g2d = paintImage.createGraphics();
 									g2d.setColor(Color.BLACK);
 									g2d.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
@@ -319,7 +323,8 @@ public class ControlPaint extends Control
 									{
 										if (paintImages[i - 1])
 										{
-											var f = new File(paintFolder + "/" + i + ".png");
+											var filePath = paintFolder + "/" + i + ".png";
+											var f = _fileHelper.getFileAtPath(filePath);
 											g2d.drawImage(ImageIO.read(f), 0, 0, null);
 										}
 									}
@@ -328,8 +333,8 @@ public class ControlPaint extends Control
 									
 									if (_paintHelper.paintImage != null)
 									{
-										_main.displayPaint.setMask(drawPanel.getMask());
-										_main.displayPaint.setImageSizeScaled();
+										_displayPaint.setMask(drawPanel.getMask());
+										_displayPaint.setImageSizeScaled();
 										setZoomMax();
 									}
 								}
@@ -337,11 +342,11 @@ public class ControlPaint extends Control
 							catch (IOException | OutOfMemoryError error)
 							{
 								drawPanel.resetImage();
-								_main.displayPaint.resetImage();
+								_displayPaint.resetImage();
 								_paintHelper.paintImage = null;
 								_errorHelper.showError("Cannot load Image, file is probably too large", error);
 							}
-							_main.displayPaint.repaint();
+							_displayPaint.repaint();
 							drawPanel.repaint();
 							drawPanel.setIsImageLoading(false);
 						}
@@ -353,8 +358,9 @@ public class ControlPaint extends Control
 			folderControlPanel.add(buttonI);
 		}
 		folderControlPanel.revalidate();
-		
-		var guide = new File(paintFolder.getAbsolutePath() + "/Guide.png");
+
+		var filePath = paintFolder.getAbsolutePath() + "/Guide.png";
+		var guide = _fileHelper.getFileAtPath(filePath);
 
 		if (paintFolder != null && paintFolder.exists()) // todo - Can this ever be null?
 		{
@@ -397,18 +403,18 @@ public class ControlPaint extends Control
 								BufferedImage.TYPE_INT_ARGB
 							);
 						drawPanel.setImage();
-						_main.displayPaint.setMask(drawPanel.getMask());
-						_main.displayPaint.setImageSizeScaled();
+						_displayPaint.setMask(drawPanel.getMask());
+						_displayPaint.setImageSizeScaled();
 						setZoomMax();
 					}
 					catch (IOException | OutOfMemoryError error)
 					{
 						drawPanel.resetImage();
-						_main.displayPaint.resetImage();
+						_displayPaint.resetImage();
 						_paintHelper.paintImage = null;
 						_errorHelper.showError("Cannot load Image, file is probably too large", error);
 					}
-					_main.displayPaint.repaint();
+					_displayPaint.repaint();
 					drawPanel.repaint();
 					drawPanel.setIsImageLoading(false);
 				}
@@ -437,19 +443,19 @@ public class ControlPaint extends Control
 					if (_paintHelper.paintImage != null)
 					{
 						drawPanel.setImage();
-						_main.displayPaint.setMask(drawPanel.getMask());
-						_main.displayPaint.setImageSizeScaled();
+						_displayPaint.setMask(drawPanel.getMask());
+						_displayPaint.setImageSizeScaled();
 						setZoomMax();
 					}
 				}
 				catch (IOException | OutOfMemoryError error)
 				{
 					drawPanel.resetImage();
-					_main.displayPaint.resetImage();
+					_displayPaint.resetImage();
 					_paintHelper.paintImage = null;
 					_errorHelper.showError("Cannot load Image, file is probably too large", error);
 				}
-				_main.displayPaint.repaint();
+				_displayPaint.repaint();
 				drawPanel.repaint();
 				drawPanel.setIsImageLoading(false);
 			}

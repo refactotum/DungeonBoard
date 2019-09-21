@@ -15,8 +15,6 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 	private CursorDirection handDirection;
 	private DisplayTimer displayTimer;
 
-	private Main _main = Main.Instance;
-
 	public DisplayWindow(Rectangle r)
 	{
 		super();
@@ -109,7 +107,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		);
 	}
 	
-	public void setMode(Mode newMode, Mode oldMode)
+	public void setDisplay(Display displayNew, Display displayOld)
 	{
 		var thread = new Thread()
 		{
@@ -117,13 +115,14 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 			public void run()
 			{
 				super.run();
-				synchronized (_main.getControl())
+				synchronized (displayOld)
 				{
-					remove(_main.getDisplay(oldMode));
-					_main.getDisplay(oldMode).setIsMainDisplay(false);
-					add(_main.getDisplay(newMode));
+					remove(displayOld);
+					displayOld.setIsMainDisplay(false);
+					
+					add(displayNew);
 					validate();
-					_main.getDisplay(newMode).setIsMainDisplay(true);
+					displayNew.setIsMainDisplay(true);
 				}
 			}
 		};

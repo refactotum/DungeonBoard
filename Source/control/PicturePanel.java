@@ -131,7 +131,8 @@ public class PicturePanel extends JPanel
 			if (c.getClass().equals(JButton.class))
 			{
 				var b = (JButton) c;
-				var f = new File(folder + File.separator + b.getText());
+				var filePath = folder + File.separator + b.getText();
+				var f = _fileHelper.getFileAtPath(filePath);
 				f = _fileHelper.fileToThumb(f);
 				try
 				{

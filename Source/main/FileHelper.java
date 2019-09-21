@@ -1,7 +1,9 @@
 package main;
 
+import java.awt.image.*;
 import java.io.*;
 import java.util.*;
+import javax.imageio.*;
 
 public class FileHelper
 {
@@ -35,7 +37,12 @@ public class FileHelper
 
 		this.dataFolder = new File(folder + fileSeparator + "Data");
 	}
-	
+
+	public File getFileAtPath(String filePath)
+	{
+		return new File(filePath);
+	}
+
 	public boolean isFileAnImage(File f)
 	{
 		var name = f.getName();
@@ -120,5 +127,19 @@ public class FileHelper
 			}
 		});
 		return files;
+	}
+
+	public BufferedImage readImageFromFileAtPath(String filePath)
+	{
+		BufferedImage returnValue = null;
+		try
+		{
+			returnValue = ImageIO.read(new File(filePath));
+		}
+		catch (IOException ex)
+		{
+			// Do nothing.
+		}
+		return returnValue;
 	}
 }
