@@ -13,10 +13,9 @@ public abstract class PicturePanel extends JPanel
 	private final int GRID_WIDTH = 4;
 	private final Dimension IMAGE_ICON_SIZE = new Dimension(100, 60);
 
-	private Settings _settings = Settings.Instance;
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	private ErrorHelper _errorHelper = ErrorHelper.Instance;
-	private Settings.FileHelper _fileHelper = _settings.fileHelper;
+	private FileHelper _fileHelper = FileHelper.Instance;
 
 	public PicturePanel()
 	{
@@ -60,7 +59,7 @@ public abstract class PicturePanel extends JPanel
 	
 	private void createThumbnail(File file)
 	{
-		var tFile = _settings.fileHelper.fileToThumb(file);
+		var tFile = _fileHelper.fileToThumb(file);
 		if (tFile.exists() == false || file.lastModified() > tFile.lastModified())
 		{
 			try

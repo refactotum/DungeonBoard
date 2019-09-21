@@ -1,0 +1,107 @@
+package main;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
+
+public class FileHelper
+{
+	public static FileHelper Instance = new FileHelper();
+
+	private final String fileSeparator = File.separator;
+	public File paintFolder;
+	
+	public final File folder = new File
+	(
+		new File(System.getProperty("user.dir")).getAbsolutePath()
+		+ fileSeparator + Settings.Instance.applicationName
+	);
+	
+	public final File[] folders =
+	{
+		new File(folder + fileSeparator + "Layer"),
+		new File(folder + fileSeparator + "Image"),
+		new File(folder + fileSeparator + "Paint"),
+		new File(folder + fileSeparator + "Loading")
+	};
+	public final File dataFolder = new File(folder + fileSeparator + "Data");
+
+	public int paintFolderSize;
+
+	public void load() throws SecurityException
+	{
+		for (var f : this.folders)
+		{
+			if (f.exists() == false)
+			{
+				f.mkdirs();
+			}
+		}
+
+		var dataFolder = this.dataFolder;
+		if (dataFolder.exists() == false)
+		{
+			dataFolder.mkdirs();
+		}
+
+		var imageThumbs = new File(dataFolder + File.separator + "Layer");
+		imageThumbs.mkdirs();
+
+		var layerThumbs = new File(dataFolder + File.separator + "Image");
+		layerThumbs.mkdirs();
+
+		var paintMasks = new File(dataFolder + File.separator + "Paint");
+		paintMasks.mkdirs();
+	}
+
+	public File fileToThumb(File f)
+	{
+		return new File(this.dataFolder.getAbsolutePath() + File.separator + f.getParentFile().getName() + File.separator + f.getName());
+	}
+
+	public File thumbToFile(File f)
+	{
+		return new File(this.folder.getAbsolutePath() + File.separator + f.getParentFile().getName() + File.separator + f.getName());
+	}
+
+	public File folderToDataFolder(File f)
+	{
+		return new File(this.dataFolder.getAbsolutePath() + File.separator + f.getName());
+	}
+
+	public File fileToMaskFile(File f)
+	{
+		File returnValue = null;
+		if (f != null)
+		{
+			var fileSuffix = ( f.isDirectory() ? ".f" : "");
+			var filePath =
+				this.dataFolder.getAbsolutePath() + File.separator
+				+ "Paint" + File.separator + f.getName() + fileSuffix;
+			returnValue = new File(filePath);
+		}
+		return returnValue;
+	}
+
+	public LinkedList<File> listFilesInOrder(File folder)
+	{
+		LinkedList<File> files = new LinkedList<>();
+		for (var f : folder.listFiles())
+		{
+			files.add(f);
+		}
+		files.sort(new Comparator<File>()
+		{
+			@Override
+			public int compare(File o1, File o2)
+			{
+				return o1.compareTo(o2);
+			}
+		});
+		return files;
+	}
+}

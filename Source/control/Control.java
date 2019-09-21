@@ -10,9 +10,9 @@ public abstract class Control extends JPanel
 	protected Main _main = Main.Instance;
 	protected ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	protected ErrorHelper _errorHelper = ErrorHelper.Instance;
+	protected FileHelper _fileHelper = FileHelper.Instance;
 
 	private Settings _settings = Settings.Instance;
-	protected Settings.FileHelper _fileHelper = _settings.fileHelper;
 	protected Settings.Icons _icons = _settings.icons;
 	protected Settings.PaintHelper _paintHelper = _settings.paintHelper;
 

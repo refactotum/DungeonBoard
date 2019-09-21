@@ -15,7 +15,7 @@ public class PicturePanelButtonCreator
 	private int queueNumber;
 	
 	private Settings _settings = Settings.Instance;
-	private Settings.FileHelper _fileHelper = _settings.fileHelper;
+	private FileHelper _fileHelper = FileHelper.Instance;
 	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
 
 	public PicturePanelButtonCreator(PicturePanel pp, File imageFolder)

@@ -109,7 +109,7 @@ public class DisplayPictures extends Display
 	
 	public void addImage(String name)
 	{
-		AlphaImage ai = new AlphaImage(_settings, imageFolder, name);
+		AlphaImage ai = new AlphaImage(imageFolder, name);
 		stopCompile();
 		imagesToBePainted.add(ai);
 		compileImage();

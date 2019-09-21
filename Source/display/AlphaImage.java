@@ -11,12 +11,11 @@ public class AlphaImage
 	private String name;
 	private File file;
 
-	private Settings _settings;
 	private ErrorHelper _errorHelper = ErrorHelper.Instance;
+	private FileHelper _fileHelper = FileHelper.Instance;
 
-	public AlphaImage(Settings settings, File folder, String n)
+	public AlphaImage(File folder, String n)
 	{
-		_settings = settings;
 		name = n;
 		file = new File(folder.getAbsolutePath() + File.separator + name);
 	}
@@ -65,7 +64,7 @@ public class AlphaImage
 	{
 		var returnValue = Color.BLACK;
 		
-		var f = _settings.fileHelper.fileToThumb(file);
+		var f = _fileHelper.fileToThumb(file);
 		
 		try
 		{

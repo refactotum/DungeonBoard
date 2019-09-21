@@ -36,7 +36,7 @@ public class DrawPanel extends JComponent
 	private Settings _settings = Settings.Instance;
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	private ErrorHelper _errorHelper = ErrorHelper.Instance;
-	private Settings.FileHelper _fileHelper = _settings.fileHelper;
+	private FileHelper _fileHelper = FileHelper.Instance;
 	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
 	
 	private Main _main = Main.Instance;
@@ -623,7 +623,7 @@ public class DrawPanel extends JComponent
 
 	public void saveMask()
 	{
-		var fileHelper = _settings.fileHelper;
+		var fileHelper = _fileHelper;
 		var f = fileHelper.fileToMaskFile(fileHelper.paintFolder);
 		if (f != null)
 		{

@@ -27,6 +27,7 @@ public class Main
 	private Settings _settings = Settings.Instance;
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	private ErrorHelper _errorHelper = ErrorHelper.Instance;
+	private FileHelper _fileHelper = FileHelper.Instance;
 
 	public static void main(String[] args)
 	{
@@ -60,10 +61,9 @@ public class Main
 
 		try
 		{
-			var fileHelper = _settings.fileHelper;
 			var _paintHelper = _settings.paintHelper;
 
-			fileHelper.load();
+			_fileHelper.load();
 			var screens = getScreens();
 			var displayIndex = JOptionPane.showOptionDialog
 			(
@@ -91,7 +91,7 @@ public class Main
 					screens[controlIndex].getRectangle());
 				_controlWindow = controlWindow;
 
-				var folders = fileHelper.folders;
+				var folders = _fileHelper.folders;
 				var folderLayer = folders[Mode.Layer.ordinal()];
 				var folderImage = folders[Mode.Image.ordinal()];
 

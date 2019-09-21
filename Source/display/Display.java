@@ -8,6 +8,7 @@ public abstract class Display extends JPanel
 {
 	protected Settings _settings = Settings.Instance;
 	protected ControlBuilder _controlBuilder = ControlBuilder.Instance;
+	protected FileHelper _fileHelper = FileHelper.Instance;
 	protected Settings.PaintHelper _paintHelper = _settings.paintHelper;
 
 	protected Main _main = Main.Instance;
