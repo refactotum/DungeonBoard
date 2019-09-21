@@ -26,6 +26,7 @@ public class Main
 
 	private Settings _settings = Settings.Instance;
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
+	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 
 	public static void main(String[] args)
 	{
@@ -54,7 +55,7 @@ public class Main
 			| UnsupportedLookAndFeelException e
 		)
 		{
-			_settings.errorHelper.showError("Error - Changing look and feel", e);
+			_errorHelper.showError("Error - Changing look and feel", e);
 		}
 
 		try
@@ -66,7 +67,7 @@ public class Main
 			var screens = getScreens();
 			var displayIndex = JOptionPane.showOptionDialog
 			(
-				null, "Select Display Window", _settings.NAME,
+				null, "Select Display Window", _settings.applicationName,
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.QUESTION_MESSAGE,
 				null, screens, 0
@@ -85,7 +86,7 @@ public class Main
 
 				var controlWindow = new ControlWindow
 				(
-					_settings.NAME,
+					_settings.applicationName,
 					_settings.icons.Program.getImage(),
 					screens[controlIndex].getRectangle());
 				_controlWindow = controlWindow;
@@ -130,7 +131,7 @@ public class Main
 		}
 		catch (SecurityException e)
 		{
-			_settings.errorHelper.showError("Error - Loading resources", e);
+			_errorHelper.showError("Error - Loading resources", e);
 		}
 		catch (HeadlessException e)
 		{

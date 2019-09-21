@@ -13,7 +13,7 @@ public class Settings
 	public static Settings Instance = new Settings();
 	private Main _main = Main.Instance;
 
-	public final String name = "Dungeon Board";
+	public final String applicationName = "Dungeon Board";
 
 	public class Icons
 	{
@@ -70,16 +70,21 @@ public class Settings
 
 	public class FileHelper
 	{
-		public final File folder = new File(new File(System.getProperty("user.dir")).getAbsolutePath() + File.separator + NAME);
+		private final String fileSeparator = File.separator;
+		public final File folder = new File
+		(
+			new File(System.getProperty("user.dir")).getAbsolutePath()
+			+ fileSeparator + applicationName
+		);
 		public File paintFolder;
 		public final File[] folders =
 		{
-			new File(folder + File.separator + "Layer"),
-			new File(folder + File.separator + "Image"),
-			new File(folder + File.separator + "Paint"),
-			new File(folder + File.separator + "Loading")
+			new File(folder + fileSeparator + "Layer"),
+			new File(folder + fileSeparator + "Image"),
+			new File(folder + fileSeparator + "Paint"),
+			new File(folder + fileSeparator + "Loading")
 		};
-		public final File dataFolder = new File(folder + File.separator + "Data");
+		public final File dataFolder = new File(folder + fileSeparator + "Data");
 
 		public int paintFolderSize;
 
@@ -157,19 +162,4 @@ public class Settings
 		}
 	}
 	public final FileHelper fileHelper = new FileHelper();
-
-	public class ErrorHelper
-	{
-		public void showError(String message)
-		{
-			JOptionPane.showMessageDialog(_main.getControl(), message, "Error", JOptionPane.ERROR_MESSAGE);
-		}
-
-		public void showError(String message, Throwable error)
-		{
-			JOptionPane.showMessageDialog(_main.getControl(), message + "\n" + error.getMessage());
-		}
-	}
-	public ErrorHelper errorHelper = new ErrorHelper();
-
 }

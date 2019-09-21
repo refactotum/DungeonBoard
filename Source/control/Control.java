@@ -8,9 +8,10 @@ import main.*;
 public abstract class Control extends JPanel
 {
 	protected Main _main = Main.Instance;
-	private Settings _settings = Settings.Instance;
 	protected ControlBuilder _controlBuilder = ControlBuilder.Instance;
-	protected Settings.ErrorHelper _errorHelper = _settings.errorHelper;
+	protected ErrorHelper _errorHelper = ErrorHelper.Instance;
+
+	private Settings _settings = Settings.Instance;
 	protected Settings.FileHelper _fileHelper = _settings.fileHelper;
 	protected Settings.Icons _icons = _settings.icons;
 	protected Settings.PaintHelper _paintHelper = _settings.paintHelper;
@@ -28,7 +29,7 @@ public abstract class Control extends JPanel
 		var northPanel = getEmptyNorthPanel();
 		var refreshButton = _controlBuilder.createButton
 		(
-			_settings.icons.Refresh,
+			_icons.Refresh,
 			e -> { load(); } 
 		);
 		northPanel.add(refreshButton);

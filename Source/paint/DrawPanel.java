@@ -35,7 +35,7 @@ public class DrawPanel extends JComponent
 
 	private Settings _settings = Settings.Instance;
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
-	private Settings.ErrorHelper _errorHelper = _settings.errorHelper;
+	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 	private Settings.FileHelper _fileHelper = _settings.fileHelper;
 	private Settings.PaintHelper _paintHelper = _settings.paintHelper;
 	
@@ -226,7 +226,7 @@ public class DrawPanel extends JComponent
 				}
 				catch (IOException e)
 				{
-					_settings.errorHelper.showError("Cannot load Mask, file is probably too large", e);
+					_errorHelper.showError("Cannot load Mask, file is probably too large", e);
 				}
 			}
 			else
@@ -642,7 +642,7 @@ public class DrawPanel extends JComponent
 			}
 			catch (IOException e)
 			{
-				_settings.errorHelper.showError("Cannot save Mask", e);
+				_errorHelper.showError("Cannot save Mask", e);
 			}
 		}
 	}

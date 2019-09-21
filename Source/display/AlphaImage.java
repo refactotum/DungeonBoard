@@ -12,6 +12,7 @@ public class AlphaImage
 	private File file;
 
 	private Settings _settings;
+	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 
 	public AlphaImage(Settings settings, File folder, String n)
 	{
@@ -49,10 +50,10 @@ public class AlphaImage
 			}
 			catch (IllegalArgumentException | IOException e)
 			{
-				_settings.errorHelper.showError("Cannot load Image \"" + name, e);
+				_errorHelper.showError("Cannot load Image \"" + name, e);
 			}
 		}
-		_settings.errorHelper.showError
+		_errorHelper.showError
 		(
 			"Cannot Load Image\"" + name + "\" after 50 attempts\n" + "Allocate more memory, use smaller images"
 		);
@@ -72,7 +73,7 @@ public class AlphaImage
 		}
 		catch (IllegalArgumentException | IOException e)
 		{
-			_settings.errorHelper.showError("Cannot load Image RGB \"" + name, e);
+			_errorHelper.showError("Cannot load Image RGB \"" + name, e);
 		}
 		
 		return returnValue;

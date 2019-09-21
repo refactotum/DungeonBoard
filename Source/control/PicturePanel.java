@@ -15,7 +15,7 @@ public abstract class PicturePanel extends JPanel
 
 	private Settings _settings = Settings.Instance;
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
-	private Settings.ErrorHelper _errorHelper = _settings.errorHelper;
+	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 	private Settings.FileHelper _fileHelper = _settings.fileHelper;
 
 	public PicturePanel()
@@ -82,7 +82,7 @@ public abstract class PicturePanel extends JPanel
 			}
 			catch (OutOfMemoryError | IOException e)
 			{
-				_settings.errorHelper.showError("Cannot create Thumbnail, file is probably too large", e);
+				_errorHelper.showError("Cannot create Thumbnail, file is probably too large", e);
 				e.printStackTrace();
 			}
 		}
