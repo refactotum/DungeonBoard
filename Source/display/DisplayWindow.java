@@ -18,13 +18,20 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 	public DisplayWindow(Rectangle r)
 	{
 		super();
+
+		setDefaults(r);
+		createAndAddMouseMotionListener();
+		createAndAddMouseListener();
+	}
+	
+	private void setDefaults(Rectangle r)
+	{
 		setTitle("Display");
 		setUndecorated(true);
 		setIconImage(_paintHelper.icons.Program.getImage());
 		setSize(r.getSize());
 		setLocation(r.getLocation());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		setCursor
 		(
 			getToolkit().createCustomCursor
@@ -35,7 +42,10 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		mousePos = NullPos;
 		handDirection = CursorDirection.Up;
 		displayTimer = new DisplayTimer(getSize());
-
+	}
+	
+	private void createAndAddMouseMotionListener()
+	{
 		addMouseMotionListener
 		(
 			new MouseMotionAdapter()
@@ -50,7 +60,10 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 				}
 			}
 		);
-		
+	}
+	
+	private void createAndAddMouseListener()
+	{
 		addMouseListener
 		(
 			new MouseListener()

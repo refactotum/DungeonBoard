@@ -59,28 +59,33 @@ public class DisplayPictures extends Display
 		}
 		else if (scaleMethod == ScaleMethod.UpScale)
 		{
-			var screenRatio = displaySize.getWidth() / displaySize.getHeight();
-			var imageRatio = (double)img.getWidth() / img.getHeight();
-			Dimension imageScale;
-			if (imageRatio > screenRatio)
-			{
-				// width > height
-				imageScale = new Dimension(displaySize.width, (int) (displaySize.width / imageRatio));
-			}
-			else
-			{
-				// width < height
-				imageScale = new Dimension((int) (displaySize.height * imageRatio), displaySize.height);
-			}
-			g2d.drawImage
-			(
-				img,
-				(displaySize.width - imageScale.width) / 2,
-				(displaySize.height - imageScale.height) / 2,
-				imageScale.width,
-				imageScale.height, null
-			);
+			this.paintImageUpscaled(g2d, img, displaySize);
 		}
+	}
+	
+	private void paintImageUpscaled(Graphics2D g2d, BufferedImage img, Dimension displaySize)
+	{
+		var screenRatio = displaySize.getWidth() / displaySize.getHeight();
+		var imageRatio = (double)img.getWidth() / img.getHeight();
+		Dimension imageScale;
+		if (imageRatio > screenRatio)
+		{
+			// width > height
+			imageScale = new Dimension(displaySize.width, (int) (displaySize.width / imageRatio));
+		}
+		else
+		{
+			// width < height
+			imageScale = new Dimension((int) (displaySize.height * imageRatio), displaySize.height);
+		}
+		g2d.drawImage
+		(
+			img,
+			(displaySize.width - imageScale.width) / 2,
+			(displaySize.height - imageScale.height) / 2,
+			imageScale.width,
+			imageScale.height, null
+		);
 	}
 	
 	private void fillBackground(Graphics2D g2d, Color c)

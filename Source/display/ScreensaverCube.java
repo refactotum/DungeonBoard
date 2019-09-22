@@ -2,6 +2,7 @@ package display;
 
 import java.awt.*;
 import java.util.*;
+import javax.swing.*;
 
 import main.*;
 
@@ -45,57 +46,69 @@ public class ScreensaverCube
 	{
 		if (isInCorner == false)
 		{
-			var vertHit = false;
 			var displaySize = _paintHelper.displaySize;
 			var iconDvd = _paintHelper.icons.Dvd;
 
-			if (isMovingUpNotDown)
+			var vertHit = moveVertical(displaySize, iconDvd);
+			moveHorizontal(displaySize, iconDvd, vertHit);
+		}
+	}
+	
+	private boolean moveVertical(Dimension displaySize, ImageIcon iconDvd)
+	{
+		var vertHit = false;
+
+		if (isMovingUpNotDown)
+		{
+			position.x -= pixelsPerMove;
+			if (position.x < 0)
 			{
-				position.x -= pixelsPerMove;
-				if (position.x < 0)
+				position.x = 0;
+				isMovingUpNotDown = false;
+				vertHit = true;
+			}
+		}
+		else
+		{
+			position.x += pixelsPerMove;
+			var xMax = displaySize.width - iconDvd.getIconWidth();
+			if (position.x > xMax)
+			{
+				position.x = (int)xMax;
+				isMovingUpNotDown = true;
+				vertHit = true;
+			}
+		}
+		
+		return vertHit;
+	}
+	
+	private void moveHorizontal(Dimension displaySize, ImageIcon iconDvd, boolean vertHit)
+	{
+		if (isMovingLeftNotRight)
+		{
+			position.y -= pixelsPerMove;
+			if (position.y < 0)
+			{
+				position.y = 0;
+				isMovingLeftNotRight = false;
+				if (vertHit)
 				{
-					position.x = 0;
-					isMovingUpNotDown = false;
-					vertHit = true;
+					isInCorner = true;
 				}
 			}
-			else
+		}
+		else
+		{
+			position.y += pixelsPerMove;
+			var yMax = displaySize.height - iconDvd.getIconHeight();
+			if (position.y > yMax)
 			{
-				position.x += pixelsPerMove;
-				var xMax = displaySize.width - iconDvd.getIconWidth();
-				if (position.x > xMax)
+				position.y = (int)yMax;
+				isMovingLeftNotRight = true;
+				if (vertHit)
 				{
-					position.x = (int)xMax;
-					isMovingUpNotDown = true;
-					vertHit = true;
-				}
-			}
-			
-			if (isMovingLeftNotRight)
-			{
-				position.y -= pixelsPerMove;
-				if (position.y < 0)
-				{
-					position.y = 0;
-					isMovingLeftNotRight = false;
-					if (vertHit)
-					{
-						isInCorner = true;
-					}
-				}
-			}
-			else
-			{
-				position.y += pixelsPerMove;
-				var yMax = displaySize.height - iconDvd.getIconHeight();
-				if (position.y > yMax)
-				{
-					position.y = (int)yMax;
-					isMovingLeftNotRight = true;
-					if (vertHit)
-					{
-						isInCorner = true;
-					}
+					isInCorner = true;
 				}
 			}
 		}
