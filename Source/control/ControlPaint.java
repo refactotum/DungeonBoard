@@ -26,24 +26,45 @@ public class ControlPaint extends Control
 	public ControlPaint(DisplayPaint displayPaint)
 	{
 		super();
-
 		this._displayPaint = displayPaint;
 
-		var controlBuilder = _controlBuilder;
-		var northPanel = controlBuilder.createPanelWithBoxLayout(BoxLayout.Y_AXIS);
+		var northPanel = _controlBuilder.createPanelWithBoxLayout(BoxLayout.Y_AXIS);
 
 		folderControlPanel = getEmptyNorthPanel();
 		folderControlPanel.setVisible(false);
 
-		var innerNorthPanel = getNorthPanel();
-
 		maxZoom = 10.0;
-
-		drawPanel = new DrawPanel();
-
 		setFocusable(true);
 
-		fileBox = controlBuilder.createComboBox(new String[] {}, controlBuilder.colors.controlBackground);
+		var innerNorthPanel = getNorthPanel();
+		innerNorthPanel.add(createFileBox());
+		innerNorthPanel.add(createPenDirectionLockButton());
+		innerNorthPanel.add(createPenShapeButton());
+		innerNorthPanel.add(createTouchpadDrawModeButton());
+		innerNorthPanel.add(createShowButton());
+		innerNorthPanel.add(createHideButton());
+		innerNorthPanel.add(createSliderPenRadius());
+		drawPanel = new DrawPanel();
+		innerNorthPanel.add(drawPanel.getUpdateButton());
+
+		var westPanel = createWestPanel();
+
+		northPanel.add(folderControlPanel);
+		northPanel.add(innerNorthPanel);
+
+		add(westPanel, BorderLayout.WEST);
+		add(northPanel, BorderLayout.NORTH);
+		add(drawPanel, BorderLayout.CENTER);
+
+		setVisible(true);
+	}
+
+	private JComboBox<String> createFileBox()
+	{
+		fileBox = _controlBuilder.createComboBox
+		(
+			new String[] {}, _controlBuilder.colors.controlBackground
+		);
 		fileBox.addItem("");
 		var fileNames = getFileNames();
 		for (var fileName : fileNames)
@@ -94,7 +115,7 @@ public class ControlPaint extends Control
 						if (file.isDirectory())
 						{
 							folderControlPanel.setVisible(true);
-							setFolder(file);
+							setupPaintFolder(file);
 						}
 						else
 						{
@@ -109,12 +130,14 @@ public class ControlPaint extends Control
 				}
 			}
 		);
-		innerNorthPanel.add(fileBox);
-
+		return fileBox;
+	}
+	
+	private JButton createPenDirectionLockButton()
+	{
 		var icons = _paintHelper.icons;
-
 		var iconsForPenDirectionLock = icons.PenDirectionLocks;
-		var penDirectionLockButton = controlBuilder.createButton
+		var penDirectionLockButton = _controlBuilder.createButton
 		(
 			iconsForPenDirectionLock[0],
 			e ->
@@ -123,10 +146,14 @@ public class ControlPaint extends Control
 				((JButton)(e.getSource())).setIcon(iconsForPenDirectionLock[drawPanel.getStyle()]);
 			}
 		);
-		innerNorthPanel.add(penDirectionLockButton);
-
+		return penDirectionLockButton;
+	}
+	
+	private JButton createPenShapeButton()
+	{
+		var icons = _paintHelper.icons;
 		var iconsForPenShapes = icons.PenShapes;
-		var shape = controlBuilder.createButton
+		var penShapeButton = _controlBuilder.createButton
 		(
 			iconsForPenShapes[0],
 			e ->
@@ -135,10 +162,14 @@ public class ControlPaint extends Control
 				((JButton)(e.getSource())).setIcon(iconsForPenShapes[drawPanel.getPenShape()]);
 			}
 		);
-		innerNorthPanel.add(shape);
-		
+		return penShapeButton;
+	}
+	
+	private JButton createTouchpadDrawModeButton()
+	{
+		var icons = _paintHelper.icons;
 		var iconsForTouchpadDrawMode = icons.TouchpadDrawModes;
-		var touchpadDrawModeButton = controlBuilder.createButton
+		var touchpadDrawModeButton = _controlBuilder.createButton
 		(
 			iconsForTouchpadDrawMode[0],
 			e ->
@@ -147,45 +178,60 @@ public class ControlPaint extends Control
 				((JButton)(e.getSource())).setIcon(iconsForTouchpadDrawMode[drawPanel.getTouchpadDrawMode()]);
 			}
 		);
-		innerNorthPanel.add(touchpadDrawModeButton);
-		
-		var colors = controlBuilder.colors;
-
-		var showButton = controlBuilder.createButton
+		return touchpadDrawModeButton;
+	}
+	
+	private JButton createShowButton()
+	{
+		var showButton = _controlBuilder.createButton
 		(
-			"Show", colors.active, e -> { drawPanel.showAll(); }
+			"Show", _controlBuilder.colors.active, e -> { drawPanel.showAll(); }
 		);
-		innerNorthPanel.add(showButton);
-		
-		var hideButton = controlBuilder.createButton
+		return showButton;
+	}
+	
+	private JButton createHideButton()
+	{
+		var hideButton = _controlBuilder.createButton
 		(
-			"Hide", colors.inactive, e -> { drawPanel.hideAll(); }
+			"Hide", _controlBuilder.colors.inactive, e -> { drawPanel.hideAll(); }
 		);
-		innerNorthPanel.add(hideButton);
-		
-		var sliderPenRadius = controlBuilder.createSlider
+		return hideButton;
+	}
+	
+	private JSlider createSliderPenRadius()
+	{
+		var sliderPenRadius = _controlBuilder.createSlider
 		(
 			SwingConstants.HORIZONTAL, 10, 100, 25,
 			null, // minSize 
-			colors.controlBackground,
+			_controlBuilder.colors.controlBackground,
 			e ->
 			{
 				var slider = ((JSlider)(e.getSource()));
 				drawPanel.setPenRadius(slider.getValue());
 			}
 		);
-		innerNorthPanel.add(sliderPenRadius);
-		
-		innerNorthPanel.add(drawPanel.getUpdateButton());
-		
-		var westPanel = controlBuilder.createPanelWithBoxLayout
+		return sliderPenRadius;
+	}
+	
+	private JPanel createWestPanel()
+	{
+		var westPanel = _controlBuilder.createPanelWithBoxLayout
 		(
-			BoxLayout.Y_AXIS, colors.controlBackground
+			BoxLayout.Y_AXIS, _controlBuilder.colors.controlBackground
 		);
 		
-		westPanel.add(controlBuilder.createLabel("Zoom", SwingConstants.LEFT));
+		westPanel.add(_controlBuilder.createLabel("Zoom", SwingConstants.LEFT));
+		westPanel.add(createZoomText());
+		westPanel.add(createZoomSlider());
 		
-		zoomText = controlBuilder.createTextField("1.00", 1);
+		return westPanel;
+	}
+
+	private JTextField createZoomText()
+	{
+		zoomText = _controlBuilder.createTextField("1.00", 1);
 		zoomText.setMaximumSize(new Dimension(5000, 25));
 		zoomText.addActionListener
 		(
@@ -213,9 +259,12 @@ public class ControlPaint extends Control
 				zoomSlider.setValue((int) (zoom * 100));
 			}
 		);
-		westPanel.add(zoomText);
-		
-		zoomSlider = controlBuilder.createSlider
+		return zoomText;
+	}
+
+	private JSlider createZoomSlider()
+	{
+		zoomSlider = _controlBuilder.createSlider
 		(
 			SwingConstants.VERTICAL, 1, (int)(maxZoom * 100), 100,
 			null, // minSize
@@ -236,19 +285,21 @@ public class ControlPaint extends Control
 				drawPanel.setZoom(zoom);
 			}
 		);
-		westPanel.add(zoomSlider);
+		return zoomSlider;
+	}
+
+	private void setupPaintFolder(File paintFolder)
+	{
+		var paintFolderSize = findPaintFolderSize(paintFolder);
+		var shouldImagesBePainted = createPaintFolderButtons(paintFolder, paintFolderSize);
+		createAndStartFolderLoadingThread(paintFolder);
 		
-		northPanel.add(folderControlPanel);
-		northPanel.add(innerNorthPanel);
-		
-		add(westPanel, BorderLayout.WEST);
-		add(northPanel, BorderLayout.NORTH);
-		add(drawPanel, BorderLayout.CENTER);
-		
-		setVisible(true);
+		_fileHelper.paintFolder = paintFolder;
+		_fileHelper.paintFolderSize = paintFolderSize;
+		_paintHelper.shouldImagesBePainted = shouldImagesBePainted;
 	}
 	
-	private void setFolder(File paintFolder)
+	private int findPaintFolderSize(File paintFolder)
 	{
 		var files = paintFolder.listFiles(File::isFile);
 		var paintFolderSize = 0;
@@ -256,8 +307,9 @@ public class ControlPaint extends Control
 		for (var f : files)
 		{
 			var fileName = f.getName();
-			var prefix = fileName.substring(0, fileName.lastIndexOf('.'));
-			var suffix = fileName.substring(fileName.lastIndexOf('.') + 1);
+			var lastIndexOfDot = fileName.lastIndexOf('.');
+			var prefix = fileName.substring(0, lastIndexOfDot);
+			var suffix = fileName.substring(lastIndexOfDot + 1);
 			try
 			{
 				if (suffix.equalsIgnoreCase("PNG") && Integer.parseInt(prefix) == paintFolderSize + 1)
@@ -277,9 +329,14 @@ public class ControlPaint extends Control
 				}
 			}
 		}
-
-		var paintImages = new boolean[paintFolderSize];
 		
+		return paintFolderSize;
+	}
+	
+	private boolean[] createPaintFolderButtons(File paintFolder, int paintFolderSize)
+	{
+		var shouldImagesBePainted = new boolean[paintFolderSize];
+
 		var controlBuilder = _controlBuilder;
 		var colors = controlBuilder.colors;
 		var controlPaint = this;
@@ -299,12 +356,12 @@ public class ControlPaint extends Control
 					if (button.getBackground().equals(colors.active))
 					{
 						button.setBackground(colors.inactive);
-						paintImages[number - 1] = false;
+						shouldImagesBePainted[number - 1] = false;
 					}
 					else
 					{
 						button.setBackground(colors.active);
-						paintImages[number - 1] = true;
+						shouldImagesBePainted[number - 1] = true;
 					}
 					var fileLoadingThread = new Thread("fileLoadingThread")
 					{
@@ -322,7 +379,7 @@ public class ControlPaint extends Control
 									var paintFolderSize = _fileHelper.paintFolderSize;
 									for (var i = paintFolderSize; i > 0; i--)
 									{
-										if (paintImages[i - 1])
+										if (shouldImagesBePainted[i - 1])
 										{
 											var filePath = paintFolder + "/" + i + ".png";
 											var f = _fileHelper.getFileAtPath(filePath);
@@ -364,13 +421,19 @@ public class ControlPaint extends Control
 			folderControlPanel.add(buttonI);
 		}
 		folderControlPanel.revalidate();
-
+		
+		return shouldImagesBePainted;
+	}
+	
+	private void createAndStartFolderLoadingThread(File paintFolder)
+	{
 		var filePath = paintFolder.getAbsolutePath() + "/Guide.png";
 		var guide = _fileHelper.getFileAtPath(filePath);
 
 		if (paintFolder != null && paintFolder.exists()) // todo - Can this ever be null?
 		{
 			drawPanel.setIsImageLoading(true);
+			var controlPaint = this;
 			var folderLoadingThread = new Thread("folderLoadingThread")
 			{
 				public void run()
@@ -430,10 +493,6 @@ public class ControlPaint extends Control
 			};
 			folderLoadingThread.start();
 		}
-		
-		_fileHelper.paintFolder = paintFolder;
-		_fileHelper.paintFolderSize = paintFolderSize;
-		_paintHelper.paintImageS = paintImages;
 	}
 
 	private void setFile(File file)

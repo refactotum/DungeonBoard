@@ -20,8 +20,23 @@ public class ControlLoading extends Control
 
 		var northPanel = getNorthPanel();
 
+		northPanel.add(createUpScaleButton());
+		northPanel.add(createAddScreensaverCubeButton());
+		northPanel.add(createClearScreensaverCubeButton());
+		var timeLabel = createTimeLabel();
+		northPanel.add(timeLabel);
+		northPanel.add(createTimeSlider(timeLabel));
+		northPanel.add(createCreateTimerButton());
+		northPanel.add(createClearTimerButton());
+
+		add(northPanel, BorderLayout.NORTH);
+		setVisible(true);
+	}
+	
+	private JButton createUpScaleButton()
+	{
 		var colors = _controlBuilder.colors;
-		
+
 		var upScaleButton = _controlBuilder.createButton
 		(
 			"Up Scale", colors.inactive,
@@ -41,35 +56,45 @@ public class ControlLoading extends Control
 				}
 			}
 		);
-		northPanel.add(upScaleButton);
 		
+		return upScaleButton;
+	}
+	
+	private JButton createAddScreensaverCubeButton()
+	{
 		var addCubeButton = _controlBuilder.createButton
 		(
 			"Add Cube",
-			e ->
-			{
-				_displayLoading.addScreensaverCube();
-			}
+			e -> { _displayLoading.addScreensaverCube(); }
 		);
-		northPanel.add(addCubeButton);
-		
+		return addCubeButton;
+	}
+	
+	private JButton createClearScreensaverCubeButton()
+	{
 		var clearScreensaverCubeButton = _controlBuilder.createButton
 		(
 			"Clear Screensaver Cubes",
-			e ->
-			{
-				_displayLoading.clearScreensaverCubes();
-			}
+			e -> { _displayLoading.clearScreensaverCubes(); }
 		);
-		northPanel.add(clearScreensaverCubeButton);
+		
+		return clearScreensaverCubeButton;
+	}
 
-		var colorControlBackground = colors.controlBackground;
+	private JLabel createTimeLabel()
+	{
+		var colorControlBackground = _controlBuilder.colors.controlBackground;
 
 		var timeLabel = _controlBuilder.createLabel
 		(
 			"08", SwingConstants.CENTER, colorControlBackground
 		);
-		northPanel.add(timeLabel);
+		return timeLabel;
+	}
+
+	private JSlider createTimeSlider(JLabel timeLabel)
+	{
+		var colorControlBackground = _controlBuilder.colors.controlBackground;
 
 		var timeSlider = _controlBuilder.createSlider
 		(
@@ -84,8 +109,11 @@ public class ControlLoading extends Control
 				_displayLoading.setSecondsPerImage(sliderValue);
 			}
 		);
-		northPanel.add(timeSlider);
-
+		return timeSlider;
+	}
+	
+	private JButton createCreateTimerButton()
+	{
 		var controlLoading = this;
 		var createTimerButton = _controlBuilder.createButton
 		(
@@ -109,7 +137,7 @@ public class ControlLoading extends Control
 					{
 						seconds += Integer.parseInt(input) * 60;
 					}
-					displayWindow.setTimerSecondsRemaining(seconds);
+					_displayWindow.setTimerSecondsRemaining(seconds);
 				}
 				catch (NumberFormatException | NullPointerException e2)
 				{
@@ -117,18 +145,19 @@ public class ControlLoading extends Control
 				}
 			}
 		);
-		northPanel.add(createTimerButton);
 		
+		return createTimerButton;
+	}
+	
+	private JButton createClearTimerButton()
+	{
 		var clearTimerButton = _controlBuilder.createButton
 		(
 			"Clear Timer",
-			e -> { displayWindow.clearTimer(); }
+			e -> { _displayWindow.clearTimer(); }
 		);
-		northPanel.add(clearTimerButton);
 		
-		add(northPanel, BorderLayout.NORTH);
-		
-		setVisible(true);
+		return clearTimerButton;
 	}
 
 	@Override

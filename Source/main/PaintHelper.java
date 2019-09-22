@@ -14,7 +14,7 @@ public class PaintHelper
 	public Dimension displaySize;
 
 	public final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-	public boolean[] paintImageS; // "S"?
+	public boolean[] shouldImagesBePainted;
 	public final int sysThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
 	public final int paintGuideScale = 3;
 	public final int paintPixelsPerMaskPixel = 5;
