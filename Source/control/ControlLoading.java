@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import common.*;
 import display.*;
 
 public class ControlLoading extends Control
@@ -99,7 +100,7 @@ public class ControlLoading extends Control
 		var timeSlider = _controlBuilder.createSlider
 		(
 			SwingConstants.HORIZONTAL, 1, 20, 8,
-			new Dimension(100, 0),
+			new Coords(100, 0),
 			colorControlBackground,
 			e ->
 			{

@@ -8,6 +8,7 @@ import java.io.*;
 import javax.imageio.*;
 import javax.swing.*;
 
+import common.*;
 import main.*;
 
 public class DrawPanel extends JComponent
@@ -16,9 +17,9 @@ public class DrawPanel extends JComponent
 	private int penRadius;
 	private int penDiameter;
 	private PenShape penShape;
-	private BufferedImage drawingLayer;
+	private ImageWrapper drawingLayer;
 	private Graphics2D g2;
-	private Dimension controlSize;
+	private Coords controlSize;
 	private double displayZoom;
 	private Point lastMouseClickPosition;
 	private Point mousePos;
@@ -203,7 +204,7 @@ public class DrawPanel extends JComponent
 			public void componentShown(ComponentEvent e) {}
 			public void componentResized(ComponentEvent e)
 			{
-				controlSize = getSize();
+				controlSize = Coords.fromDimension(getSize());
 				repaint();
 			}
 			public void componentMoved(ComponentEvent e) {}
@@ -240,8 +241,8 @@ public class DrawPanel extends JComponent
 			{
 				try
 				{
-					drawingLayer = ImageIO.read(maskFile);
-					g2 = (Graphics2D) drawingLayer.getGraphics();
+					drawingLayer = new ImageWrapper(ImageIO.read(maskFile));
+					g2 = (Graphics2D) drawingLayer.systemImage.getGraphics();
 					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, 0.6f));
 					g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 				}
@@ -252,15 +253,18 @@ public class DrawPanel extends JComponent
 			}
 			else
 			{
-				var paintImage = _paintHelper.paintImage;
+				var paintImageSize = _paintHelper.paintImage.size();
 				var pixelsPerMask = _paintHelper.paintPixelsPerMaskPixel;
-				drawingLayer = new BufferedImage
+				drawingLayer = new ImageWrapper
 				(
-					paintImage.getWidth() / pixelsPerMask,
-					paintImage.getHeight() / pixelsPerMask,
-					BufferedImage.TYPE_INT_ARGB
+					new BufferedImage
+					(
+						paintImageSize.x / pixelsPerMask,
+						paintImageSize.y / pixelsPerMask,
+						BufferedImage.TYPE_INT_ARGB
+					)
 				);
-				g2 = (Graphics2D) drawingLayer.getGraphics();
+				g2 = (Graphics2D) drawingLayer.systemImage.getGraphics();
 				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, 0.6f));
 				g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 				hideAll();
@@ -351,23 +355,25 @@ public class DrawPanel extends JComponent
 		return touchpadDrawMode.ordinal();
 	}
 
-	public BufferedImage getMask() throws OutOfMemoryError
+	public ImageWrapper getMask() throws OutOfMemoryError
 	{
+		var drawingLayerSize = drawingLayer.size();
+
 		var mask = new BufferedImage
 		(
-			drawingLayer.getWidth(),
-			drawingLayer.getHeight(),
+			drawingLayerSize.x,
+			drawingLayerSize.y,
 			BufferedImage.TYPE_INT_ARGB
 		);
 
 		var colorClearAsRgb = -1721434268;
 		var colorOpaqueAsRgb = -1711315868;
 
-		for (var i = 0; i < drawingLayer.getWidth(); i++)
+		for (var i = 0; i < drawingLayerSize.x; i++)
 		{
-			for (var j = 0; j < drawingLayer.getHeight(); j++)
+			for (var j = 0; j < drawingLayerSize.y; j++)
 			{
-				var dl = drawingLayer.getRGB(i, j);
+				var dl = drawingLayer.systemImage.getRGB(i, j);
 				if (dl == colorClearAsRgb)
 				{
 					mask.setRGB(i, j, 0);
@@ -378,7 +384,8 @@ public class DrawPanel extends JComponent
 				}
 			}
 		}
-		return mask;
+
+		return new ImageWrapper(mask);
 	}
 
 	public Point getWindowPosition()
@@ -399,12 +406,12 @@ public class DrawPanel extends JComponent
 		var g2d = (Graphics2D) g;
 		if (isLoading)
 		{
-			g2d.drawString("Loading...", controlSize.width / 2, controlSize.height / 2);
+			g2d.drawString("Loading...", controlSize.x / 2, controlSize.y / 2);
 		}
 		else if (_paintHelper.paintControlImage != null)
 		{
-			g2d.drawImage(_paintHelper.paintControlImage, 0, 0, controlSize.width, controlSize.height, null);
-			g2d.drawImage(drawingLayer, 0, 0, controlSize.width, controlSize.height, null);
+			g2d.drawImage(_paintHelper.paintControlImage.systemImage, 0, 0, controlSize.x, controlSize.y, null);
+			g2d.drawImage(drawingLayer.systemImage, 0, 0, controlSize.x, controlSize.y, null);
 			g2d.setColor(colors.pink);
 			switch (penShape) {
 			case Circle:
@@ -433,33 +440,33 @@ public class DrawPanel extends JComponent
 		}
 		else if (controlSize != null)
 		{
-			g2d.drawString("No image loaded", controlSize.width / 2, controlSize.height / 2);
+			g2d.drawString("No image loaded", controlSize.x / 2, controlSize.y / 2);
 		}
 	}
 
 	private void drawPlayerView(Graphics2D g2d)
 	{
 		var displaySize = _paintHelper.displaySize;
-		var paintImage = _paintHelper.paintImage;
-		var w = (int) (displaySize.width * displayZoom * controlSize.width / paintImage.getWidth());
-		var h = (int) (displaySize.height * displayZoom * controlSize.height / paintImage.getHeight());
+		var paintImageSize = _paintHelper.paintImage.size();
+		var w = (int) (displaySize.x * displayZoom * controlSize.x / paintImageSize.x);
+		var h = (int) (displaySize.y * displayZoom * controlSize.y / paintImageSize.y);
 		int x, y;
 
-		if (w > controlSize.width)
+		if (w > controlSize.x)
 		{
-			x = -(w - controlSize.width) / 2;
+			x = -(w - controlSize.x) / 2;
 		}
 		else
 		{
-			x = windowPosition.x * controlSize.width / paintImage.getWidth();
+			x = windowPosition.x * controlSize.x / paintImageSize.x;
 		}
-		if (h > controlSize.height)
+		if (h > controlSize.y)
 		{
-			y = -(h - controlSize.height) / 2;
+			y = -(h - controlSize.y) / 2;
 		}
 		else
 		{
-			y = windowPosition.y * controlSize.height / paintImage.getHeight();
+			y = windowPosition.y * controlSize.y / paintImageSize.y;
 		}
 
 		g2d.drawRect(x, y, w, h);
@@ -471,10 +478,11 @@ public class DrawPanel extends JComponent
 
 	private Point toDrawingPoint(Point p)
 	{
+		var drawingLayerSize = drawingLayer.size();
 		return new Point
 		(
-			p.x * drawingLayer.getWidth() / controlSize.width,
-			p.y * drawingLayer.getHeight() / controlSize.height
+			p.x * drawingLayerSize.x / controlSize.x,
+			p.y * drawingLayerSize.y / controlSize.y
 		);
 	}
 
@@ -484,13 +492,14 @@ public class DrawPanel extends JComponent
 
 		var pixelsPerMask = _paintHelper.paintPixelsPerMaskPixel;
 		var displaySize = _paintHelper.displaySize;
-		windowPosition.x = (int) (p.x * pixelsPerMask - (displaySize.width * displayZoom) / 2);
-		windowPosition.y = (int) (p.y * pixelsPerMask - (displaySize.height * displayZoom) / 2);
+		windowPosition.x = (int) (p.x * pixelsPerMask - (displaySize.x * displayZoom) / 2);
+		windowPosition.y = (int) (p.y * pixelsPerMask - (displaySize.y * displayZoom) / 2);
 
 		var paintImage = _paintHelper.paintImage;
 		if (paintImage != null)
 		{
-			var xMax = paintImage.getWidth() - displaySize.width * displayZoom;
+			var paintImageSize = paintImage.size();
+			var xMax = paintImageSize.x - displaySize.x * displayZoom;
 			if (windowPosition.x > xMax)
 			{
 				windowPosition.x = (int)xMax;
@@ -499,7 +508,7 @@ public class DrawPanel extends JComponent
 			{
 				windowPosition.x = 0;
 			}
-			var yMax = paintImage.getHeight() - displaySize.height * displayZoom;
+			var yMax = paintImageSize.y - displaySize.y * displayZoom;
 			if (windowPosition.y > yMax)
 			{
 				windowPosition.y = (int)yMax;
@@ -533,8 +542,9 @@ public class DrawPanel extends JComponent
 				default:
 					break;
 			}
-			final double widthMod = (double)drawingLayer.getWidth() / controlSize.width;
-			final double heightMod = (double)drawingLayer.getHeight() / controlSize.height;
+			var drawingLayerSize = drawingLayer.size();
+			final double widthMod = (double)drawingLayerSize.x / controlSize.x;
+			final double heightMod = (double)drawingLayerSize.y / controlSize.y;
 			final double rwidth = penRadius * widthMod;
 			final double rheight = penRadius * heightMod;
 			final int dwidth = (int) (penDiameter * widthMod);
@@ -625,7 +635,8 @@ public class DrawPanel extends JComponent
 		if (g2 != null)
 		{
 			g2.setPaint(c);
-			g2.fillRect(0, 0, drawingLayer.getWidth(), drawingLayer.getHeight());
+			var drawingLayerSize = drawingLayer.size();
+			g2.fillRect(0, 0, drawingLayerSize.x, drawingLayerSize.y);
 			repaint();
 			updateButton.setEnabled(true);
 			updateButton.setBackground(_controlBuilder.colors.active);
@@ -650,7 +661,7 @@ public class DrawPanel extends JComponent
 		{
 			try
 			{
-				ImageIO.write(drawingLayer, "png", f);
+				ImageIO.write(drawingLayer.systemImage, "png", f);
 
 				var dataFilePath = 
 					fileHelper.dataFolder + File.separator

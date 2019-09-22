@@ -7,13 +7,14 @@ import java.io.*;
 import javax.imageio.*;
 import javax.swing.*;
 
+import common.*;
 import display.*;
 import main.*;
 
 public class PicturePanel extends JPanel
 {
 	private final int GridWidth = 4;
-	private final Dimension ImageIconSize = new Dimension(100, 60);
+	private final Coords ImageIconSize = new Coords(100, 60);
 
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
@@ -74,13 +75,13 @@ public class PicturePanel extends JPanel
 				var imageIconSize = ImageIconSize;
 				var bufferedImage = new BufferedImage
 				(
-					imageIconSize.width, imageIconSize.height, BufferedImage.TYPE_INT_RGB
+					imageIconSize.x, imageIconSize.y, BufferedImage.TYPE_INT_RGB
 				);
 				bufferedImage.getGraphics().drawImage
 				(
 					ImageIO.read(file).getScaledInstance
 					(
-						imageIconSize.width, imageIconSize.height, BufferedImage.SCALE_SMOOTH
+						imageIconSize.x, imageIconSize.y, BufferedImage.SCALE_SMOOTH
 					),
 					0, 0, null
 				);
@@ -93,7 +94,7 @@ public class PicturePanel extends JPanel
 			}
 		}
 	}
-	
+
 	public void clearButtons()
 	{
 		for (var c : getComponents())

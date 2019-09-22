@@ -2,6 +2,8 @@ package main;
 
 import java.awt.*;
 
+import common.*;
+
 public class Screen
 {
 	private final Rectangle rectangle;
@@ -19,9 +21,9 @@ public class Screen
 		return name + "  " + rectangle.width + "x" + rectangle.height;
 	}
 
-	public Dimension getSize()
+	public Coords getSize()
 	{
-		return rectangle.getSize();
+		return Coords.fromDimension(rectangle.getSize());
 	}
 
 	public Rectangle getRectangle()

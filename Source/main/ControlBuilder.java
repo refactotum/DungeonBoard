@@ -5,6 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import common.*;
+
 public class ControlBuilder
 {
 	public static ControlBuilder Instance = new ControlBuilder();
@@ -24,7 +26,7 @@ public class ControlBuilder
 	}
 	public final Colors colors = new Colors();
 
-	public final Dimension controlSize = new Dimension(900, 700);
+	public final Coords controlSize = new Coords(900, 700);
 
 	public JButton createButton(String label)
 	{
@@ -159,13 +161,13 @@ public class ControlBuilder
 	public JSlider createSlider
 	(
 		int orientation, int min, int max, int value, 
-		Dimension minSize, Color backgroundColor, ChangeListener changeListener
+		Coords minSize, Color backgroundColor, ChangeListener changeListener
 	)
 	{
 		var returnValue = new JSlider(orientation, min, max, value);
 		if (minSize != null)
 		{
-			returnValue.setMinimumSize(minSize);
+			returnValue.setMinimumSize(minSize.toDimension());
 		}
 		if (backgroundColor != null)
 		{

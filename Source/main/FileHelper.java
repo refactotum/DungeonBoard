@@ -5,6 +5,8 @@ import java.io.*;
 import java.util.*;
 import javax.imageio.*;
 
+import common.*;
+
 public class FileHelper
 {
 	public static FileHelper Instance = new FileHelper();
@@ -129,12 +131,12 @@ public class FileHelper
 		return files;
 	}
 
-	public BufferedImage readImageFromFileAtPath(String filePath)
+	public ImageWrapper readImageFromFileAtPath(String filePath)
 	{
-		BufferedImage returnValue = null;
+		ImageWrapper returnValue = null;
 		try
 		{
-			returnValue = ImageIO.read(new File(filePath));
+			returnValue = new ImageWrapper(ImageIO.read(new File(filePath)));
 		}
 		catch (IOException ex)
 		{

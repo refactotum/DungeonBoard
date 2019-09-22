@@ -4,14 +4,19 @@ import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
+import common.*;
+
 public class PaintHelper
 {
 	public static PaintHelper Instance = new PaintHelper();
 
-	public final BufferedImage blankCursor = new BufferedImage(3, 3, BufferedImage.TYPE_INT_ARGB);
-	public BufferedImage paintImage;
-	public BufferedImage paintControlImage;
-	public Dimension displaySize;
+	public final ImageWrapper blankCursor = new ImageWrapper
+	(
+		new BufferedImage(3, 3, BufferedImage.TYPE_INT_ARGB)
+	);
+	public ImageWrapper paintImage;
+	public ImageWrapper paintControlImage;
+	public Coords displaySize;
 
 	public final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
 	public boolean[] shouldImagesBePainted;

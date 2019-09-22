@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
+import common.*;
 import main.*;
 
 public class ScreensaverCube
@@ -27,8 +28,8 @@ public class ScreensaverCube
 		var iconDvd = _paintHelper.icons.Dvd;
 		position = new Point
 		(
-			rand.nextInt(displaySize.width - iconDvd.getIconWidth()),
-			rand.nextInt(displaySize.height - iconDvd.getIconHeight())
+			rand.nextInt(displaySize.x - iconDvd.getIconWidth()),
+			rand.nextInt(displaySize.y - iconDvd.getIconHeight())
 		);
 		isMovingUpNotDown = rand.nextBoolean();
 		isMovingLeftNotRight = rand.nextBoolean();
@@ -54,7 +55,7 @@ public class ScreensaverCube
 		}
 	}
 	
-	private boolean moveVertical(Dimension displaySize, ImageIcon iconDvd)
+	private boolean moveVertical(Coords displaySize, ImageIcon iconDvd)
 	{
 		var vertHit = false;
 
@@ -71,7 +72,7 @@ public class ScreensaverCube
 		else
 		{
 			position.x += pixelsPerMove;
-			var xMax = displaySize.width - iconDvd.getIconWidth();
+			var xMax = displaySize.x - iconDvd.getIconWidth();
 			if (position.x > xMax)
 			{
 				position.x = (int)xMax;
@@ -83,7 +84,7 @@ public class ScreensaverCube
 		return vertHit;
 	}
 	
-	private void moveHorizontal(Dimension displaySize, ImageIcon iconDvd, boolean vertHit)
+	private void moveHorizontal(Coords displaySize, ImageIcon iconDvd, boolean vertHit)
 	{
 		if (isMovingLeftNotRight)
 		{
@@ -101,7 +102,7 @@ public class ScreensaverCube
 		else
 		{
 			position.y += pixelsPerMove;
-			var yMax = displaySize.height - iconDvd.getIconHeight();
+			var yMax = displaySize.x - iconDvd.getIconHeight();
 			if (position.y > yMax)
 			{
 				position.y = (int)yMax;

@@ -5,6 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import main.*;
 
+import common.*;
+
 public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 {
 	private final Point NullPos = new Point(-100, -100);
@@ -36,12 +38,12 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		(
 			getToolkit().createCustomCursor
 			(
-				_paintHelper.blankCursor, new Point(0, 0), "null"
+				_paintHelper.blankCursor.systemImage, new Point(0, 0), "null"
 			)
 		);
 		mousePos = NullPos;
 		handDirection = CursorDirection.Up;
-		displayTimer = new DisplayTimer(getSize());
+		displayTimer = new DisplayTimer(Coords.fromDimension(getSize()));
 	}
 	
 	private void createAndAddMouseMotionListener()

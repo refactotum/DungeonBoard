@@ -1,6 +1,8 @@
 package display;
 
 import java.awt.*;
+
+import common.*;
 import main.*;
 
 public class DisplayTimer // todo - Should this inherit Display?
@@ -19,11 +21,11 @@ public class DisplayTimer // todo - Should this inherit Display?
 	
 	private Main _main = Main.Instance;
 
-	public DisplayTimer(Dimension size)
+	public DisplayTimer(Coords size)
 	{
-		left = (size.width - _timerWidth) / 2;
-		top = size.height - _timerHeight;
-		bottom = size.height - 4;
+		left = (size.x - _timerWidth) / 2;
+		top = size.y - _timerHeight;
+		bottom = size.y - 4;
 		timerSecondsRemaining = -_secondsToShowCompletedTimer;
 		paintThread = new Thread();
 	}

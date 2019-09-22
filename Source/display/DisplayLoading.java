@@ -5,6 +5,7 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 
+import common.*;
 import main.*;
 
 public class DisplayLoading extends Display
@@ -16,8 +17,8 @@ public class DisplayLoading extends Display
 	private int ticksPerImage = 400;
 	private LinkedList<ScreensaverCube> screensaverCubes;
 	private LinkedList<String> fileNamesNotYetShown;
-	private BufferedImage oldImage;
-	private BufferedImage currentImage;
+	private ImageWrapper oldImage;
+	private ImageWrapper currentImage;
 	private Thread paintThread;
 	private boolean isMainDisplay;
 	private boolean shouldImagesBeUpscaled;
@@ -77,36 +78,39 @@ public class DisplayLoading extends Display
 
 		if (ticksSinceImageChanged <= ticksPerFade)
 		{
-			g2d.drawImage(oldImage, 0, 0, displaySize.width, displaySize.height, null);
+			g2d.drawImage(oldImage.systemImage, 0, 0, displaySize.x, displaySize.y, null);
 		}
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fadeOpacity));
-		g2d.drawImage(currentImage, 0, 0, displaySize.width, displaySize.height, null);
+		g2d.drawImage(currentImage.systemImage, 0, 0, displaySize.x, displaySize.y, null);
 	}
 
 	private void paintCurrentImageNotUpscaled(Graphics2D g2d)
 	{
 		var displaySize = _paintHelper.displaySize;
 
-		g2d.setColor(new Color(currentImage.getRGB(0, 0)));
-		g2d.fillRect(0, 0, displaySize.width, displaySize.height);
+		g2d.setColor(new Color(currentImage.systemImage.getRGB(0, 0)));
+		g2d.fillRect(0, 0, displaySize.x, displaySize.y);
 
 		if (ticksSinceImageChanged <= ticksPerFade && oldImage != null)
 		{
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1 - fadeOpacity));
+			var oldImageSize = oldImage.size();
 			g2d.drawImage
 			(
-				oldImage,
-				(displaySize.width - oldImage.getWidth()) / 2,
-				(displaySize.height - oldImage.getHeight()) / 2,
+				oldImage.systemImage,
+				(displaySize.x - oldImageSize.x) / 2,
+				(displaySize.y - oldImageSize.y) / 2,
 				null
 			);
 		}
+		
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fadeOpacity));
+		var currentImageSize = currentImage.size();
 		g2d.drawImage
 		(
-			currentImage, 
-			(displaySize.width - currentImage.getWidth()) / 2,
-			(displaySize.height - currentImage.getHeight()) / 2,
+			currentImage.systemImage, 
+			(displaySize.x - currentImageSize.x) / 2,
+			(displaySize.y - currentImageSize.y) / 2,
 			null
 		);
 	}

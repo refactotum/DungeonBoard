@@ -9,6 +9,7 @@ import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import common.*;
 import display.*;
 import main.*;
 import paint.*;
@@ -232,7 +233,7 @@ public class ControlPaint extends Control
 	private JTextField createZoomText()
 	{
 		zoomText = _controlBuilder.createTextField("1.00", 1);
-		zoomText.setMaximumSize(new Dimension(5000, 25));
+		zoomText.setMaximumSize(new Coords(5000, 25).toDimension());
 		zoomText.addActionListener
 		(
 			e ->
@@ -372,9 +373,10 @@ public class ControlPaint extends Control
 								var paintImage = _paintHelper.paintImage;
 								synchronized (paintImage)
 								{
-									var g2d = paintImage.createGraphics();
+									var g2d = paintImage.systemImage.createGraphics();
 									g2d.setColor(Color.BLACK);
-									g2d.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
+									var paintImageSize = paintImage.size();
+									g2d.fillRect(0, 0, paintImageSize.x, paintImageSize.y);
 									
 									var paintFolderSize = _fileHelper.paintFolderSize;
 									for (var i = paintFolderSize; i > 0; i--)
@@ -442,35 +444,41 @@ public class ControlPaint extends Control
 					{
 						_paintHelper.paintImage = null;
 						_paintHelper.paintControlImage = null;
-						Dimension imageSizeScaled;
+						Coords imageSizeScaled;
 						{
 							var guideImg = ImageIO.read(guide);
-							imageSizeScaled = new Dimension(guideImg.getWidth(), guideImg.getHeight());
+							imageSizeScaled = new Coords(guideImg.getWidth(), guideImg.getHeight());
 							var paintGuideScale = _paintHelper.paintGuideScale;
-							var paintControlImage = new BufferedImage
+							var paintControlImage = new ImageWrapper
 							(
-									imageSizeScaled.width / paintGuideScale,
-									imageSizeScaled.height / paintGuideScale,
+								new BufferedImage
+								(
+									imageSizeScaled.x / paintGuideScale,
+									imageSizeScaled.y / paintGuideScale,
 									BufferedImage.TYPE_INT_RGB
+								)
 							);
 							_paintHelper.paintControlImage = paintControlImage;
-							paintControlImage.getGraphics().drawImage
+							paintControlImage.systemImage.getGraphics().drawImage
 							(
 								guideImg.getScaledInstance
 								(
-									imageSizeScaled.width / paintGuideScale,
-									imageSizeScaled.height / paintGuideScale,
+									imageSizeScaled.x / paintGuideScale,
+									imageSizeScaled.y / paintGuideScale,
 									BufferedImage.SCALE_SMOOTH
 								), 
 								0, 0, null
 							);
 						}
-						_paintHelper.paintImage = new BufferedImage
+						_paintHelper.paintImage = new ImageWrapper
 						(
-								imageSizeScaled.width,
-								imageSizeScaled.height,
+							new BufferedImage
+							(
+								imageSizeScaled.x,
+								imageSizeScaled.y,
 								BufferedImage.TYPE_INT_ARGB
-							);
+							)
+						);
 						drawPanel.setImage();
 						_displayPaint.setMask(drawPanel.getMask());
 						_displayPaint.setImageSizeScaled();
@@ -507,7 +515,7 @@ public class ControlPaint extends Control
 				try
 				{
 					_paintHelper.paintImage = null;
-					_paintHelper.paintImage = ImageIO.read(file);
+					_paintHelper.paintImage = new ImageWrapper(ImageIO.read(file));
 					_paintHelper.paintControlImage = _paintHelper.paintImage;
 					if (_paintHelper.paintImage != null)
 					{
@@ -535,10 +543,10 @@ public class ControlPaint extends Control
 	private void setZoomMax()
 	{
 		// Image cannot be smaller than the screen.
-		var paintImage = _paintHelper.paintImage;
+		var paintImageSize = _paintHelper.paintImage.size();
 		var displaySize = _paintHelper.displaySize;
-		var w = paintImage.getWidth() / displaySize.getWidth();
-		var h = paintImage.getHeight() / displaySize.getHeight();
+		var w = paintImageSize.x / displaySize.x;
+		var h = paintImageSize.y / displaySize.y;
 		maxZoom = h > w ? h : w;
 		zoomSlider.setMaximum((int) (maxZoom * 100));
 	}

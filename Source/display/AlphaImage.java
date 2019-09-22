@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
+
+import common.*;
 import main.*;
 
 public class AlphaImage
@@ -26,16 +28,16 @@ public class AlphaImage
 		return name;
 	}
 	
-	public BufferedImage getImage()
+	public ImageWrapper getImage()
 	{
-		BufferedImage returnValue = null;
+		ImageWrapper returnValue = null;
 
 		var timesToAttempt = 50;
 		for (int i = 0; i < timesToAttempt; i++)
 		{
 			try
 			{
-				returnValue = ImageIO.read(file);
+				returnValue = new ImageWrapper(ImageIO.read(file));
 				break;
 			} 
 			catch (OutOfMemoryError e)

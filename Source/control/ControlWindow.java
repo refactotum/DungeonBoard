@@ -17,45 +17,69 @@ public class ControlWindow extends JFrame // todo - Should this inherit from Con
 		setIconImage(iconImage);
 
 		var controlSize = _controlBuilder.controlSize;
-		setSize(controlSize);
+		setSize(controlSize.toDimension());
 		setLocation
 		(
-			(r.width - controlSize.width) / 2 + r.x,
-			(r.height - controlSize.height) / 2 + r.y
+			(r.x - controlSize.x) / 2 + r.x,
+			(r.y - controlSize.y) / 2 + r.y
 		);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		var colors = _controlBuilder.colors;
-
+		var northPanel = createNorthPanel();
+		add(northPanel, BorderLayout.NORTH);
+	}
+	
+	private JPanel createNorthPanel()
+	{
+		var northPanel = _controlBuilder.createPanel(new GridLayout(1, 2));
+		this.controlButtons = createControlButtons();
+		this.displayButtons = createDisplayButtons();
+		northPanel.add(createButtonGroup("Controls", this.controlButtons));
+		northPanel.add(createButtonGroup("Displaying", this.displayButtons));
+		return northPanel;
+	}
+	
+	private JButton[] createControlButtons()
+	{
 		var modes = Mode.values();
 		var modeCount = modes.length;
-		controlButtons = new JButton[modeCount];
-		displayButtons = new JButton[modeCount];
-		for (var i = 0; i < controlButtons.length; i++) 
+		var colors = _controlBuilder.colors;
+
+		var controlButtons = new JButton[modeCount];
+		for (var i = 0; i < modeCount; i++) 
 		{
 			var mode = modes[i];
 			var modeName = mode.name();
-			
 			var controlButton = _controlBuilder.createButton
 			(
 				modeName, colors.inactive, new ModeListener(WindowType.Control, mode)
 			);
 			controlButtons[i] = controlButton;
+		}
+		
+		return controlButtons;
+	}
+	
+	private JButton[] createDisplayButtons()
+	{
+		var modes = Mode.values();
+		var modeCount = modes.length;
+		var colors = _controlBuilder.colors;
 
+		displayButtons = new JButton[modeCount];
+		for (var i = 0; i < modeCount; i++) 
+		{
+			var mode = modes[i];
+			var modeName = mode.name();
 			var displayButton = _controlBuilder.createButton
 			(
 				modeName, colors.inactive, new ModeListener(WindowType.Display, mode)
 			);
 			displayButtons[i] = displayButton;
 		}
-		
-		var northPanel = _controlBuilder.createPanel(new GridLayout(1, 2));
-		northPanel.add(createButtonGroup("Controls", controlButtons));
-		northPanel.add(createButtonGroup("Displaying", displayButtons));
-		
-		add(northPanel, BorderLayout.NORTH);
+		return displayButtons;
 	}
-	
+
 	private JPanel createButtonGroup(String title, JButton[] buttons)
 	{
 		var controlBuilder = _controlBuilder;

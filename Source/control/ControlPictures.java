@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+
+import common.*;
 import display.*;
 
 public class ControlPictures extends Control
@@ -20,53 +22,60 @@ public class ControlPictures extends Control
 		super();
 		this.imageFolder = imageFolder;
 		this.display = display;
-		
+
 		var northPanel = getNorthPanel();
+		northPanel.add(createScaleComboBox());
+		northPanel.add(createFlipButton());
+		add(northPanel, BorderLayout.NORTH);
 
-		var controlBuilder = _controlBuilder;
-		var colors = controlBuilder.colors;
-		var colorControlBackground = colors.controlBackground;
+		this.picturePanel = new PicturePanel(display, areMultipleImagesAllowed);
+		add(createPicturePanelScrollPane(this.picturePanel), BorderLayout.CENTER);
+		
+		load();
 
+		this.picturePanel.forgetThumbnails();
+
+		setVisible(true);
+		
+	}
+	
+	private JComboBox<ScaleMethod> createScaleComboBox()
+	{
 		var scaleMethods = ScaleMethod.values();
-		var scaleComboBox = controlBuilder.createComboBox
+		var scaleComboBox = _controlBuilder.createComboBox
 		(
-			scaleMethods, colorControlBackground
+			scaleMethods, _controlBuilder.colors.controlBackground
 		);
-		scaleComboBox.setMaximumSize(new Dimension(100, 5000));
+		scaleComboBox.setMaximumSize(new Coords(100, 5000).toDimension());
 		scaleComboBox.setSelectedItem(ScaleMethod.UpScale);
 		scaleComboBox.addActionListener
 		(
-			e ->
-			{
-				display.setScaleMode(scaleComboBox.getSelectedItem());
-			}
+			e -> { display.setScaleMode(scaleComboBox.getSelectedItem()); }
 		);
-		northPanel.add(scaleComboBox);
 		
-		var flipButton = controlBuilder.createButton
+		return scaleComboBox;
+	}
+	
+	public JButton createFlipButton()
+	{
+		var flipButton = _controlBuilder.createButton
 		(
 			_paintHelper.icons.Flip,
-			colorControlBackground,
+			_controlBuilder.colors.controlBackground,
 			arg0 ->
 			{
 				display.toggleShouldImageBeRotatedAHalfTurn();
 			}
 		);
-		northPanel.add(flipButton);
-
-		add(northPanel, BorderLayout.NORTH);
-
-		this.picturePanel = new PicturePanel(display, areMultipleImagesAllowed);
-		var jsp = controlBuilder.createScrollPane(picturePanel);
-		jsp.setBackground(colorControlBackground);
+		return flipButton;
+	}
+	
+	public JScrollPane createPicturePanelScrollPane(PicturePanel picturePanel)
+	{
+		var jsp = _controlBuilder.createScrollPane(picturePanel);
+		jsp.setBackground(_controlBuilder.colors.controlBackground);
 		jsp.setBorder(BorderFactory.createEmptyBorder());
-		add(jsp, BorderLayout.CENTER);
-
-		load();
-
-		picturePanel.forgetThumbnails();
-
-		setVisible(true);
+		return jsp;
 	}
 	
 	@Override
