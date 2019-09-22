@@ -88,7 +88,7 @@ public class ControlPaint extends Control
 							}
 							catch (IOException e2)
 							{
-								_errorHelper.showError("Cannot load Mask Data", e2);
+								_controlBuilder.showError(this, "Cannot load Mask Data", e2);
 							}
 						}
 						if (file.isDirectory())
@@ -104,7 +104,7 @@ public class ControlPaint extends Control
 					}
 					else
 					{
-						_errorHelper.showError("Cannot load Image, file does not exist");
+						_controlBuilder.showError(this, "Cannot load Image, file does not exist");
 					}
 				}
 			}
@@ -282,6 +282,7 @@ public class ControlPaint extends Control
 		
 		var controlBuilder = _controlBuilder;
 		var colors = controlBuilder.colors;
+		var controlPaint = this;
 
 		folderControlPanel.removeAll();
 		// Creates all buttons.
@@ -344,7 +345,12 @@ public class ControlPaint extends Control
 								drawPanel.resetImage();
 								_displayPaint.resetImage();
 								_paintHelper.paintImage = null;
-								_errorHelper.showError("Cannot load Image, file is probably too large", error);
+								_controlBuilder.showError
+								(
+									controlPaint,
+									"Cannot load Image, file is probably too large",
+									error
+								);
 							}
 							_displayPaint.repaint();
 							drawPanel.repaint();
@@ -412,7 +418,10 @@ public class ControlPaint extends Control
 						drawPanel.resetImage();
 						_displayPaint.resetImage();
 						_paintHelper.paintImage = null;
-						_errorHelper.showError("Cannot load Image, file is probably too large", error);
+						_controlBuilder.showError
+						(
+							controlPaint, "Cannot load Image, file is probably too large", error
+						);
 					}
 					_displayPaint.repaint();
 					drawPanel.repaint();
@@ -431,6 +440,7 @@ public class ControlPaint extends Control
 	{
 		drawPanel.setIsImageLoading(true);
 		_fileHelper.paintFolder = file;
+		var controlPaint = this;
 		var fileLoadingThread = new Thread("fileLoadingThread")
 		{
 			public void run()
@@ -453,7 +463,7 @@ public class ControlPaint extends Control
 					drawPanel.resetImage();
 					_displayPaint.resetImage();
 					_paintHelper.paintImage = null;
-					_errorHelper.showError("Cannot load Image, file is probably too large", error);
+					_controlBuilder.showError(controlPaint, "Cannot load Image, file is probably too large", error);
 				}
 				_displayPaint.repaint();
 				drawPanel.repaint();

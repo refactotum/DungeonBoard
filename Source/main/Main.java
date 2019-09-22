@@ -12,23 +12,21 @@ public class Main
 
 	public static String ApplicationName = "Dungeon Board";
 
+	private Mode _controlMode = Mode.Paint;
 	private ControlWindow _controlWindow;
 	private ControlPictures _controlLayer;
 	private ControlPictures _controlImage;
 	private ControlPaint _controlPaint;
 	private ControlLoading _controlLoading;
 
-	private Mode _controlMode = Mode.Paint;
+	private Mode _displayMode = Mode.Loading;
 	private DisplayWindow _displayWindow;
 	private DisplayPictures _displayLayer;
 	private DisplayPictures _displayImage;
-	private Mode _displayMode = Mode.Loading;
-
 	public DisplayPaint displayPaint;
 	public DisplayLoading displayLoading;
 
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
-	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
 	private PaintHelper _paintHelper = PaintHelper.Instance;
 
@@ -38,6 +36,12 @@ public class Main
 	}
 
 	private void run()
+	{
+		initializeLookAndFeel();
+		loadAndInitializeScreens();
+	}
+	
+	private void initializeLookAndFeel()
 	{
 		try
 		{
@@ -59,88 +63,93 @@ public class Main
 			| UnsupportedLookAndFeelException e
 		)
 		{
-			_errorHelper.showError("Error - Changing look and feel", e);
+			_controlBuilder.showError(this.getControl(), "Error - Changing look and feel", e);
 		}
-
+	}
+	
+	private void loadAndInitializeScreens()
+	{
 		try
 		{
 			_fileHelper.load();
 			var screens = getScreens();
-			var displayIndex = JOptionPane.showOptionDialog
+			var displayIndex = _controlBuilder.getInputFromOptionDialog
 			(
-				null, "Select Display Window", Main.ApplicationName,
-				JOptionPane.DEFAULT_OPTION,
-				JOptionPane.QUESTION_MESSAGE,
-				null, screens, 0
+				"Select Display Window", Main.ApplicationName, screens
 			);
 
 			if (displayIndex >= 0 && displayIndex < screens.length)
 			{
 				var controlIndex = (displayIndex == 0 ? screens.length - 1 : 0);
-
 				var screen = screens[displayIndex];
-				_paintHelper.displaySize = screen.getSize();
-
-				var folders = _fileHelper.folders;
-				var folderLayer = folders[Mode.Layer.ordinal()];
-				var folderImage = folders[Mode.Image.ordinal()];
-
-				_displayWindow = new DisplayWindow(screen.getRectangle());
-				_displayLayer = new DisplayPictures(folderLayer);
-				_displayImage = new DisplayPictures(folderImage);
-				displayPaint = new DisplayPaint();
-				displayLoading = new DisplayLoading();
-
-				_controlWindow = new ControlWindow
-				(
-					Main.ApplicationName,
-					_paintHelper.icons.Program.getImage(),
-					screens[controlIndex].getRectangle()
-				);
-				_controlLayer = new ControlPictures(folderLayer, _displayLayer, true);
-				_controlImage = new ControlPictures(folderImage, _displayImage, false);
-				_controlPaint = new ControlPaint(displayPaint);
-				_controlLoading = new ControlLoading(displayLoading, _displayWindow);
-
-				_controlWindow.addWindowListener
-				(
-					new WindowAdapter()
-					{
-						@Override
-						public void windowClosing(WindowEvent windowEvent)
-						{
-							_controlPaint.saveMask();
-						}
-					}
-				);
-
-				_controlWindow.setButton(WindowType.Control, Mode.Paint, true);
-				_controlWindow.setButton(WindowType.Display, Mode.Loading, true);
-				_controlWindow.setControl
-				(
-					this.getControlForMode(_controlMode),
-					this.getControlForMode(Mode.Image)
-				);
-				_displayWindow.setDisplay
-				(
-					this.getDisplayForMode(_displayMode), 
-					this.getDisplayForMode(Mode.Image)
-				);
-
-				synchronized (_controlWindow)
-				{
-					_displayWindow.setVisible(true);
-					_controlWindow.setVisible(true);
-				}
+				var screenControl = screens[controlIndex];
+				initializeForScreens(screen, screenControl);
 			}
 		}
 		catch (SecurityException e)
 		{
-			_errorHelper.showError("Error - Loading resources", e);
+			_controlBuilder.showError(this.getControl(), "Error - Loading resources", e);
 		}
 		catch (HeadlessException e)
 		{
 			System.out.println("Error - Cannot find any screens\n" + e.getMessage());
+		}
+	}
+
+	private void initializeForScreens(Screen screen, Screen screenControl)
+	{
+		_paintHelper.displaySize = screen.getSize();
+
+		var folders = _fileHelper.folders;
+		var folderLayer = folders[Mode.Layer.ordinal()];
+		var folderImage = folders[Mode.Image.ordinal()];
+
+		_displayWindow = new DisplayWindow(screen.getRectangle());
+		_displayLayer = new DisplayPictures(folderLayer);
+		_displayImage = new DisplayPictures(folderImage);
+		displayPaint = new DisplayPaint();
+		displayLoading = new DisplayLoading();
+
+		_controlWindow = new ControlWindow
+		(
+			Main.ApplicationName,
+			_paintHelper.icons.Program.getImage(),
+			screenControl.getRectangle()
+		);
+		_controlLayer = new ControlPictures(folderLayer, _displayLayer, true);
+		_controlImage = new ControlPictures(folderImage, _displayImage, false);
+		_controlPaint = new ControlPaint(displayPaint);
+		_controlLoading = new ControlLoading(displayLoading, _displayWindow);
+
+		_controlWindow.addWindowListener
+		(
+			new WindowAdapter()
+			{
+				@Override
+				public void windowClosing(WindowEvent windowEvent)
+				{
+					_controlPaint.saveMask();
+				}
+			}
+		);
+
+		_controlWindow.setButton(WindowType.Control, Mode.Paint, true);
+		_controlWindow.setButton(WindowType.Display, Mode.Loading, true);
+		_controlWindow.setControl
+		(
+			this.getControlForMode(_controlMode),
+			this.getControlForMode(Mode.Image)
+		);
+		_displayWindow.setDisplay
+		(
+			this.getDisplayForMode(_displayMode), 
+			this.getDisplayForMode(Mode.Image)
+		);
+
+		synchronized (_controlWindow)
+		{
+			_displayWindow.setVisible(true);
+			_controlWindow.setVisible(true);
 		}
 	}
 
@@ -196,7 +205,7 @@ public class Main
 	{
 		var graphicsDevices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		var screens = new Screen[graphicsDevices.length];
-		for (int i = 0; i < graphicsDevices.length; i++)
+		for (var i = 0; i < graphicsDevices.length; i++)
 		{
 			screens[i] = new Screen(graphicsDevices[i]);
 		}

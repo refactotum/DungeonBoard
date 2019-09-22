@@ -7,7 +7,7 @@ import main.*;
 
 public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 {
-	private final Point NULL_POS = new Point(-100, -100);
+	private final Point NullPos = new Point(-100, -100);
 
 	private PaintHelper _paintHelper = PaintHelper.Instance;
 
@@ -32,7 +32,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 				_paintHelper.blankCursor, new Point(0, 0), "null"
 			)
 		);
-		mousePos = NULL_POS;
+		mousePos = NullPos;
 		handDirection = CursorDirection.Up;
 		displayTimer = new DisplayTimer(getSize());
 
@@ -66,7 +66,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 				public void mouseClicked(MouseEvent e) {}
 				public void mouseExited(MouseEvent e)
 				{
-					setMouse(NULL_POS);
+					setMouse(NullPos);
 				}
 				public void mouseEntered(MouseEvent e)
 				{

@@ -34,13 +34,22 @@ public class DrawPanel extends JComponent
 	private JButton updateButton;
 
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
-	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
 	private PaintHelper _paintHelper = PaintHelper.Instance;
 	
 	private Main _main = Main.Instance;
 
 	public DrawPanel()
+	{
+		setDefaults();
+		createUpdateButton();
+		createAndAddMouseListener();
+		createAndAddMouseMotionListener();
+		createAndAddComponentListener();
+		repaint();
+	}
+	
+	private void setDefaults()
 	{
 		setDoubleBuffered(false);
 		setPenRadius(penRadiusDefault);
@@ -51,7 +60,10 @@ public class DrawPanel extends JComponent
 		penShape = PenShape.Circle;
 		penDirectionLock = PenDirection.None;
 		touchpadDrawMode = TouchpadDrawMode.Any;
-
+	}
+	
+	private void createUpdateButton()
+	{
 		var colors = _controlBuilder.colors;
 
 		updateButton = _controlBuilder.createButton
@@ -67,13 +79,18 @@ public class DrawPanel extends JComponent
 					}
 					catch (OutOfMemoryError error)
 					{
-						_errorHelper.showError("Cannot update Image, file is probably large", error);
+						_controlBuilder.showError(this, "Cannot update Image, file is probably large", error);
 					}
 					updateButton.setEnabled(false);
 					updateButton.setBackground(colors.controlBackground);
 				}
 			}
 		);
+	}
+	
+	private void createAndAddMouseListener()
+	{
+		var colors = _controlBuilder.colors;
 
 		var mouseAdapter = new MouseAdapter()
 		{
@@ -132,10 +149,11 @@ public class DrawPanel extends JComponent
 						var p = toDrawingPoint(e.getPoint());
 						var p2 = toDrawingPoint(startOfClick);
 						g2.fillRect(
-								Math.min(p.x, p2.x),
-								Math.min(p.y, p2.y),
-								Math.abs(p.x - p2.x),
-								Math.abs(p.y - p2.y));
+							Math.min(p.x, p2.x),
+							Math.min(p.y, p2.y),
+							Math.abs(p.x - p2.x),
+							Math.abs(p.y - p2.y)
+						);
 						break;
 					default:
 						break;
@@ -146,7 +164,10 @@ public class DrawPanel extends JComponent
 			}
 		};
 		addMouseListener(mouseAdapter);
+	}
 
+	private void createAndAddMouseMotionListener()
+	{
 		var mouseMotionAdapter = new MouseMotionAdapter()
 		{
 			public void mouseDragged(MouseEvent e)
@@ -172,9 +193,11 @@ public class DrawPanel extends JComponent
 				repaint();
 			}
 		};
-
 		addMouseMotionListener(mouseMotionAdapter);
+	}
 
+	private void createAndAddComponentListener()
+	{
 		var componentListener = new ComponentListener()
 		{
 			public void componentShown(ComponentEvent e) {}
@@ -187,7 +210,6 @@ public class DrawPanel extends JComponent
 			public void componentHidden(ComponentEvent e) {}
 		};
 		addComponentListener(componentListener);
-		repaint();
 	}
 
 	public void setZoom(double zoom)
@@ -225,7 +247,7 @@ public class DrawPanel extends JComponent
 				}
 				catch (IOException e)
 				{
-					_errorHelper.showError("Cannot load Mask, file is probably too large", e);
+					_controlBuilder.showError(this, "Cannot load Mask, file is probably too large", e);
 				}
 			}
 			else
@@ -641,7 +663,7 @@ public class DrawPanel extends JComponent
 			}
 			catch (IOException e)
 			{
-				_errorHelper.showError("Cannot save Mask", e);
+				_controlBuilder.showError(this, "Cannot save Mask", e);
 			}
 		}
 	}

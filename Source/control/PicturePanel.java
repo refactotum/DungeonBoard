@@ -16,7 +16,6 @@ public class PicturePanel extends JPanel
 	private final Dimension ImageIconSize = new Dimension(100, 60);
 
 	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
-	private ErrorHelper _errorHelper = ErrorHelper.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
 
 	private DisplayPictures _display;
@@ -89,7 +88,7 @@ public class PicturePanel extends JPanel
 			}
 			catch (OutOfMemoryError | IOException e)
 			{
-				_errorHelper.showError("Cannot create Thumbnail, file is probably too large", e);
+				_controlBuilder.showError(this, "Cannot create Thumbnail, file is probably too large", e);
 				e.printStackTrace();
 			}
 		}
@@ -140,7 +139,7 @@ public class PicturePanel extends JPanel
 				}
 				catch (OutOfMemoryError | IOException e)
 				{
-					_errorHelper.showError("Cannot load Thumbnail, file is probably too large", e);
+					_controlBuilder.showError(this, "Cannot load Thumbnail, file is probably too large", e);
 					e.printStackTrace();
 				}
 			}

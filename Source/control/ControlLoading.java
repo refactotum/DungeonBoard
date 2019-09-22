@@ -92,7 +92,10 @@ public class ControlLoading extends Control
 			"Create Timer",
 			e ->
 			{
-				var input = JOptionPane.showInputDialog(controlLoading, "Enter minutes or M:SS", "");
+				var input = _controlBuilder.getInputFromTextDialog
+				(
+					controlLoading, "Enter minutes or M:SS"
+				);
 				try
 				{
 					var seconds = 0;

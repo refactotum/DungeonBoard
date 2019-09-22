@@ -11,7 +11,7 @@ public class AlphaImage
 	private String name;
 	private File file;
 
-	private ErrorHelper _errorHelper = ErrorHelper.Instance;
+	private ControlBuilder _controlBuilder = ControlBuilder.Instance;
 	private FileHelper _fileHelper = FileHelper.Instance;
 
 	public AlphaImage(File folder, String n)
@@ -30,7 +30,8 @@ public class AlphaImage
 	{
 		BufferedImage returnValue = null;
 
-		for (int i = 0; i < 50; i++)
+		var timesToAttempt = 50;
+		for (int i = 0; i < timesToAttempt; i++)
 		{
 			try
 			{
@@ -50,12 +51,14 @@ public class AlphaImage
 			}
 			catch (IllegalArgumentException | IOException e)
 			{
-				_errorHelper.showError("Cannot load Image \"" + name, e);
+				_controlBuilder.showError(Main.Instance.getControl(), "Cannot load Image \"" + name, e);
 			}
 		}
-		_errorHelper.showError
+		_controlBuilder.showError
 		(
-			"Cannot Load Image\"" + name + "\" after 50 attempts\n" + "Allocate more memory, use smaller images"
+			Main.Instance.getControl(),
+			"Cannot Load Image\"" + name + "\" after " + timesToAttempt
+			+ " attempts.\n" + "Allocate more memory or use smaller images."
 		);
 		
 		return null;
@@ -73,7 +76,7 @@ public class AlphaImage
 		}
 		catch (IllegalArgumentException | IOException e)
 		{
-			_errorHelper.showError("Cannot load Image RGB \"" + name, e);
+			_controlBuilder.showError(Main.Instance.getControl(), "Cannot load Image RGB \"" + name, e);
 		}
 		
 		return returnValue;

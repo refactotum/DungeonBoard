@@ -44,50 +44,71 @@ public class DisplayLoading extends Display
 		var g2d = (Graphics2D) g;
 		if (currentImage != null)
 		{
-			var displaySize = _paintHelper.displaySize;
-			
-			if (shouldImagesBeUpscaled)
-			{
-				if (ticksSinceImageChanged <= ticksPerFade)
-				{
-					g2d.drawImage(oldImage, 0, 0, displaySize.width, displaySize.height, null);
-				}
-				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fadeOpacity));
-				g2d.drawImage(currentImage, 0, 0, displaySize.width, displaySize.height, null);
-			}
-			else
-			{
-				g2d.setColor(new Color(currentImage.getRGB(0, 0)));
-				g2d.fillRect(0, 0, displaySize.width, displaySize.height);
-
-				if (ticksSinceImageChanged <= ticksPerFade && oldImage != null)
-				{
-					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1 - fadeOpacity));
-					g2d.drawImage
-					(
-						oldImage,
-						(displaySize.width - oldImage.getWidth()) / 2,
-						(displaySize.height - oldImage.getHeight()) / 2,
-						null
-					);
-				}
-				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fadeOpacity));
-				g2d.drawImage
-				(
-					currentImage, 
-					(displaySize.width - currentImage.getWidth()) / 2,
-					(displaySize.height - currentImage.getHeight()) / 2,
-					null
-				);
-			}
+			paintCurrentImage(g2d);
 		}
+		
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+
 		for (var c: screensaverCubes)
 		{
 			c.paint(g2d);
 		}
+
 		paintMouse(g2d);
+
 		g2d.dispose();
+	}
+	
+	private void paintCurrentImage(Graphics2D g2d)
+	{
+		if (shouldImagesBeUpscaled)
+		{
+			paintCurrentImageUpscaled(g2d);
+		}
+		else
+		{
+			paintCurrentImageNotUpscaled(g2d);
+		}
+	}
+	
+	private void paintCurrentImageUpscaled(Graphics2D g2d)
+	{
+		var displaySize = _paintHelper.displaySize;
+
+		if (ticksSinceImageChanged <= ticksPerFade)
+		{
+			g2d.drawImage(oldImage, 0, 0, displaySize.width, displaySize.height, null);
+		}
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fadeOpacity));
+		g2d.drawImage(currentImage, 0, 0, displaySize.width, displaySize.height, null);
+	}
+
+	private void paintCurrentImageNotUpscaled(Graphics2D g2d)
+	{
+		var displaySize = _paintHelper.displaySize;
+
+		g2d.setColor(new Color(currentImage.getRGB(0, 0)));
+		g2d.fillRect(0, 0, displaySize.width, displaySize.height);
+
+		if (ticksSinceImageChanged <= ticksPerFade && oldImage != null)
+		{
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1 - fadeOpacity));
+			g2d.drawImage
+			(
+				oldImage,
+				(displaySize.width - oldImage.getWidth()) / 2,
+				(displaySize.height - oldImage.getHeight()) / 2,
+				null
+			);
+		}
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fadeOpacity));
+		g2d.drawImage
+		(
+			currentImage, 
+			(displaySize.width - currentImage.getWidth()) / 2,
+			(displaySize.height - currentImage.getHeight()) / 2,
+			null
+		);
 	}
 	
 	@Override

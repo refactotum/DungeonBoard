@@ -183,4 +183,45 @@ public class ControlBuilder
 		var returnValue = new JTextField(text, columns);
 		return returnValue;
 	}
+
+	public String getInputFromTextDialog
+	(
+		Component parentComponent, String message
+	)
+	{
+		return JOptionPane.showInputDialog
+		(
+			parentComponent,
+			message,
+			"" // initialValue?
+		);
+	}
+
+	public int getInputFromOptionDialog
+	(
+		String message, String title, Object[] options
+	)
+	{
+		return JOptionPane.showOptionDialog
+		(
+			null, // parentComponent
+			message,
+			title,
+			JOptionPane.DEFAULT_OPTION,
+			JOptionPane.QUESTION_MESSAGE,
+			null, // icon
+			options,
+			0 // initialValue
+		);
+	}
+
+	public void showError(Component parentComponent, String message)
+	{
+		JOptionPane.showMessageDialog(parentComponent, message, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	public void showError(Component parentComponent, String message, Throwable error)
+	{
+		JOptionPane.showMessageDialog(parentComponent, message + "\n" + error.getMessage());
+	}
 }
