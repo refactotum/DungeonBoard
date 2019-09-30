@@ -21,16 +21,16 @@ public class DrawPanel extends JComponent
 	private Graphics2D g2;
 	private Coords controlSize;
 	private double displayZoom;
-	private Point lastMouseClickPosition;
-	private Point mousePos;
+	private Coords lastMouseClickPosition;
+	private Coords mousePos;
 	private boolean canDraw;
 	private boolean isLoading;
 	private boolean isDragging;
 	private PenDirection penDirectionLock;
 	private TouchpadDrawMode touchpadDrawMode;
-	private Point lastWindowClick;
-	private Point windowPosition;
-	private Point startOfClick;
+	private Coords lastWindowClick;
+	private Coords windowPosition;
+	private Coords startOfClick;
 
 	private JButton updateButton;
 
@@ -54,10 +54,10 @@ public class DrawPanel extends JComponent
 	{
 		setDoubleBuffered(false);
 		setPenRadius(penRadiusDefault);
-		mousePos = new Point(-100, -100);
+		mousePos = new Coords(-100, -100);
 		displayZoom = 1;
-		windowPosition = new Point(0, 0);
-		lastWindowClick = new Point(0, 0);
+		windowPosition = new Coords(0, 0);
+		lastWindowClick = new Coords(0, 0);
 		penShape = PenShape.Circle;
 		penDirectionLock = PenDirection.None;
 		touchpadDrawMode = TouchpadDrawMode.Any;
@@ -99,7 +99,7 @@ public class DrawPanel extends JComponent
 			{
 				if (_paintHelper.paintImage != null)
 				{
-					lastMouseClickPosition = toDrawingPoint(e.getPoint());
+					lastMouseClickPosition = toDrawingPoint(Coords.fromPoint(e.getPoint()));
 					switch (touchpadDrawMode)
 					{
 					case Any:
@@ -121,14 +121,14 @@ public class DrawPanel extends JComponent
 								g2.setPaint(colors.opaque);
 								canDraw = true;
 							}
-							startOfClick = e.getPoint();
+							startOfClick = Coords.fromPoint(e.getPoint());
 							isDragging = true;
 							addPoint(lastMouseClickPosition);
 						}
 						break;
 					case Invisible:
 					case Visible:
-						startOfClick = e.getPoint();
+						startOfClick = Coords.fromPoint(e.getPoint());
 						isDragging = true;
 						addPoint(lastMouseClickPosition);
 						break;
@@ -147,7 +147,7 @@ public class DrawPanel extends JComponent
 				{
 					switch (penShape){
 					case Rectangle:
-						var p = toDrawingPoint(e.getPoint());
+						var p = toDrawingPoint(Coords.fromPoint(e.getPoint()));
 						var p2 = toDrawingPoint(startOfClick);
 						g2.fillRect(
 							Math.min(p.x, p2.x),
@@ -177,20 +177,20 @@ public class DrawPanel extends JComponent
 				{
 					if (canDraw)
 					{
-						addPoint(toDrawingPoint(e.getPoint()));
+						addPoint(toDrawingPoint(Coords.fromPoint(e.getPoint())));
 					}
 					else
 					{
-						setWindowPosition(toDrawingPoint(e.getPoint()));
+						setWindowPosition(toDrawingPoint(Coords.fromPoint(e.getPoint())));
 						_main.displayPaint.setWindowPosition(getWindowPosition());
 					}
-					mousePos = e.getPoint();
+					mousePos = Coords.fromPoint(e.getPoint());
 					repaint();
 				}
 			}
 			public void mouseMoved(MouseEvent e)
 			{
-				mousePos = e.getPoint();
+				mousePos = Coords.fromPoint(e.getPoint());
 				repaint();
 			}
 		};
@@ -222,7 +222,7 @@ public class DrawPanel extends JComponent
 		repaint();
 	}
 
-	public void setWindowScaleAndPosition(double zoom, Point p)
+	public void setWindowScaleAndPosition(double zoom, Coords p)
 	{
 		displayZoom = zoom;
 		setWindowPosition(p);
@@ -388,9 +388,9 @@ public class DrawPanel extends JComponent
 		return new ImageWrapper(mask);
 	}
 
-	public Point getWindowPosition()
+	public Coords getWindowPosition()
 	{
-		return new Point((int)(windowPosition.x / displayZoom), (int) (windowPosition.y / displayZoom));
+		return new Coords((int)(windowPosition.x / displayZoom), (int) (windowPosition.y / displayZoom));
 	}
 
 	public boolean hasImage()
@@ -476,17 +476,17 @@ public class DrawPanel extends JComponent
 		g2d.fillRect(x, y, w, h);
 	}
 
-	private Point toDrawingPoint(Point p)
+	private Coords toDrawingPoint(Coords p)
 	{
 		var drawingLayerSize = drawingLayer.size();
-		return new Point
+		return new Coords
 		(
 			p.x * drawingLayerSize.x / controlSize.x,
 			p.y * drawingLayerSize.y / controlSize.y
 		);
 	}
 
-	private void setWindowPosition(Point p)
+	private void setWindowPosition(Coords p)
 	{
 		lastWindowClick = p;
 
@@ -525,7 +525,7 @@ public class DrawPanel extends JComponent
 	 * @param newP a point based on the placement on {@code _settings.paintImage}<br>
 	 * use {@code toDrawingPoint} to convert to the correct point
 	 */
-	private void addPoint(Point newP)
+	private void addPoint(Coords newP)
 	{
 		if (g2 != null)
 		{
@@ -579,9 +579,9 @@ public class DrawPanel extends JComponent
 		}
 	}
 
-	private Polygon getPolygonSweptByOval(Point newP, Point oldP, double rwidth, double rheight)
+	private Polygon getPolygonSweptByOval(Coords newP, Coords oldP, double rwidth, double rheight)
 	{
-		final double angle = -Math.atan2(newP.getY() - oldP.getY(), newP.getX() - oldP.getX());
+		final double angle = -Math.atan2(newP.y - oldP.y, newP.x - oldP.x);
 		final double anglePos = angle + Math.PI / 2;
 		final double angleNeg = angle - Math.PI / 2;
 		final int cosP = (int) (Math.cos(anglePos) * rwidth);
@@ -590,21 +590,25 @@ public class DrawPanel extends JComponent
 		final int sinN = (int) (Math.sin(angleNeg) * rheight);
 		return new Polygon
 		(
-			new int[] {
-					newP.x + cosP,
-					newP.x + cosN,
-					oldP.x + cosN,
-					oldP.x + cosP},
-			new int[] {
-					newP.y - sinP,
-					newP.y - sinN,
-					oldP.y - sinN,
-					oldP.y - sinP},
+			new int[]
+			{
+				newP.x + cosP,
+				newP.x + cosN,
+				oldP.x + cosN,
+				oldP.x + cosP
+			},
+			new int[]
+			{
+				newP.y - sinP,
+				newP.y - sinN,
+				oldP.y - sinN,
+				oldP.y - sinP
+			},
 			4
 		);
 	}
 
-	private Polygon getPolygonSweptByRectangle(Point newP, Point oldP, int rwidth, int rheight)
+	private Polygon getPolygonSweptByRectangle(Coords newP, Coords oldP, int rwidth, int rheight)
 	{
 		if ((newP.x > oldP.x && newP.y > oldP.y) || (newP.x < oldP.x && newP.y < oldP.y))
 		{

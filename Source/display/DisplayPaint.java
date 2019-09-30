@@ -13,7 +13,7 @@ public class DisplayPaint extends Display
 	private Coords imageSizeScaled;
 	
 	// The negative of this will be the position to start drawing.
-	private Point windowPosition;
+	private Coords windowPosition;
 	
 	 // Larger means zoomed out and a smaller image.
 	private double scale;
@@ -21,7 +21,7 @@ public class DisplayPaint extends Display
 	public DisplayPaint()
 	{
 		super();
-		windowPosition = new Point(0, 0);
+		windowPosition = new Coords(0, 0);
 		scale = 1;
 		setVisible(true);
 	}
@@ -79,7 +79,7 @@ public class DisplayPaint extends Display
 		}
 	}
 	
-	public void setWindowScaleAndPosition(double scale, Point position)
+	public void setWindowScaleAndPosition(double scale, Coords position)
 	{
 		this.scale = scale;
 		if (_paintHelper.paintImage != null)
@@ -99,7 +99,7 @@ public class DisplayPaint extends Display
 		repaint();
 	}
 	
-	public void setWindowPosition(Point value)
+	public void setWindowPosition(Coords value)
 	{
 		windowPosition = value;
 		if (imageSizeScaled != null)

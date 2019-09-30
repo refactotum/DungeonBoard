@@ -101,7 +101,7 @@ public class ControlPaint extends Control
 								
 								var data = br.readLine().split(" ");
 								var zoom = Double.parseDouble(data[0]);
-								var p = new Point(Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+								var p = new Coords(Integer.parseInt(data[1]), Integer.parseInt(data[2]));
 								zoomSlider.setMaximum(10_000);
 								zoomSlider.setValue((int) (zoom * 100));
 								zoomText.setText(String.format("%.2f", zoom));

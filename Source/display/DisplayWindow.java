@@ -9,11 +9,11 @@ import common.*;
 
 public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 {
-	private final Point NullPos = new Point(-100, -100);
+	private final Coords NullPos = new Coords(-100, -100);
 
 	private PaintHelper _paintHelper = PaintHelper.Instance;
 
-	private Point mousePos;
+	private Coords mousePos;
 	private CursorDirection handDirection;
 	private DisplayTimer displayTimer;
 
@@ -38,7 +38,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		(
 			getToolkit().createCustomCursor
 			(
-				_paintHelper.blankCursor.systemImage, new Point(0, 0), "null"
+				_paintHelper.blankCursor.systemImage, new Coords(0, 0).toPoint(), "null"
 			)
 		);
 		mousePos = NullPos;
@@ -54,11 +54,11 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 			{
 				public void mouseDragged(MouseEvent e)
 				{
-					setMouse(e.getPoint());
+					setMouse(Coords.fromPoint(e.getPoint()));
 				}
 				public void mouseMoved(MouseEvent e)
 				{
-					setMouse(e.getPoint());
+					setMouse(Coords.fromPoint(e.getPoint()));
 				}
 			}
 		);
@@ -85,7 +85,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 				}
 				public void mouseEntered(MouseEvent e)
 				{
-					setMouse(e.getPoint());
+					setMouse(Coords.fromPoint(e.getPoint()));
 				}
 			}
 		);
@@ -144,7 +144,7 @@ public class DisplayWindow extends JFrame // todo - Should this inherit Display?
 		thread.start();
 	}
 
-	private void setMouse(Point p)
+	private void setMouse(Coords p)
 	{
 		mousePos = p;
 		repaint();

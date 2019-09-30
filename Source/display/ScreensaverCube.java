@@ -12,7 +12,7 @@ public class ScreensaverCube
 	// An image that floats around the screen like the old DvD logo would on DvD players.
 
 	private final int pixelsPerMove;
-	private Point position;
+	private Coords position;
 
 	private boolean isMovingUpNotDown;
 	private boolean isMovingLeftNotRight;
@@ -26,7 +26,7 @@ public class ScreensaverCube
 		pixelsPerMove = rand.nextInt(5) + 1;
 		var displaySize = _paintHelper.displaySize;
 		var iconDvd = _paintHelper.icons.Dvd;
-		position = new Point
+		position = new Coords
 		(
 			rand.nextInt(displaySize.x - iconDvd.getIconWidth()),
 			rand.nextInt(displaySize.y - iconDvd.getIconHeight())
